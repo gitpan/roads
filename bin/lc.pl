@@ -6,7 +6,7 @@ use lib "/home/roads2/lib";
 # recommend you use perl 5.003 or above and libwww-perl 5
 
 # Author: Martin Hamilton <martinh@gnu.org>
-# $Id: lc.pl,v 3.19 1998/11/05 20:55:10 jon Exp $
+# $Id: lc.pl,v 3.20 1999/04/08 14:57:54 jon Exp $
 
 require LWP::Protocol::http;
 require LWP::UserAgent;
@@ -80,8 +80,22 @@ foreach $thing (@things) {
   $opt_i && do (&check_iafa($thing), next);
 
   if ($thing =~ /\.([^\.]+)$/) {
-    print STDERR "Checking suffix... $1\n" if $debug;
-    unless (grep(/$1/i, @HTML)) { # skip unless file looks like HTML
+    my $thischeck = $1;
+    print STDERR "Checking suffix... $thischeck\n" if $debug;
+    # We've got to escape regexp specials in the URL
+    $thischeck =~ s/\?/\\\?/g;
+    $thischeck =~ s/\*/\\\*/g;
+    $thischeck =~ s/\(/\\\(/g;
+    $thischeck =~ s/\)/\\\)/g;
+    $thischeck =~ s/\[/\\\[/g;
+    $thischeck =~ s/\]/\\\]/g;
+    $thischeck =~ s/\./\\\./g;
+    $thischeck =~ s/\-/\\\-/g;
+    $thischeck =~ s/\^/\\\^/g;
+    $thischeck =~ s/\$/\\\$/g;
+    $thischeck =~ s/\\/\\\\/g;
+    $thischeck =~ s/\&/\\\&/g;
+    unless (grep(/$thischeck/i, @HTML)) { # skip unless file looks like HTML
       print STDERR "Skipping... $thing\n" if $debug;
       next;
     }

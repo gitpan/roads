@@ -7,13 +7,15 @@ use lib "/home/roads2/lib";
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #         Martin Hamilton <martinh@gnu.org>
-# $Id: rebuild.pl,v 3.4 1998/09/10 17:19:15 jon Exp $
+# $Id: rebuild.pl,v 3.7 1999/01/19 20:02:38 jon Exp $
 
 use Getopt::Std;
+use File::Basename;
 
 require ROADS;
 use ROADS::ErrorLogging;
 use ROADS::ReadTemplate;
+
 
 getopts('adps:t:S:W:');
 
@@ -64,14 +66,18 @@ if ($opt_p) {
 foreach $Handle (@ARGV) {
     # If this was an old template being updated
     if ($ALLTEMPS{"$Handle"}) {
+        system($ROADS::CpPath, "$IafaSource/$Handle",
+          "$ROADS::TmpDir/$Handle.$$");
         if ($ROADS::ExtDBDel ne "") {
 	    $ENV{"HANDLE"} = $Handle;
 	    $ENV{"IAFAFILE"} = "$IafaSource/$Handle";
 	    $res=system("$ROADS::ExtDBDel");
         } else {
 	    $res=system("$ROADS::Bin/deindex.pl", "-s", $IafaSource,
-		        "-i", $IndexDir, $Handles);
+		        "-i", $IndexDir, $Handle);
         }
+        system($ROADS::MvPath, "$ROADS::TmpDir/$Handle.$$",
+          "$IafaSource/$Handle");
     
         if ($res != 0) {
 	    flock(MKTEMPLOCK,8);
@@ -129,9 +135,9 @@ if ($slview) {
 if ($wnview) {
     $arg="-s $IafaSource -n '$ROADS::ServiceName' -w $wnview -r";
     if ($opt_a) {
-      $res=system("$ROADS::Bin/addwn.pl -ar");
+      $res=system("$ROADS::Bin/addwn.pl -ar $arg");
     } else {
-      $res=system("$ROADS::Bin/addwn.pl -r $Handles");
+      $res=system("$ROADS::Bin/addwn.pl -r $arg $Handles");
     }
 
     if ($res != 0) {

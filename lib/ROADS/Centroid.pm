@@ -3,7 +3,7 @@
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #
-# $Id: Centroid.pm,v 3.4 1998/09/05 13:58:57 martin Exp $
+# $Id: Centroid.pm,v 3.5 1999/01/26 18:45:10 jon Exp $
 
 package ROADS::Centroid;
 require Exporter;
@@ -49,6 +49,20 @@ sub referrallookup {
       $conjunction = "&";
     }
     $query =~ s/\".*?\"/\($replacement\)/;
+  }
+  while($query =~ /(\w+[\_\w+]+)/) {
+    $phrase = $1;
+    $replacement = "";
+    $conjunction = "";
+    foreach $word (split(/\_/,$phrase)) {
+      if ($CENTROID{$word}) {
+        $replacement .= "$conjunction\377";
+      } else {
+        $replacement .= "$conjunction\376";
+      }
+      $conjunction = "&";
+    }
+    $query =~ s/\w+[\_\w+]+/\($replacement\)/;
   }
   $query =~s/\w*?=(\w+)/$1/g;
     

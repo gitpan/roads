@@ -5,7 +5,7 @@ use lib "/home/roads2/lib";
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #         Martin Hamilton <martinh@gnu.org>
-# $Id: cullwn.pl,v 3.13 1998/08/28 17:36:21 martin Exp $
+# $Id: cullwn.pl,v 3.14 1999/01/19 19:54:04 jon Exp $
 
 use Getopt::Std;
 use POSIX;
@@ -281,7 +281,7 @@ B<DD> is the day of the month,
 
 =item *
 
-B<MM> is the month (0-11),
+B<MM> is the month (1-12),
 
 =item *
 
@@ -291,7 +291,7 @@ B<YYYY> is the year.
 
 This time and date string specifies the culling time; all entries in
 the what's new list generated before that date are removed.  Thus the
-string B<10452312021995> tells B<cullwn.pl> to remove any entries
+string B<10452312031995> tells B<cullwn.pl> to remove any entries
 added the I<What's New> list before 10:45:23am on 12th March 1995.
 
 =head1 FILES

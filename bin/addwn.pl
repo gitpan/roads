@@ -4,7 +4,7 @@ use lib "/home/roads2/lib";
 # addwn.pl
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
-# $Id: addwn.pl,v 3.17 1998/11/05 19:36:35 jon Exp $
+# $Id: addwn.pl,v 3.19 1999/01/19 19:34:02 jon Exp $
 
 use Getopt::Std;
 use POSIX;
@@ -199,7 +199,7 @@ sub GenHTML {
 	$mod_year += 1900;
 	$mod_month=
 	    (Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec)[$mod_mon];
-	$mod_day=(Sun,Mon,Tue,Wed,Thu,Fri,Sat)[$wday];
+	$mod_day=(Sun,Mon,Tue,Wed,Thu,Fri,Sat)[$mod_wday];
 
 	$ADDED_TIME{"$handle"} =
 	    sprintf("%s %2.2d %s %2.2d:%2.2d:%2.2d UTC",
@@ -384,7 +384,7 @@ B<URI> attribute.
 =head1 OPTIONS
 
 A number of options are available for the B<addwn.pl> program to
-control which files are used for generating the subject listings and
+control which files are used for generating the what's new listings and
 where configuration options are located:
 
 =over 4
@@ -426,10 +426,10 @@ name which was entered when the ROADS server was created.
 
 =item B<-p> I<pattern>
 
-Only enter entries in the subject listings for templates that have URI
+Only enter entries in the what's new listings for templates that have URI
 fields that match the supplied pattern.  The pattern can be a full Perl
 regular expression and allows one to, for example, restrict entries in
-the subject listings to only include UK academic sites.  By default the
+the what's new listings to only include UK academic sites.  By default the
 pattern matches all URLs and so all templates are included in the
 hypertext lists. 
 
@@ -464,7 +464,7 @@ in the "What's New" listing, where the date fields are:
 These options are then followed by zero or more templates handles
 (note - B<not> filenames).  If the B<-a> option is given, no handles
 need be given on the command line; all templates in the database will
-be added to the subject listings.
+be added to the what's new listings.
 
 =head1 FILES
 
@@ -477,10 +477,10 @@ I<htdocs/whats-new.html> - default location of listing.
 
 =head1 FILE FORMAT
 
-The B<addwn.pl> can generate a number of different subject listings.
-This allows, for example, a subject listing of UK based resources in
-addition to a subject listing of all resources.  The views also allow
-easy selection of which subject listing a template should be added to
+The B<addwn.pl> can generate a number of different what's new listings.
+This allows, for example, a what's new listing of UK based resources in
+addition to a what's new listing of all resources.  The views also allow
+easy selection of which what's new listing a template should be added to
 in the B<mktemp.pl> editor.
 
 The view is specified by a view file.  A sample file is:
@@ -494,7 +494,7 @@ The various attributes currently defined in the view file are:
 
 =item HTML-File:
 
-The path to the file in which the subject listing HTML document should be
+The path to the file in which the what's new listing HTML document should be
 generated.  This file should be accessible to the HTTP daemon that serves
 the ROADS documents if the HTML document is to be accessible via the
 World Wide Web.  If the path is a relative one, it is assumed to be
@@ -513,7 +513,7 @@ to be relative to the ROADS F<guts> directory.
 
 =head1 SEE ALSO
 
-L<bin/addwn.pl>, L<bin/cullsl.pl>, L<bin/mkinv.pl>
+L<bin/addsl.pl>, L<bin/cullsl.pl>, L<bin/mkinv.pl>
 
 =head1 COPYRIGHT
 

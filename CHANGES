@@ -1,11 +1,64 @@
-$Id: CHANGES,v 3.26 1998/12/09 14:42:48 martin Exp $
+$Id: CHANGES,v 3.30 1999/04/21 15:36:02 martin Exp $
+
+# v2.2 - Wednesday 21st April 1999 #########################################
+
+This is another maintenance release adding the following bug fixes:
+
+ * Broken HTML in config/multilingual/UK-English/lib/authfail.html.
+
+ * config/multilingual/UK-English/search-views/headlines/headlines
+   - filename should have been 'full'.
+
+ * Fixed bug 2.1-001:
+   The config/mktemp-views/service file is actually the same as the
+   document file. This is causing the mktemp stuff to go a bit  squiffy.
+   (ie. not showing a subject cluster by default.) This seems to be the
+   same in the v2.00 bundle.
+
+ * Fixed bug 2.1-002:
+   bin/rebuild.pl doesn't add all the arguments to the call to
+   bin/addwn.pl when rebuilding what's new lists.
+
+ * Fixed bug 2.1-003:
+   bin/rebuild.pl deindexes pending/existing templates using
+   bin/deindex.pl which deletes the source template automatically,
+   resulting in no template to reindex.
+
+ * Fixed bug 2.1-004:
+   bin/addwn.pl uses the wrong day in one of its date routines.
+
+ * Fixed bug 2.1-005:
+   bin/cullwn.pl perldoc says to use 0-11 for the month but actually
+   needs 1-12.                                           
+
+ * Fixed bug 2.1-006:
+   bin/rebuild.pl needs an explicit use for File::Basename on some Perl
+   installations.                                           
+
+ * Fixed bug 2.1-007:
+   The call to Override in cgi-bin/search.pl doesn't require an ampersand
+   (and screws up Perl 5.004 under Solaris if it is there).
+
+ * Fixed bug 2.1-008:
+   Referrals don't work for phrases.
+
+ * Fixed bug 2.1-009:
+   Phrases in v2 extended search boxes (the up to three attribute/value
+   pair combinations) don't work properly - e.g. choosing attribute
+   'title' and search terms 'journal of finance' results in a search being
+   carried out for '(title=journal AND of AND finance)',  which is clearly
+   bogus. 
+
+ * Fixed bug 2.1-010:
+   The link checker bin/lc.pl blows up if it gets a URL with lots of odd
+   characters in it (such as CGI scripts).                 
 
 # v2.1 - Wednesday 9th Dec 1998 ############################################
 
 This is a maintenance release that fixes a few problems that have popped up
 since the v2.00 release.  The major fixes are:
 
- * in/bogus.pl called a subroutine which doesn't exist - wanted_dir 
+ * bin/bogus.pl called a subroutine which doesn't exist - wanted_dir 
    versus wanted,
 
  * Subject listings appeared the HTML output from the alphalist even 

@@ -1,35 +1,30 @@
-Template-Type:		DOCUMENT
+Template-Type:           SERVICE
 Handle:
-Category:Common elements:
 Title:Quick Edit:Common elements:
 URI-v*:Quick Edit:Common elements:
-Short-Title:Common elements:
-Alternative-Title:Common elements:
-Author-(USER*):Quick Edit:Common elements:
 Admin-(USER*):Quick Edit:Common elements:
-Source:Common elements:
-Requirements:
-Description:Quick Edit:Common elements:
-Citation:
-Publication-Status:
+Owner-(ORGANIZATION*):Common elements:
+Sponsoring-(ORGANIZATION*):Common elements:
 Publisher-(ORGANIZATION*):Common elements:
-Copyright:Common elements:
-Creation-Date:
-Discussion:Common elements:
+Description:Quick Edit:Common elements:
+Authentication:Common elements:
+Registration:Common elements:
+Charging-Policy:Common elements:
+Access-Policy:Common elements:
+Access-Times:Common elements:
 Keywords:Quick Edit:Common elements:
-Version-v*:
-Format-v*:
-Size-v*:
-Language-v*:Common elements:
-Character-Set-v*:
-ISBN-v*:Common elements:
-ISSN-v*:Common elements:
-Last-Revision-Date-v*:
-Subject-Descriptor-v*:Common elements:
-Subject-Descriptor-Scheme-v*:Common elements:
+Subject-(DESCRIPTOR*):Quick Edit:Common elements:
+Relation-(RELATION*):Common elements:
+Short-Title:Common elements:
+Alternative-Title:Quick Edit:Common elements:
+Language-v*:Quick Edit:Common elements:
+ISSN:Common elements:
+Discussion:Common elements:
+Source:Common elements:
+Category:Quick Edit:Common elements:
 To-Be-Reviewed-Date:Common elements:
-Record-Last-Verified-Email:
-Record-Last-Verified-Date:
+Record-Last-Verified-Email:Common elements:
+Record-Last-Verified-Date:Common elements:
 Comments:Common elements:
 Destination:Quick Edit:Common elements:
 

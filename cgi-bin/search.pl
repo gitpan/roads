@@ -5,7 +5,7 @@ use lib "/home/roads2/lib";
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #         Martin Hamilton <martinh@gnu.org>
-# $Id: search.pl,v 3.23 1998/09/10 17:29:41 jon Exp $
+# $Id: search.pl,v 3.26 1999/04/06 15:27:22 martin Exp $
 
 # Fix for stupid Netscape server bug/misfeature
 close(STDERR) if $ENV{"SERVER_NAME"} =~ /netscape/i;
@@ -95,7 +95,7 @@ EOF
 
 &initStoplist($stopfile) unless $StoplistInit;
 &ReadDBNames;
-&Override;
+Override;
 &cleaveargs;
 if ($scriptname eq "admin") {
   &CheckUserAuth("admin_users");
@@ -189,6 +189,8 @@ if ($CGIvar{query}) {
   
   $query = "";
   if ($CGIvar{term1}) {
+      $CGIvar{term1} =~ s/\s\s+/ /g;
+      $CGIvar{term1} =~ s/\s/_/g;
       if ($CGIvar{attrib1} eq "ANY") {
 	  $query = "$CGIvar{term1}";
       } else {
@@ -196,6 +198,8 @@ if ($CGIvar{query}) {
       }
   }
   if ($CGIvar{term2}) {
+    $CGIvar{term2} =~ s/\s\s+/ /g;
+    $CGIvar{term2} =~ s/\s/_/g;
     if ($query) {
 	if ($CGIvar{attrib2} eq "ANY") {
 	    $query .= " $bop $CGIvar{term2}";
@@ -211,6 +215,8 @@ if ($CGIvar{query}) {
     }
   }
   if ($CGIvar{term3}) {
+    $CGIvar{term3} =~ s/\s\s+/ /g;
+    $CGIvar{term3} =~ s/\s/_/g;
     if ($query) {
 	if ($CGIvar{attrib3} eq "ANY") {
 	    $query .= " $bop $CGIvar{term3}";
