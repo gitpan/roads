@@ -4,7 +4,7 @@
 #
 # Authors: Jon Knight <jon@net.lut.ac.uk>
 #          Martin Hamilton <martinh@gnu.org>
-# $Id: Index.pm,v 3.23 1998/09/05 13:58:57 martin Exp $
+# $Id: Index.pm,v 3.24 1999/07/29 14:40:39 martin Exp $
 #
 
 require ROADS::Porter;
@@ -15,7 +15,7 @@ require Exporter;
 @EXPORT = qw(index_search
   initStoplist initExpansions initRestrictions initIndexCache
   ExpansionsInit FieldRestrictionInit StoplistInit
-  %RestrictFields %STOPLIST %TEMPLATE %INDEX %INDEXATTR);
+  %RestrictFields @STOPLIST %TEMPLATE %INDEX %INDEXATTR);
 
 use ROADS::ErrorLogging;
 use ROADS::Porter;
@@ -208,7 +208,7 @@ sub term {
     # Grab some handy global variables from outside the package
 
     $_=$iquery;
-    if (s/^((([\w\-]+=)*[\w\.\-\'\x80-\xff]+)\s*)+//) {
+    if (s/^((([\w\-]+=)*[\w\.\-\%\'\x80-\xff]+)\s*)+//) {
         my($searchterm,%match,$pass,$newsearch,$space,$bit,$subbit);
         $line = $_;
         $search = $1;
@@ -217,7 +217,7 @@ sub term {
         $newsearch = "";
         $space = "";
         foreach $searchterm (split(" ",$search)) {
-          if($searchterm=~/^([\w\-]+)=([\w\.\-\'\200-\377]+)/) {
+          if($searchterm=~/^([\w\-]+)=([\w\.\-\%\'\200-\377]+)/) {
             $attr = $1;
             $bit = $2;
             foreach $subbit (split(/[\.\-\']/,$bit)) {
@@ -727,4 +727,3 @@ development programme.
 
 Jon Knight E<lt>jon@net.lut.ac.ukE<gt>,
 Martin Hamilton E<lt>martinh@gnu.orgE<gt>
-

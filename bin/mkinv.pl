@@ -6,18 +6,21 @@ use lib "/home/roads2/lib";
 # Authors: Jon Knight <jon@net.lut.ac.uk>
 #          Martin Hamilton <martinh@gnu.org>
 #
-# $Id: mkinv.pl,v 3.24 1998/11/12 14:37:30 jon Exp $
+# $Id: mkinv.pl,v 3.25 1999/07/29 14:39:37 martin Exp $
 
 use Getopt::Std;
-getopts('adhi:m:s:t:ux:y:z:');
+getopts('adhi:m:s:t:ux:y:z:I:P:');
 
 require ROADS;
 use ROADS::ErrorLogging;
+
+use URI::Escape;  # To support %-encoding of indexed URIs
 
 if ($opt_h) {
     die <<EOF;
 Usage: $0 [-adhu] [-i index-dir] [-m min-size] [-s source-dir]
   [-t tmp dir] [-x stoplist] [-y stopattr] [-z alltemps]
+  [-I indexspecial] [-P percentencode]
 EOF
 }
 
@@ -32,6 +35,8 @@ $debug = $opt_d || 0;
 $minsize  = $opt_m || 2;
 $stoplist = $opt_x || "$ROADS::Config/stoplist";
 $stopattr = $opt_y || "$ROADS::Config/stopattr";
+$indexspecial = $opt_I || "$ROADS::Config/indexspecial";
+$percentencode = $opt_P || "$ROADS::Config/percentencode";
 $alltemps = $opt_z || "$ROADS::Guts/alltemps";
 
 # What we think we're doing!
@@ -44,6 +49,8 @@ print STDERR <<EOF if $debug;
 >> Stoplist: $stoplist
 >> Stoplist for attribute names: $stopattr
 >> All templates list: $alltemps
+>> Index special file: $indexspecial
+>> Percent encode file: $percentencode
 EOF
 
 chomp($PWD = `pwd`); # just in case those were relative path names
@@ -83,6 +90,32 @@ if (open(STOPATTR, "$stopattr")) {
     $STOPATTR{"$_"} = "y";
   }
   close(STOPATTR);
+}
+
+if (open(INDEXSPECIAL, "$indexspecial")) {
+  warn ">> Reading in indexspecial\n" if $debug;
+  while(<INDEXSPECIAL>) {
+    chomp;
+    $_ = lc($_);
+    if(/([^:]*):(.*)/)
+    {
+	$INDEXSPECIAL{"$1"} = "$2";
+    }
+}
+  close(INDEXSPECIAL);
+}
+
+if (open(PERCENTENCODE, "$percentencode")) {
+  warn ">> Reading in percentencode\n" if $debug;
+  while(<PERCENTENCODE>) {
+    chomp;
+    $_ = lc($_);
+    if(/([^:]*):(.*)/)
+    {
+	$PERCENTENCODE{"$1"} = "$2";
+    }
+  }
+  close(PERCENTENCODE);
 }
 
 # Process all the files in the source directory - this must come after the
@@ -175,13 +208,25 @@ foreach $filename (@ARGV) {
       $value = $_;
     }
 
-    $value =~ tr/[\/\\]/ /;
-    foreach $term (split(/$IndexSplitPattern/, $value)) {
+    #$value =~ tr/[\/\\]/ /;
+    
+    unless($AttribIndexSplitPattern = $INDEXSPECIAL{"$attr"})
+    {
+	$AttribIndexSplitPattern = $IndexSplitPattern; 
+    }
+
+    foreach $term (split(/$AttribIndexSplitPattern/, $value)) {
+
       $term =~ s/\.+$//;
       next if $term =~ /^(\s+|)$/; # skip blanks
       next if length($term) < $minsize;
       $test = lc($term);
       next if $STOPLIST{"$test"}; # skip terms in stoplist
+
+      if($EncodePattern = $PERCENTENCODE{"$attr"})
+      {
+	  $term = uri_escape(uri_unescape($term), $EncodePattern); 
+      }
       print TMPFILE "$tt:$attr:$term:$handle\n";
     }
   }
@@ -356,7 +401,8 @@ B<bin/mkinv.pl> - build ROADS database index
 
   bin/mkinv.pl [-adhu] [-i directory] [-m minsize]
     [-s directory] [-t directory] [-x stoplist]
-    [-y stopattr] [-z alltemps] [handle1 handle2 ... handleN]
+    [-y stopattr] [-z alltemps] [-I indexspecial]
+    [-P percentencode] [handle1 handle2 ... handleN]
 
 =head1 DESCRIPTION
 
@@ -426,6 +472,21 @@ which should not be indexed.
 The I<absolute> pathname of the file to which the list of template
 handle to filename mappings should be saved.
 
+=item B<-I> I<indexspecial>
+
+The I<absolute> pathname of a file containing a list of regular
+expressions which will be used to override the standard tokenisation
+algorithm used by the ROADS indexer - see below for examples.  This
+is needed when indexing URIs, to avoid the standard ROADS tokenising
+behaviour breaking the URI up into little chunks.
+
+=item B<-P> I<percentencode>
+
+The I<absolute> pathname of a file containing B<URI::Escape> patterns
+on a per attribute basis - see below for examples.  This is needed to
+percent escape URIs in the ROADS index so that they can be matched
+when a WHOIS++ search is done.
+
 =back
 
 If the B<-a> option is not used, the B<mkinv.pl> script expects one or
@@ -433,6 +494,20 @@ more filenames containing IAFA templates to be given.  These files are
 then processed, and all the templates in them are indexed.
 
 =head1 FILES
+
+I<config/indexspecial> - list of attributes (regular expression
+pattern matches) which should be percent escaped, e.g.
+
+  URI:\s+
+  Description-URI:\s+
+
+I<config/percentencode> - lists the characters which should be percent
+escaped for a particular attribute, e.g.
+
+  URI:^-A-Za-z0-9
+
+causes all characters other than alphanumerics and - to be percent
+escaped when the index is built.
 
 I<config/stopattr> - default list of attributes to exclude from
 the index.

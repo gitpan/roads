@@ -4,7 +4,7 @@ use lib "/home/roads2/lib";
 # addwn.pl
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
-# $Id: addwn.pl,v 3.19 1999/01/19 19:34:02 jon Exp $
+# $Id: addwn.pl,v 3.20 1999/06/01 12:53:11 martin Exp $
 
 use Getopt::Std;
 use POSIX;
@@ -202,11 +202,12 @@ sub GenHTML {
 	$mod_day=(Sun,Mon,Tue,Wed,Thu,Fri,Sat)[$mod_wday];
 
 	$ADDED_TIME{"$handle"} =
-	    sprintf("%s %2.2d %s %2.2d:%2.2d:%2.2d UTC",
-		    $day,$mday,$month,$hour,$min,$sec);
+	    sprintf("%s %2.2d %s %2.2d:%2.2d:%2.2d UTC %04d",
+		    $day,$mday,$month,$hour,$min,$sec,$year);
 	$MODIFIED_TIME{"$handle"} =
-	    sprintf("%s %2.2d %s %2.2d:%2.2d:%2.2d UTC",
-		    $mod_day,$mod_mday,$mod_month,$mod_hour,$mod_min,$mod_sec);
+	    sprintf("%s %2.2d %s %2.2d:%2.2d:%2.2d UTC %04d",
+		    $mod_day,$mod_mday,$mod_month,$mod_hour,$mod_min,
+		    $mod_sec,$mod_year);
 	
 	# If we were doing the last N items added...
 	if (defined($opt_l)) {

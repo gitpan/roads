@@ -1,0 +1,5 @@
+# format:
+# name:profile file name:section id[:section id:section id]
+# note: each section id number should only appear once
+Example One:example1:anr:lsrd:digi
+Example Two:example2:es:qa:ss:ta

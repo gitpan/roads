@@ -1,0 +1,4 @@
+You can display random hints here
+Edit the config/multilingual/*/search-hints/hints.data file to change the hints
+Use the pseudo-HTML tag <SEARCHHINT> to display the hints
+One hint per line, in config/multilingual/*/search-hints/hints.data

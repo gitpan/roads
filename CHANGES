@@ -1,4 +1,63 @@
-$Id: CHANGES,v 3.30 1999/04/21 15:36:02 martin Exp $
+$Id: CHANGES,v 3.31 1999/07/29 14:39:14 martin Exp $
+
+# v2.3 - Wednesday 26th July 1999 ##########################################
+
+Added support for different ranking algorithms using Perl's autoloader.
+The old ranking module is left as the default.  Ranking via alphabetical
+sort is supplied as an option.  To see this in action, supply the CGI
+parameter 'rankingalg=alpha:title' to cgi-bin/search.pl, to sort on the
+value of the Title attribute.  Thanks to Tracy Gardner for contributing
+the code to do this.  For more information, see also:
+<URL:http://www.ukoln.ac.uk/metadata/desire/qualityratings/roadsranking/>
+
+Added support for indexing whole URIs and fetching by URI.  This isn't
+enabled by default - you have to remove URI from the list of attributes
+which aren't indexed in config/stopattr.  You'll also need to edit
+config/percentencode and config/indexspecial to index any URIs other than
+those with attribute name 'URI:'.  See the bin/mkinv.pl manpage for more
+info, and note that you'll need to percent escape any URIs you search for!
+Thanks to Tracy Gardner for contributing the code.  For background info:
+<URL:http://www.ukoln.ac.uk/metadata/roads/metadata-mgmt/fetchbyuri.html>
+
+Added support for hierarchical browsing.  The default config/class-map
+file for the eLib projects demo database has beed edited to illustrate
+how this works in practice.  See the bin/addsl.pl manpage and the
+ROADS::HTMLOut manpage for more info.  Thanks to Jasper Tredgold for 
+contributing the code.
+
+Added support for section editor attribution.  A sample section editor
+config file config/section-editors has been included.  See the
+ROADS::HTMLOut manpage for more information.  Thanks to Jasper Tredgold
+for contributing the code.
+
+Added support for search hints/help, with sample data included in
+config/multilingual/UK-English/search-hints/hints.data.  See the
+ROADS::HTMLOut manpage for more information on this.  Thanks to Jasper
+Tredgold for contributing the code.
+
+Bug fixes (mostly by the ILRT crowd :-)
+
+ * Stoplist problems. %STOPLIST should have been @STOPLIST in export list in
+   ROADS::Index
+
+ * Improved highlighting of search terms in ROADS::Render. If search terms are
+   fielded, they are only highlighted in the relevent field.
+
+ * Fixed ROADS::Render so that the URI tag displays only one URI when used
+   without FOREACH.
+
+ * bin/wppd.pl was matching URI-v1 with URI-v1*. Fixed.
+
+ * ROADS::HTMLOut. GetMessageDir was not using the 'view' parameter. Fixed.
+   Also edited ROADS::Render to bring it into line with this fix.
+
+ * Boolean searches were inadvertantly broken by the fix for bug 2.1-009.
+   Fixed - thanks to Ian Sealy for code contributed.
+
+ * Fixed bug number 2.2-001:
+   No year is generated in ADDEDTIME tag expansion by bin/cullwn.pl and
+   bin/addwn.pl.  We just goofed and forgot to include the year when we
+   generated the printable version of the date/time.
 
 # v2.2 - Wednesday 21st April 1999 #########################################
 

@@ -1,16 +1,16 @@
-anr:Access to Network Resources:anr
+anr:Access to Network Resources:anr:lsrd
 digi:Digitisation:digi
-dp:Digital Preservation:dp
-edd:Electronic Document Delivery:edd
-ej:Electronic Journals and Pre-Prints:ej
-ers:Electronic Reserve Support:ers
-es:Evaluation Studies:es
-eslp:Electronic Short Loan:eslp
+dp:Digital Preservation:dp:digi
+edd:Electronic Document Delivery::ej
+ej:Electronic Journals and Pre-Prints:ej:edd
+ers:Electronic Reserve Support:ers:eslp
+es:Evaluation Studies:es:ss
+eslp:Electronic Short Loan:eslp:ers
 hl:Hybrid Libraries:hl
 images:Images:images
-lsrd:Large Scale Resource Discover:lsrd
+lsrd:Large Scale Resource Discovery:lsrd
 odp:On Demand Publishing:odp
-pp:Pre-Prints:pp
-qa:Quality Assurance:qa
+pp:Pre-Prints:pp:ej
+qa:Quality Assurance:qa:ss
 ss:Supporting Studies:ss
-ta:Training and Awareness:ta
+ta:Training and Awareness:ta:ss

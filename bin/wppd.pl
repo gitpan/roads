@@ -7,7 +7,7 @@ use lib "/home/roads2/lib";
 #          Jon Knight <jon@net.lut.ac.uk>
 #          with apologies to Tom Christiansen, and Larry Wall :-)
 #
-# $Id: wppd.pl,v 3.33 1998/09/10 12:43:38 jon Exp $
+# $Id: wppd.pl,v 3.34 1999/07/29 14:39:37 martin Exp $
 
 require ROADS;
 use ROADS::Index;
@@ -719,7 +719,7 @@ sub displayfull {
 		while(1) {
 		    print STDOUT "% 204 looking for variant $base-v$variant\r\n"
 		        if $debug;
-		    @cluster = grep(/$base-v$variant/i, @avkeys);
+		    @cluster = grep(/$base-v$variant$/i, @avkeys);
 		    last if $#cluster < 0;
 		    foreach (@cluster) { &prettyprint(" $AV{$_}\r\n"); }
 		    $variant++;
@@ -735,7 +735,7 @@ sub displayfull {
 	    while(1) {
 		print STDOUT "% 204 looking for cluster $base($include)-V$variant\n" 
 		    if $debug;
-		@cluster = grep(/$base.+-V$variant/i, @avkeys);
+		@cluster = grep(/$base.+-V$variant$/i, @avkeys);
 		last if $#cluster < 0;
 		foreach (@cluster) { &prettyprint(" $AV{$_}\r\n"); }
 		$variant++;

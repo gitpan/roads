@@ -3,13 +3,13 @@
 # Configure - Perl program to do ROADS v2 installation
 
 # martin hamilton <m.t.hamilton@lut.ac.uk>
-# $Id: Configure,v 2.61 1998/11/24 17:16:34 jon Exp $
+# $Id: Configure,v 2.62 1999/07/29 14:39:14 martin Exp $
 
 use Config;
 use Cwd;
 
 # built-in defaults
-$ROADS::Version = "v2.1";
+$ROADS::Version = "v2.3";
 $ROADS::PerlPath = &find("perl");
 
 $ROADS::Dir = 
@@ -80,7 +80,7 @@ if ($ARGV[0]) {
 $ROADS::Dir = $TopDir;
 # Always use the current version number, even if we read the settings from
 # an older version.
-$ROADS::Version = "v2.1";
+$ROADS::Version = "v2.3";
 
 print <<EOF;
 
@@ -1452,27 +1452,27 @@ The software distribution comes in the compressed archive format
 conventionally used to distribute Unix software over the Internet.  To
 unpack it, use the I<zcat> and I<tar> commands, e.g.
 
-  % zcat roads-v2.1.tar.Z | tar xvf -
+  % zcat roads-v2.3.tar.Z | tar xvf -
 
 The software distribution will be unpacked into a directory called
-I<roads-v2.1>, in whatever directory you happen to be in at the
+I<roads-v2.3>, in whatever directory you happen to be in at the
 time.  If you choose to keep all or most of your ROADS related files
 in this directory, you may want to make a symbolic link from it to
 some common name which you will carry on using for some time, e.g.
 
-  % ln -s /usr/local/roads-v2.1 /usr/local/roads
+  % ln -s /usr/local/roads-v2.3 /usr/local/roads
 
 or perhaps rename the directory:
 
-  % mv /usr/local/roads-v2.1 /usr/local/roads
+  % mv /usr/local/roads-v2.3 /usr/local/roads
 
 Now you can carry on using the name I</usr/local/roads> to refer to
 the ROADS installation, no matter where it actually lives.
 
 Once the software has been unpacked, you should see the following in
-your I<roads-v2.1> (or whatever :-) directory:
+your I<roads-v2.3> (or whatever :-) directory:
 
-  % ls -l roads-v2.1
+  % ls -l roads-v2.3
   total 466
   -rw-r--r--  1 martin       7459 Aug  3 20:13 CHANGES
   -r-xr-xr-x  1 martin      27386 Aug  3 20:42 Configure
@@ -1695,7 +1695,7 @@ To install the ROADS software on your machine, you will need to run
 the I<Configure> shell script which can be found in the directory
 you unpacked the distribution in, e.g.
 
-  % cd roads-v2.1
+  % cd roads-v2.3
   % ./Configure
 
 I<Configure> will ask you a number of questions about the your

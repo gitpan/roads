@@ -8,8 +8,11 @@
 <H1>Subject Listing for <NAME></H1>
 
 parent: <TREEPARENT><br>
-children: <TREECHILDREN " - "><br>
+children: <TREECHILDREN " | "><br>
 related: <RELATED " | "><br>
 section-editor: <a href="/<HTDOCS>/profiles/<SECTION-EDITOR-PAGE>.html"><SECTION-EDITOR></a><br>
 
 <HR>
+<em>There are no resources catalogued in this section</em>
+</BODY>
+</HTML>

@@ -4,7 +4,7 @@ use lib "/home/roads2/lib";
 # cullsl.pl
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
-# $Id: cullsl.pl,v 3.17 1998/09/05 14:07:11 martin Exp $
+# $Id: cullsl.pl,v 3.18 1999/07/29 14:39:37 martin Exp $
 
 use Getopt::Std;
 
@@ -142,8 +142,8 @@ open(SCHEMEMAP,$MappingFile) || &WriteToErrorLogAndDie("cullsl",
 while(<SCHEMEMAP>) {
     chomp;
     ($classno,@name) = split(':');
-    $shortname{$classno}=pop @name;
-    ($namelist{$classno})=@name;
+    $namelist{"$classno"}=shift @name;
+    $shortname{"$classno"}=shift @name;
     $longname=$namelist{$classno};
     $long2short{"$longname"}=$shortname{$classno};
 }

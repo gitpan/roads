@@ -4,7 +4,7 @@
 # Authors: Jon Knight <jon@net.lut.ac.uk>
 #          Martin Hamilton <martinh@gnu.org>
 #
-# $Id: Render.pm,v 3.29 1998/11/05 18:42:07 jon Exp jon $
+# $Id: Render.pm,v 3.31 1999/07/29 14:40:39 martin Exp $
 
 package ROADS::Render;
 require Exporter;
@@ -71,8 +71,13 @@ sub render {
     }
 
     if ($::matches == 0) {
+      my $message_dir = &GetMessageDir("$::scriptname-views", "$view", $::Language, $::CharSet);
+      if (-f "$message_dir/nohits"){
+	&OutputHTML("$::scriptname-views", "$view/nohits", $::Language, $::CharSet);
+      } else {
 	&OutputHTML("$::scriptname", "nohits.html", $::Language, $::CharSet);
-	return;
+      }
+      return;
     }
 
     print "[<EM>render called with by '$::scriptname' with query '$query', "
@@ -80,9 +85,11 @@ sub render {
 	    if $debug;
 
     # split query into its consituent bits
-    foreach $term (split(/\W/, $CGIvar{query})) {
-	next if $term =~ /^(and|or|not)$/;
-	s/^[^=]+=(.*)/$1/;
+    my($q) = split /:/,$::query,2;
+    foreach $term (split(/\s/,$q)) {
+	next if $term =~ /^(and|or|not)$/i;
+        $term =~ s/[\(\)]//g; # strip stuff
+#	$term =~ s/^([^=])+=(.*)/$1/;
 	push (@terms,$term);
     }
 
@@ -98,8 +105,8 @@ sub render {
 
     print "[<EM>got message_dir: $message_dir</EM>]<BR>\n" if $debug;
 
-    unless (opendir(MESSAGE_DIR, "$message_dir/$view")) {
-	print "<HR>Can't open HTML messages directory '$message_dir/$view'.\n";
+    unless (opendir(MESSAGE_DIR, "$message_dir")) {
+	print "<HR>Can't open HTML messages directory '$message_dir'.\n";
         print "Consult tech support!<HR>\n";
 	&OutputHTML("$::scriptname-views", "$view/trailer",
 		    $::Language, $::CharSet);
@@ -114,9 +121,9 @@ sub render {
 	next if $rulefile =~ /~$/;
 	print "[<EM>adding rule $rulefile</EM>]<BR>\n" if $debug;
 
-	unless (open (RULES, "$message_dir/$view/$rulefile")) {
+	unless (open (RULES, "$message_dir/$rulefile")) {
 	    &WriteToErrorLog("render",
-              "couldn't open rule file $message_dir/$view/$rulefile: $!");
+              "couldn't open rule file $message_dir/$rulefile: $!");
 	    next;
 	}
 
@@ -404,7 +411,7 @@ sub render {
                             print "$URI{\"$protocol\"}\n";
                         } else {
                             last if ($wrote eq "yes");
-                            $URI{$protocol} =~ s/\n.*//m;
+                            $URI{$protocol} =~ s/\n.*//s;
                             print "$URI{\"$protocol\"}\n";
                         }
                         $wrote = "yes";
@@ -477,21 +484,29 @@ sub render {
                   }
                 }
                 $rhs = $internationalversion if($internationalversion ne "");
-		foreach $term (@terms) {
+		foreach $trm (@terms) {
+		    my($att,$term);
+		    if($trm =~ /\=/){
+		      ($att,$term) = split /\=/,$trm;
+		    } else {
+		      $term = $trm;
+		    }
                     next if $term =~ /^(and|or|not)$/i;
                     next if grep(/^$term$/i, @STOPLIST);
-		    if($caseful) {
+		    unless ((defined $att) && (uc($att) ne $attrib)){
+		      if($caseful) {
                         if($::CGIvar{stemming} eq "sub") {
                           $rhs =~ s/($term)/<B>$1<\/B>/g;
                         } else {
                           $rhs =~ s/([( >]|^)($term)/$1<B>$2<\/B>/g;
-                        }
-		    } else {
-                        if($::CGIvar{stemming} eq "sub") {
-                          $rhs =~ s/($term)/<B>$1<\/B>/gi;
-                        } else {
-                          $rhs =~ s/([( >]|^)($term)/$1<B>$2<\/B>/gi;
-                        }
+			}	   
+		      } else {
+			if($::CGIvar{stemming} eq "sub") {
+			  $rhs =~ s/($term)/<B>$1<\/B>/gi;
+			} else {
+			  $rhs =~ s/([( >]|^)($term)/$1<B>$2<\/B>/gi;
+		        }
+		      }
 		    }
 		}
 
@@ -518,19 +533,31 @@ sub render {
             $handle = $fullhandle;
             $handle =~ s/(.*:)//;
             print <<"EditButton";
+<CENTER>
+<TABLE WIDTH="25%"><TR><TD ALIGN="CENTER">
 <FORM ACTION="/$ROADS::WWWAdminCgi/mktemp.pl" METHOD="POST">
 <INPUT TYPE="hidden" NAME="templatetype" VALUE="$templatetype">
 <INPUT TYPE="hidden" NAME="op" VALUE="text">  
 <INPUT TYPE="hidden" NAME="mode" VALUE="edit">
 <INPUT TYPE="hidden" NAME="debug" VALUE="$debug">
 <INPUT TYPE="hidden" NAME="originalhandle" VALUE="$handle">
-<INPUT TYPE="submit" VALUE="Edit Template">
+<INPUT TYPE="hidden" NAME="view" VALUE="Quick Edit">
+<INPUT TYPE="hidden" NAME="asksize" VALUE="sizes">
+<INPUT TYPE="hidden" NAME="partdone" VALUE="yes">
+<INPUT TYPE="hidden" NAME="clusterSubject" VALUE="0">
+<INPUT TYPE="hidden" NAME="clusterPublisher" VALUE="0">
+<INPUT TYPE="hidden" NAME="clusterAdmin" VALUE="0">
+<INPUT TYPE="hidden" NAME="clusterAuthor" VALUE="0">
+<INPUT TYPE="hidden" NAME="variantsize" VALUE="0">
+<INPUT TYPE="submit" VALUE="Edit">
 </FORM>
-
+</TD><TD ALIGN="CENTER">
 <FORM ACTION="/$ROADS::WWWAdminCgi/deindex.pl" METHOD="POST">
 <INPUT TYPE="hidden" NAME="handletobedeleted" VALUE="$handle">
-<INPUT TYPE="submit" VALUE="Delete Template">
-</FORM><HR>
+<INPUT TYPE="submit" VALUE="Del.">
+</FORM><PRE>
+</PRE>
+</TD></TR></TABLE></CENTER>
 EditButton
         }  
     }

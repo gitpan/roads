@@ -5,7 +5,7 @@ use lib "/home/roads2/lib";
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #         Martin Hamilton <martinh@gnu.org>
-# $Id: cullwn.pl,v 3.14 1999/01/19 19:54:04 jon Exp $
+# $Id: cullwn.pl,v 3.15 1999/06/01 12:53:11 martin Exp $
 
 use Getopt::Std;
 use POSIX;
@@ -154,11 +154,12 @@ sub GenHTML {
 	$mod_day=(Sun,Mon,Tue,Wed,Thu,Fri,Sat)[$wday];
 
 	$ADDED_TIME{"$handle"} =
-	    sprintf("%s %2.2d %s %2.2d:%2.2d:%2.2d UTC",
-		    $day,$mday,$month,$hour,$min,$sec);
+	    sprintf("%s %2.2d %s %2.2d:%2.2d:%2.2d UTC %04d",
+		    $day,$mday,$month,$hour,$min,$sec,$year);
 	$MODIFIED_TIME{"$handle"} =
-	    sprintf("%s %2.2d %s %2.2d:%2.2d:%2.2d UTC",
-		    $mod_day,$mod_mday,$mod_month,$mod_hour,$mod_min,$mod_sec);
+	    sprintf("%s %2.2d %s %2.2d:%2.2d:%2.2d UTC %04d",
+		    $mod_day,$mod_mday,$mod_month,$mod_hour,$mod_min,
+		    $mod_sec,$mod_year);
 
 	push(@handles, $handle);
     }

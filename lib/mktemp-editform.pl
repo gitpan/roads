@@ -3,19 +3,19 @@
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #
-# $Id: mktemp-editform.pl,v 1.31 1998/12/03 17:17:25 martin Exp $
+# $Id: mktemp-editform.pl,v 1.34 1999/07/29 14:40:39 martin Exp $
 #
 
 sub editform {
     &OutputHTML("mktemp","editformhead.html",$Language,$CharSet);
     if ($HavePlainFields == 1) {
-        print STDOUT "<UL><LI><A HREF=\"#plain\">Goto the Plain Fields</A></UL>\n";
+        print STDOUT "<P><A HREF=\"#plain\">Plain Fields</A>\n";
     }
     if ($HaveClusters == 1) {
-        print STDOUT "<UL><LI><A HREF=\"#clusters\">Goto the Clusters</A></UL>\n";
+        print STDOUT "<P><A HREF=\"#clusters\">Clusters</A>\n";
     }
     if ($HaveVariantFields == 1) {
-        print STDOUT "<UL><LI><A HREF=\"#variants\">Goto the Variant Fields</A></UL>\n";
+        print STDOUT "<P><A HREF=\"#variants\">Variant Fields</A>\n";
     }
     print STDOUT <<"HeadOfForm";
 <FORM ACTION="$myurl" METHOD="POST">
@@ -32,12 +32,26 @@ HeadOfForm
     # Output the hidden record creation/verification attributes
     #
     if($CGIvar{mode} eq "edit") {
-	$TEMPLATE{RecordCreatedEmail} =~ s/\n//g;
-        print STDOUT <<"HeadOfForm";
-<INPUT TYPE="hidden" NAME="IAFARecordCreatedDate" VALUE="$TEMPLATE{RecordCreatedDate}">
-<INPUT TYPE="hidden" NAME="IAFARecordCreatedEmail" VALUE="$TEMPLATE{RecordCreatedEmail}">
+      if ($TEMPLATE{RecordCreatedDate} && $TEMPLATE{RecordCreatedEmail}) { # ANH 1999-05-03
+        $rcd = $TEMPLATE{RecordCreatedDate};    # ANH 1999-05-03
+        $rce = $TEMPLATE{RecordCreatedEmail};   # ANH 1999-05-03
+      }	elsif ($CGIvar{IAFARecordCreatedDate} &&
+	     $CGIvar{IAFARecordCreatedEmail}) { # ANH 1999-05-03
+	$rcd = $CGIvar{IAFARecordCreatedDate};  # ANH 1999-05-03
+	$rce = $CGIvar{IAFARecordCreatedEmail}; # ANH 1999-05-03
+      }	else {                                  # ANH 1999-05-03
+	$rcd = "eaten by a bug";                # ANH 1999-05-03
+	$rce = "eaten by a bug";                # ANH 1999-05-03
+      }                                         # ANH 1999-05-03
+
+      $rce =~ s/\n//g;                          # ANH 1999-05-03
+      $rcd =~ s/\n//g;                          # ANH 1999-05-03
+      print STDOUT <<"HeadOfForm";
+<INPUT TYPE="hidden" NAME="IAFARecordCreatedDate" VALUE="$rcd">
+<INPUT TYPE="hidden" NAME="IAFARecordCreatedEmail" VALUE="$rce">
 HeadOfForm
     }
+
     #
     # Output the plain fields of the template
     #
@@ -62,15 +76,15 @@ HeadOfForm
             }
             if(($CGIvar{view} eq "ALL") || ($displayfield == 1)) {
                 if($DisplayedPlains == 0) {
-                    print STDOUT "<HR><A NAME=\"plain\">\n<H1>Plain Fields</H1><TABLE>\n";
+                    print STDOUT "<HR NOSHADE><A NAME=\"plain\">\n<H3>Plain Fields</H3>\n";
                     $DisplayedPlains = 1;
                 }
-                print "<TR><TD VALIGN=TOP><A HREF=\"/$ROADS::WWWHtDocs/IAFA-help/$tt.html#$real\">";
+                print "<P><A HREF=\"/$ROADS::WWWHtDocs/IAFA-help/$tt.html#$real\">";
                 printf STDOUT "%-25s:", $real;
                 $tt = $CGIvar{templatetype};
                 $tt =~ tr/A-Z/a-z/;
                 if($default=~/\|/) {
-                    print STDOUT "</A><TD VALIGN=TOP><SELECT SIZE=5 NAME=\"IAFA$Field\" MULTIPLE>\n";
+                    print STDOUT "</A><P><SELECT SIZE=5 NAME=\"IAFA$Field\" MULTIPLE>\n";
                     if($value ne ""  && !($value =~ /\|/)) {
                         print STDOUT "<OPTION SELECTED>$value\n";
                     }
@@ -83,12 +97,12 @@ HeadOfForm
                     $value =~ s/^\s*//;
  		    if ($YSize{$Field} == "1") {
  			print STDOUT <<EOF
-</A><TD VALIGN=TOP><INPUT NAME="IAFA$Field" SIZE="$XSize{$Field}" VALUE="$value">
+</A><P><INPUT NAME="IAFA$Field" SIZE="$XSize{$Field}" VALUE="$value">
 EOF
 ;
  		    } else {
  			print STDOUT <<EOF
-</A><TD VALIGN=TOP><TEXTAREA NAME="IAFA$Field" ROWS="$YSize{$Field}" COLS="$XSize{$Field}">$value</TEXTAREA>
+</A><P><TEXTAREA WRAP="VIRTUAL" NAME="IAFA$Field" ROWS="$YSize{$Field}" COLS="$XSize{$Field}">$value</TEXTAREA>
 EOF
 ;
  		    }
@@ -96,7 +110,7 @@ EOF
 		    $tt =~ tr/A-Z/a-z/;
                     $authfile = "$ROADS::Config/authority/$tt/$real";
                     if(-f "$authfile") {
-                         print STDOUT "<TR><TD VALIGN=TOP><TD VALIGN=TOP><INPUT TYPE=\"submit\" ";
+                         print STDOUT "<P><P><INPUT TYPE=\"submit\" ";
                          print STDOUT "NAME=\"ROADSAuth$real\" ";
                          print STDOUT "VALUE=\"Authority File\">\n";
                     }
@@ -121,7 +135,7 @@ EOF
             }
         }
     }
-    print STDOUT "</TABLE>\n";
+    print STDOUT "\n";
     
     #
     # Output the clusters in the template
@@ -151,27 +165,27 @@ EOF
                     }
                     if(($CGIvar{view} eq "ALL") || ($displayfield == 1)) {
                         if($DisplayedClusters == 0) {
-                            print STDOUT "<HR><A NAME=\"clusters\">\n<H1>Clusters</H1>\n<UL>\n";
+                            print STDOUT "<HR NOSHADE><A NAME=\"clusters\">\n<H3>Clusters</H3>\n\n";
                             $DisplayedClusters = 1;
                         }
                         if($DisplayedThisCluster == 0) {
-                            print STDOUT "<LI><H2><A HREF=\"/$ROADS::WWWHtDocs/IAFA-help/$tt.html#$Cluster\">$Cluster</A></H2>\n";
+                            print STDOUT "<P><H4><A HREF=\"/$ROADS::WWWHtDocs/IAFA-help/$tt.html#$Cluster\">$Cluster</A></H4>\n";
                             $DisplayedThisCluster = 1;
                         }
                         if($DisplayedThisInstance == 0) {
-                            print STDOUT "<H2>Instance $Number</H2>\n";
-                            print STDOUT "<INPUT TYPE=\"submit\" NAME=\"";
+                            print STDOUT "<H4>Instance $Number</H4>\n";
+                            print STDOUT "<SMALL><INPUT TYPE=\"submit\" NAME=\"";
                             print STDOUT "ROADSFind$Cluster$Number\" VALUE=\"";
-                            print STDOUT "Search for cluster\"><BR>";
+                            print STDOUT "Search for cluster\"></SMALL><BR>";
  
  			    print STDOUT "Insert cluster with handle:";
- 			    print STDOUT "<INPUT NAME=\"ROADSAdd$Cluster-$Number\" VALUE=\"\"><BR><BR>";
+ 			    print STDOUT "<SMALL><INPUT NAME=\"ROADSAdd$Cluster-$Number\" VALUE=\"\"></SMALL><BR>";
  			    $DisplayedThisInstance = 1;
-                            print STDOUT "<TABLE>\n";
+                            print STDOUT "\n";
                          }
  			unless ($Element eq "Handle"
 				  || $Element eq "Template-Type") {
- 			    print STDOUT "<TR><TD><A HREF=\"/$ROADS::WWWHtDocs/IAFA-help/$ClusterTypes{$Cluster}.html#$Element\">";
+ 			    print STDOUT "<P><A HREF=\"/$ROADS::WWWHtDocs/IAFA-help/$ClusterTypes{$Cluster}.html#$Element\">";
  			    printf STDOUT "%-25s:",$Element;
  			}
                         $AuthElement = $Element;
@@ -180,7 +194,7 @@ EOF
                         $value = $ClusterValue{$index};
                         $default = $DefaultValues{$index};
                         if($default=~/\|/) {
-                            print STDOUT "</A><TD><SELECT SIZE=5 NAME=\"IAFA$Cluster$Element$Number\" MULTIPLE>\n";
+                            print STDOUT "</A><P><SELECT SIZE=5 NAME=\"IAFA$Cluster$Element$Number\" MULTIPLE>\n";
                             if($value ne ""  && !($value =~ /\|/)) {
                                 print STDOUT "<OPTION SELECTED>$value\n";
                             }
@@ -195,12 +209,12 @@ EOF
  			    unless ($Element eq "Handle") {
  				if ($YSize{$index} == "1") {
  				    print STDOUT <<EOF
-</A><TD><INPUT NAME="IAFA$Cluster$Element$Number" SIZE="$XSize{$index}" VALUE="$ClusterValue{$index}">
+</A><P><INPUT NAME="IAFA$Cluster$Element$Number" SIZE="$XSize{$index}" VALUE="$ClusterValue{$index}">
 EOF
 ;
  				} else {
  				    print STDOUT <<EOF
-</A><TD><TEXTAREA NAME="IAFA$Cluster$Element$Number" ROWS="$YSize{$index}" COLS="$XSize{$index}">$ClusterValue{$index}</TEXTAREA>
+</A><P><TEXTAREA WRAP="VIRTUAL" NAME="IAFA$Cluster$Element$Number" ROWS="$YSize{$index}" COLS="$XSize{$index}">$ClusterValue{$index}</TEXTAREA>
 EOF
 ;
  				}
@@ -243,7 +257,7 @@ EOF
                         print STDOUT "VALUE=\"$value\">";
                     }
                 }
-                print STDOUT "</UL></TABLE>\n";
+                print STDOUT "\n";
                 $Number++;
             }
             print STDOUT "<INPUT TYPE=\"hidden\" NAME=\"cluster$Cluster\" ";
@@ -251,18 +265,20 @@ EOF
             print STDOUT "VALUE=\"$Element\">\n";
 
 	    if($DisplayedClusters == 0) {
-		print STDOUT "<HR><A NAME=\"clusters\">\n<H1>Clusters"
-		    . "</H1>\n<UL>\n";
+		print STDOUT "<HR NOSHADE><A NAME=\"clusters\">\n<H3>Clusters"
+		    . "</H3>\n\n";
 		$DisplayedClusters = 1;
 	    }
-	    print STDOUT "<INPUT TYPE=\"submit\" NAME=\"ROADScincr$Cluster\" ".
-		"VALUE=\"Add a cluster of type: $Cluster\">";
-	    print STDOUT "<INPUT TYPE=\"submit\" NAME=\"ROADScdecr$Cluster\" ".
-		"VALUE=\"Remove last $Cluster cluster\">"
+	    print STDOUT "<P><SMALL><INPUT TYPE=\"submit\" NAME=\"ROADScincr$Cluster\" ".
+		"VALUE=\"Add $Cluster cluster\"></SMALL>";
+
+            print STDOUT '</P><HR NOSHADE>' if $Element == 0;
+	    print STDOUT "<SMALL><INPUT TYPE=\"submit\" NAME=\"ROADScdecr$Cluster\" ".
+		"VALUE=\"Remove last $Cluster\"></SMALL></P><HR NOSHADE>"
 		    unless $Element == 0;
 	    print STDOUT "\n";
         }
-        print STDOUT "</TABLE></UL>\n";
+        print STDOUT "\n";
     }
     
     #
@@ -293,19 +309,19 @@ EOF
                 $real = $RealFields{$Field};
                 if(($CGIvar{view} eq "ALL") || ($displayfield == 1)) {
                     if($DisplayedVariants == 0) {
-                        print STDOUT "<HR><A NAME=\"variants\">\n<H1>Variant Fields</H1>\n<UL>\n";
+                        print STDOUT "<BR><A NAME=\"variants\">\n<H3>Variant Fields</H3>\n\n";
                         $DisplayedVariants = 1;
                     }
                     if($DisplayedThisVariant == 0) {
-                        print STDOUT "</TABLE><LI><H2>Variant $Variant</H2><TABLE>\n";
+                        print STDOUT "<P><H4>Variant $Variant</H4>\n";
                         $DisplayedThisVariant = 1;
                     }
-                    print STDOUT "<TR><TD><A HREF=\"/$ROADS::WWWHtDocs/IAFA-help/$tt.html#$real\">";
+                    print STDOUT "<P><A HREF=\"/$ROADS::WWWHtDocs/IAFA-help/$tt.html#$real\">";
                     printf STDOUT "%-25s:", $real;
                     $tt = $CGIvar{templatetype};
                     $tt =~ tr/A-Z/a-z/;
                     if($default=~/\|/) {
-                        print STDOUT "</A><TD><SELECT SIZE=5 NAME=\"IAFA$Field$Variant\" MULTIPLE>\n";
+                        print STDOUT "</A><P><SELECT SIZE=5 NAME=\"IAFA$Field$Variant\" MULTIPLE>\n";
                         if($value ne ""  && !($value =~ /\|/)) {
                           print STDOUT "<OPTION SELECTED>$value\n";
                         }
@@ -317,12 +333,12 @@ EOF
                     } else {
  			if ($YSize{$index} == 1) {
  			    print STDOUT <<EOF
-</A><TD><INPUT NAME="IAFA$Field$Variant" SIZE="$XSize{$index}" VALUE="$value">
+</A><P><INPUT NAME="IAFA$Field$Variant" SIZE="$XSize{$index}" VALUE="$value">
 EOF
 ;
 			} else {
 			    print STDOUT <<EOF
-</A><TD><TEXTAREA NAME="IAFA$Field$Variant" ROWS="$YSize{$index}" COLS="$XSize{$index}">$value</TEXTAREA>
+</A><P><TEXTAREA WRAP="VIRTUAL" NAME="IAFA$Field$Variant" ROWS="$YSize{$index}" COLS="$XSize{$index}">$value</TEXTAREA>
 EOF
 ;
  			}
@@ -357,19 +373,19 @@ EOF
             }
             $Variant++;
         }
-	print STDOUT "</TABLE>\n";
+	print STDOUT "\n";
         print STDOUT "<INPUT TYPE=\"hidden\" NAME=\"variantsize\" ";
-        print STDOUT "VALUE=\"$CGIvar{variantsize}\">\n</UL>\n";
+        print STDOUT "VALUE=\"$CGIvar{variantsize}\">\n\n";
 
 	if($DisplayedVariants == 0) {
-	    print STDOUT "</TABLE><HR><A NAME=\"variants\">\n<H1>Variant Fields"
-		."</H1>\n<UL><TABLE>\n";
+	    print STDOUT "<HR NOSHADE><A NAME=\"variants\">\n<H3>Variant Fields"
+		."</H3>\n\n";
 	    $DisplayedVariants = 1;
 	}
-        print STDOUT "<INPUT TYPE=\"submit\" NAME=\"ROADSincrvarsize\" ".
-          "VALUE=\"Add a variant\">";
-        print STDOUT "<INPUT TYPE=\"submit\" NAME=\"ROADSdecrvarsize\" ".
-          "VALUE=\"Remove last variant\">" unless $CGIvar{variantsize} == 0;
+        print STDOUT "<P><SMALL><INPUT TYPE=\"submit\" NAME=\"ROADSincrvarsize\" ".
+          "VALUE=\"Add a variant\"></SMALL>";
+        print STDOUT "<SMALL><INPUT TYPE=\"submit\" NAME=\"ROADSdecrvarsize\" ".
+          "VALUE=\"Remove last variant\"></SMALL>" unless $CGIvar{variantsize} == 0;
 	print STDOUT "\n";
     }
 

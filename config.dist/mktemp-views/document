@@ -25,11 +25,14 @@ Character-Set-v*:Common elements:
 ISBN-v*:Common elements:
 ISSN-v*:Common elements:
 Last-Revision-Date-v*:Common elements:
-Subject-Descriptor-v*:Common elements:
-Subject-Descriptor-Scheme-v*:Common elements:
+Subject-Descriptor-v*:Common elements:Quick:Edit:
+Subject-Descriptor-Scheme-v*:Common elements:Quick Edit:
 To-Be-Reviewed-Date:Common elements:
 Record-Last-Verified-Email:
 Record-Last-Verified-Date:
 Comments:Common elements:
 Destination:Quick Edit:Common elements:
-
+Author-Name:Common elements:
+Author-Email:Common elements:
+Admin-Name:Quick Edit:Common elements:
+Admin-Email:Quick Edit:Common elements:

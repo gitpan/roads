@@ -5,7 +5,7 @@ use lib "/home/roads2/lib";
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #         Martin Hamilton <martinh@gnu.org>
-# $Id: search.pl,v 3.26 1999/04/06 15:27:22 martin Exp $
+# $Id: search.pl,v 3.27 1999/07/29 14:39:54 martin Exp $
 
 # Fix for stupid Netscape server bug/misfeature
 close(STDERR) if $ENV{"SERVER_NAME"} =~ /netscape/i;
@@ -189,8 +189,15 @@ if ($CGIvar{query}) {
   
   $query = "";
   if ($CGIvar{term1}) {
-      $CGIvar{term1} =~ s/\s\s+/ /g;
-      $CGIvar{term1} =~ s/\s/_/g;
+      while ($CGIvar{term1} =~ m/("[^"]*")/) {
+          $termstart = $`;
+          $termend = $';
+          $tempterm = $1;
+          $tempterm =~ s/\s/_/g;
+          $tempterm =~ s/"//g;
+          $CGIvar{term1} = $termstart . " " . $tempterm . " " . $termend;
+      }
+
       if ($CGIvar{attrib1} eq "ANY") {
 	  $query = "$CGIvar{term1}";
       } else {
@@ -198,38 +205,52 @@ if ($CGIvar{query}) {
       }
   }
   if ($CGIvar{term2}) {
-    $CGIvar{term2} =~ s/\s\s+/ /g;
-    $CGIvar{term2} =~ s/\s/_/g;
-    if ($query) {
-	if ($CGIvar{attrib2} eq "ANY") {
-	    $query .= " $bop $CGIvar{term2}";
-	} else {
-	    $query .= " $bop ($CGIvar{attrib2}=$CGIvar{term2})";
-	}
-    } else {
-	if ($CGIvar{attrib2} eq "ANY") {
-	    $query = "$CGIvar{term2}";
-	} else {
-	    $query = "($CGIvar{attrib2}=$CGIvar{term2})";
-	}
-    }
+      while ($CGIvar{term2} =~ m/("[^"]*")/) {
+          $termstart = $`;
+          $termend = $';
+          $tempterm = $1;
+          $tempterm =~ s/\s/_/g;
+          $tempterm =~ s/"//g;
+          $CGIvar{term2} = $termstart . " " . $tempterm . " " . $termend;
+      }
+
+      if ($query) {
+	  if ($CGIvar{attrib2} eq "ANY") {
+	      $query .= " $bop $CGIvar{term2}";
+	  } else {
+	      $query .= " $bop ($CGIvar{attrib2}=$CGIvar{term2})";
+	  }
+      } else {
+	  if ($CGIvar{attrib2} eq "ANY") {
+	      $query = "$CGIvar{term2}";
+	  } else {
+	      $query = "($CGIvar{attrib2}=$CGIvar{term2})";
+	  }
+      }
   }
   if ($CGIvar{term3}) {
-    $CGIvar{term3} =~ s/\s\s+/ /g;
-    $CGIvar{term3} =~ s/\s/_/g;
-    if ($query) {
-	if ($CGIvar{attrib3} eq "ANY") {
-	    $query .= " $bop $CGIvar{term3}";
-	} else {
-	    $query .= " $bop ($CGIvar{attrib3}=$CGIvar{term3})";
-	}
-    } else {
-	if ($CGIvar{attrib3} eq "ANY") {
-	    $query = "$CGIvar{term3}";
-	} else {
-	    $query = "($CGIvar{attrib3}=$CGIvar{term3})";
-	}
-    }
+      while ($CGIvar{term3} =~ m/("[^"]*")/) {
+          $termstart = $`;
+          $termend = $';
+          $tempterm = $1;
+          $tempterm =~ s/\s/_/g;
+          $tempterm =~ s/"//g;
+          $CGIvar{term3} = $termstart . " " . $tempterm . " " . $termend;
+      }
+
+      if ($query) {
+	  if ($CGIvar{attrib3} eq "ANY") {
+	      $query .= " $bop $CGIvar{term3}";
+	  } else {
+	      $query .= " $bop ($CGIvar{attrib3}=$CGIvar{term3})";
+	  }
+      } else {
+	  if ($CGIvar{attrib3} eq "ANY") {
+	      $query = "$CGIvar{term3}";
+	  } else {
+	      $query = "($CGIvar{attrib3}=$CGIvar{term3})";
+	  }
+      }
   }
   @querybits = split(/ /, $query);
 }

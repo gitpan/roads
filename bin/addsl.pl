@@ -6,7 +6,7 @@ use lib "/home/roads2/lib";
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #         Martin Hamilton <martinh@gnu.org>
-# $Id: addsl.pl,v 3.26 1998/11/05 19:50:37 jon Exp $
+# $Id: addsl.pl,v 3.27 1999/07/29 14:39:37 martin Exp $
 
 use Getopt::Std;
 
@@ -138,6 +138,10 @@ while(<VIEW>) {
     } elsif (/^Subject-Scheme:\s+(.*)/i) {
         $scheme_name = $1;
 	$scheme_name =~ s/^Subject-Scheme:\s*//i;
+    } elsif (/^Section-Editors-File:\s+(.*)/i) {
+        $SecEdFile = $1;
+        $SecEdFile = "$ROADS::Config/$SecEdFile"
+          unless $SecEdFile =~ /^\//;
     } elsif (/^Casefold-List/i) {
 	$opt_c = 1;
     } elsif (/^Generate-Children:\s*(.*)/i) {
@@ -169,8 +173,10 @@ open(SCHEMEMAP,$MappingFile)
 while(<SCHEMEMAP>) {
     chomp;
     ($classno,@name) = split(':');
-    $shortname{"$classno"}=pop @name;
-    ($namelist{"$classno"})=@name;
+    $namelist{"$classno"}=shift @name;
+    $shortname{"$classno"}=shift @name;
+    $parentOf{"$classno"}=shift @name; # if there is one
+    $relatedList{"$classno"}=shift @name; # if there are any (';' separated)
     $longname=$namelist{"$classno"};
     $long2short{"$longname"}=$shortname{"$classno"};
 }
@@ -183,13 +189,56 @@ chdir ($iafa_source)
 %MAPPING = &readalltemps;
 push(@ARGV, keys %MAPPING) if $opt_a;
 
+# Get section editors
+if (open(SEC_ED,$SecEdFile)) {
+  while(<SEC_ED>) {
+    next if (/^\#/);
+    chomp;
+    my ($name, $file, @sub) = split(':');
+    foreach $sub (@sub) {
+      $SEC_ED{$sub} = "$name:$file";
+    }
+  }
+  close(SEC_ED);
+} else {
+  &WriteToErrorLog("addsl", "Can't open section editors file $SecEdFile: $!");
+}
+
+# Build any parent/child hashes
+foreach $num (keys %parentOf) {
+  next unless ($parentOf{$num});
+  $parents{$num} .= "$parentOf{$num}:$namelist{$parentOf{$num}}:$shortname{$parentOf{$num}}\n";
+  $children{$parentOf{$num}} .= "$num:$namelist{$num}:$shortname{$num}\n";
+}
+
+# Build any related hashes
+foreach $num (keys %relatedList) {
+  my @relList = split /\s*;\s*/,$relatedList{"$num"};
+  foreach $num2 (@relList) {
+    $related{"$num"} .= "$num2:$namelist{$num2}:$shortname{$num2}\n";
+  }
+}
+
 # Actually process the template(s) to generate the list files
 foreach $handle (@ARGV) {
     warn "Doing template \"$handle\"\n" if $debug;
-    %TEMPLATE = &readtemplate("$handle");
-
+    %TEMPLATE = &readtemplate("$handle","$iafa_source/$MAPPING{$handle}");
     &inserttemplate($handle) if $TEMPLATE{handle} eq $handle;
     undef(%TEMPLATE);
+}
+
+# Add empty list files for those sections without resources
+# important for hierarchical browsing
+foreach $number (keys %shortname) {
+  if(!-e "$ListingDirectory/$shortname{\"$number\"}.lst") {
+    &WriteToErrorLog("addsl",
+		     "$ListingDirectory/$shortname{$number}.lst doesn't exist - creating");
+    open(INDEX,">$ListingDirectory/$shortname{$number}.lst")
+      || &WriteToErrorLogAndDie("addsl",
+				"Can't open $ListingDirectory/$shortname{$number}.lst: $!");
+    close(INDEX);
+    $ChangedList{"$number"} = 1;
+  }
 }
 
 # Convert each list file that has changed into an HTML document
@@ -233,6 +282,7 @@ if (($NewHTML == 1 || $opt_i) && !$opt_A) {
         push(@handles, "$filename");
     }
 
+    local $myurl = "$name.html";
     &render("", "${SubjectListing}Alpha", @handles);
     close(STDOUT);
 }
@@ -261,6 +311,7 @@ if (($NewHTML == 1 || $opt_i) && !$opt_N) {
         push(@handles, "$classno");
     }
 
+    local $myurl = "$name.html";
     &render("", "${SubjectListing}Number", @handles);
     close(STDOUT);
 }
@@ -274,6 +325,35 @@ sub GenHTML {
 
     $name = $shortname{"$number"};
     $longname = $namelist{"$number"};
+    local $parents;
+    my ($num, $longname, $shortname) = split /:/,$parents{"$number"};
+    chomp $shortname;
+    if (-f "$ListingDirectory/$shortname.lst") {
+      $parents = "$longname:$shortname:$num";
+    }
+    local $children;
+    my @tmp;
+    foreach $child (split /\n/,$children{"$number"}) {
+      my ($num, $longname, $shortname) = split /:/,$child;
+      if (-f "$ListingDirectory/$shortname.lst") {
+	push @tmp,"$longname:$shortname:$num";
+      }
+    }
+    $children = join "\n",(sort @tmp);
+    undef $children unless $children;
+    undef @tmp;
+    local $related;
+    foreach $rel (split /\n/,$related{"$number"}) {
+      my ($num, $longname, $shortname) = split /:/,$rel;
+      if (-f "$ListingDirectory/$shortname.lst") {
+	push @tmp,"$longname:$shortname:$num";
+      }
+    }
+    $related = join "\n",(sort @tmp);
+    undef $related unless $related;
+    local ($sec_ed, $sec_ed_page) = split /\:/,$SEC_ED{"$number"};
+    undef $sec_ed unless $sec_ed;
+    undef $sec_ed_page unless $sec_ed;
     system("$ROADS::SortPath -bf $name.lst >$name.$$");
     rename("$name.$$","$name.lst");
     $NewHTML = 1 unless -f "$name.html";
@@ -299,6 +379,7 @@ sub GenHTML {
     }
     close(LSTFILE);
 
+    local $myurl = "$name.html";
     &render("", "$SubjectListing", @handles);
     close(STDOUT);
 }
@@ -369,7 +450,7 @@ sub inserttemplate {
                 warn "$attr = @udclist\n" if $debug;
                 $newresource = 0;
                 foreach $number (@udclist) {
-                    &addtosubjlist($number);
+                    &addtosubjlist($number,$handle);
                 }
             }
         }
@@ -381,7 +462,7 @@ sub inserttemplate {
 # NOTE: This is NOT creating the HTML file - that comes later
 #
 sub addtosubjlist {
-    my($number) = @_;
+    my($number,$handle) = @_;
     my($inserted,$oldtitle,$oldhandle,$oldmtime,$normtitle,$mtime) = 0;
     my(@stat);
 
@@ -419,7 +500,7 @@ sub addtosubjlist {
     # See if a subject listing for this subject class number already exists
     # and if not generate one.  If one does exist, merge the current template
     # into the file.
-    $inserted = 0;
+    my($inserted) = 0;
     if(!-e "$ListingDirectory/$shortname{\"$number\"}.lst") {
         &WriteToErrorLog("addsl",
 	 "$ListingDirectory/$shortname{$number}.lst doesn't exist - creating");
@@ -553,6 +634,11 @@ resources of a particular type (e.g. MPEG movies), and so on.
 I<addsl.pl> will also generate customizable lists of the
 available subject categories in both alphabetical and numerical order
 (assuming the B<Subject-Descriptor> classification is numeric.
+
+I<addsl.pl> can link sections together via 'parent/child' relationships
+defined in the subject descriptor mapping file. Sections can also be
+linked together via a 'related' relationship. As well as this, each section
+can have an editor attributed, together with a link to a profile page.
 
 A default set of subject categories based on the different programme
 areas in the UK Electronic Libraries Programme (to match our sample
@@ -830,9 +916,26 @@ subject listing tools.
 I<htdocs/subject-listing> - default location of the HTML
 generated by B<addsl.pl>
 
+I<config/section-editors> - default location of the section
+editors definition file.
+
 =head1 FILE FORMATS
 
 =over 4
+
+=item Section Editors File
+
+The section editors file provides information about the people who
+maintain your subject sections. It is only necessary if you want to
+display editor details on your subject listing pages. Each line should
+contain the section editor's printable name, the filename of their
+profile, and a list of all the subject section codes this edotor is
+responsible for. All the fields should be colon separated. Here's an example:
+
+  Editor One:editor1:anr:lsrd:digi
+
+The printable name and the filename can be displayed by using the ROADS
+HTML tags <SECTION-EDITOR> and <SECTION-EDITOR-PAGE>. See I<ROADS::HTMLOut>.
 
 =item Subject Descriptor Mapping File
 
@@ -847,6 +950,31 @@ subject descriptor scheme) is:
 
 Note that the section name should not contain the colon character ":"
 - this would confuse B<addsl.pl>.
+
+You can optionally add some more information to detail 'parent/child' and
+'related' relationships between sections.
+
+A section with a parent is denoted by an extra entry at the end of the line.
+The entry is the subject-descriptor of the parent. e.g.:
+
+  1:Philosophy:philos
+  11:Metaphysics:metaphys:1
+  14:Philosophical Systems:philsys:1
+
+In this example the philosophy section has no parent, but is the parent 
+of the two other sections. Child relationships are deduced by I<bin/addsl.pl>
+from the defined parent relationships.
+
+You can also list related sections by adding an optional fifth field to a 
+class-map entry. This field is a semi-colon separated list of subject-descriptors.
+
+  159.9:Psychology:psych::301.151;364.264;377.015.3
+
+Note that the parent field and the related resource field are optional,
+but if you include the latter you must include the former, even if empty as above.
+
+To display this information in your listings, use the ROADS HTML tags <TREEPARENT>,
+<TREECHILDREN> and <RELATED>. See I<ROADS::HTMLOut>.
 
 =item Subject Listing Views
 
@@ -903,6 +1031,13 @@ relative to the ROADS I<guts> directory.
 
 The path to the subject descriptor mapping file.  If this is a relative
 path, it is assumed to be relative to the ROADS I<config> directory.
+
+=item I<Section-Editors-File>
+
+The path to the section editors file.  If this is a relative
+path, it is assumed to be relative to the ROADS I<config> directory.
+Only necessary if you want to display editor information in your
+subject-listings.
 
 =item I<Subject-Scheme>
 

@@ -1,5 +1,5 @@
 
-                   ROADS software version 2.2
+                   ROADS software version 2.3
                    --------------------------
 
 WHAT IS THIS ?
@@ -142,14 +142,14 @@ If not, you'll have to do it the hard way :-)
 The ROADS software distribution is packaged up as a compressed Unix
 tar file.  To extract the installation from this file use:
 
-  zcat roads-v2.2.tar.Z | tar xvf -
+  zcat roads-v2.3.tar.Z | tar xvf -
 
 Make sure that you use binary mode if you transfer the compressed tar
 file over the Internet using FTP.  If not, it will be damaged in
 transit and will not be usable.
 
 Once the tar file has been expanded you should find that you have a
-directory called roads-v2.2.
+directory called roads-v2.3.
 
 Before you start installing the software, we suggest that you read the
 installation guide, which you will find along with our other on-line
@@ -157,7 +157,7 @@ documentation at:
 
   http://www.roads.lut.ac.uk/v2/Manual/
 
-To install the software, enter the roads-v2.2 directory and type:
+To install the software, enter the roads-v2.3 directory and type:
 
   ./Configure
 
@@ -265,4 +265,4 @@ Cheers!
 Jon Knight <J.P.Knight@lut.ac.uk>
 Martin Hamilton <M.T.Hamilton@lut.ac.uk> 
 
-$Id: README,v 3.19 1999/04/21 15:04:45 martin Exp $
+$Id: README,v 3.19 1999/04/21 15:04:45 martin Exp martin $

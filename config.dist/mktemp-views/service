@@ -14,6 +14,8 @@ Access-Policy:Common elements:
 Access-Times:Common elements:
 Keywords:Quick Edit:Common elements:
 Subject-(DESCRIPTOR*):Quick Edit:Common elements:
+Subject-Descriptor-v*:Common elements:Quick:Edit:
+Subject-Descriptor-Scheme-v*:Common elements:Quick Edit:
 Relation-(RELATION*):Common elements:
 Short-Title:Common elements:
 Alternative-Title:Quick Edit:Common elements:
@@ -27,4 +29,7 @@ Record-Last-Verified-Email:Common elements:
 Record-Last-Verified-Date:Common elements:
 Comments:Common elements:
 Destination:Quick Edit:Common elements:
-
+Author-Name:Common elements:
+Author-Email:Common elements:
+Admin-Name:Quick Edit:Common elements:
+Admin-Email:Quick Edit:Common elements:

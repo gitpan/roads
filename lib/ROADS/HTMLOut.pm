@@ -3,7 +3,7 @@
 #
 # Authors: Jon Knight <jon@net.lut.ac.uk>
 #          Martin Hamilton <>martinh@gnu.org>
-# $Id: HTMLOut.pm,v 3.30 1998/11/05 18:18:36 jon Exp $
+# $Id: HTMLOut.pm,v 3.31 1999/07/29 14:40:39 martin Exp $
 #
 
 package ROADS::HTMLOut;
@@ -47,15 +47,14 @@ sub GetMessageDir {
         $htmlfile = $LanguageLookup{"$lcode-$charset"} ||
             $LanguageLookup{"$::Language-$::CharSet"};
     }
-
-    if (-d "$htmlfile/$program/$file") {
-        $htmlfile .= "/$program/$file";
-    } elsif (-d "${ROADS::Config}/$htmlfile/$program/$file") {
-        $htmlfile = "${ROADS::Config}/$htmlfile/$program/$file";
-    } elsif (-d "${ROADS::Config}/$program/$file") {
-        $htmlfile = "${ROADS::Config}/$program/$file";
-    } elsif (-d "${ROADS::Config}/multilingual/UK-English/$program/$file") {
-        $htmlfile = "${ROADS::Config}/multilingual/UK-English/$program/$file";
+    if (-d "$htmlfile/$program/$view") {
+        $htmlfile .= "/$program/$view";
+    } elsif (-d "${ROADS::Config}/$htmlfile/$program/$view") {
+        $htmlfile = "${ROADS::Config}/$htmlfile/$program/$view";
+    } elsif (-d "${ROADS::Config}/$program/$view") {
+        $htmlfile = "${ROADS::Config}/$program/$view";
+    } elsif (-d "${ROADS::Config}/multilingual/UK-English/$program/$view") {
+        $htmlfile = "${ROADS::Config}/multilingual/UK-English/$program/$view";
     } else {
         $htmlfile = "/nada";
     }
@@ -604,6 +603,84 @@ sub GenericSubs {
 	s/<NAME>/$::longname/ig;
     }
     
+    if (/<TREEPARENT/i) {
+      if (defined $::parents) {
+	my $html,$join;
+	$join = (/<TREEPARENT\s*\"([^\"]+)\"\s*>/)? $1: ' | ';
+	foreach $parent (split /\n/,$::parents) {
+	  my ($longname, $shortname, $num) = split /:/,$parent;
+	  $html .= "<a href=\"$shortname.html\">$longname</a>$join";
+	}
+	$html =~ s/\Q$join\E$//; # remove last join
+	s/<TREEPARENT\s*\"*[\Q$join\E]*\"*\s*>/$html/ig;
+      } else {
+	$_ = "";  # line is blanked
+      }
+    }
+  
+    if (/<TREECHILDREN/i) {
+      if (defined $::children) {
+	my $html,$join;
+	$join = (/<TREECHILDREN\s*\"([^\"]+)\"\s*>/)? $1: ' | ';
+	foreach $child (split /\n/,$::children) {
+	  my ($longname, $shortname, $num) = split /:/,$child;
+	  $html .= "<a href=\"$shortname.html\">$longname</a>$join";
+	}
+	$html =~ s/\Q$join\E$//; # remove last join
+	s/<TREECHILDREN\s*\"*[\Q$join\E]*\"*\s*>/$html/ig;
+      } else {
+	$_ = "";  # line is blanked
+      }
+    }
+  
+    if (/<RELATED/i) {
+      if (defined $::related) {
+	my $html,$join;
+      $join = (/<RELATED\s*\"([^\"]+)\"\s*>/)? $1: ' | ';
+	foreach $rel (split /\n/,$::related) {
+	  my ($longname, $shortname, $num) = split /:/,$rel;
+	  $html .= "<a href=\"$shortname.html\">$longname</a>$join";
+	}
+	$html =~ s/\Q$join\E$//; # remove last join
+	s/<RELATED\s*\"*[\Q$join\E]*\"*\s*>/$html/ig;
+      } else {
+	$_ = "";  # line is blanked
+      }
+    }
+  
+    if (/<SECTION-EDITOR>/i) {
+      if (defined $::sec_ed){
+	s/<SECTION-EDITOR>/$::sec_ed/ig;
+      } else {
+	$_ = "";
+      }
+    }
+
+    if (/<SECTION-EDITOR-PAGE>/i) {
+      if (defined $::sec_ed_page){
+	s/<SECTION-EDITOR-PAGE>/$::sec_ed_page/ig;
+      } else {
+	$_ = "";
+      }
+    }
+
+    if (/<SEARCHHINT>/i) {
+      my $message_dir = &::GetMessageDir("search-hints", "", $::Language, $::CharSet);
+    
+      print "[<EM>got hints_dir: $message_dir</EM>]<BR>\n" if $debug;
+    
+      if (open(DATA, "$message_dir/hints.data")) {
+	my @hints,$in;
+	while ($in = <DATA>) {
+	  next if ($in =~ /^\s*\#/);
+	  push @hints,$in;
+	}
+	s/<SEARCHHINT>/$hints[int(rand $#hints+1)]/ei;
+      } else {
+	s/<SEARCHHINT>//;
+      }
+    }
+
     # Lastly see if there should be any of our variables written out
     while(/<ROADSVAR([ "=a-zA-Z0-9]+)>/i) {
         my($attr,$val,$rep,$thing);
@@ -781,6 +858,41 @@ I<stat(2)> of the file it lives in.
 
 =back
 
+=head2 Subject listing programs
+
+These tags are understood by I<bin/addsl.pl>.
+
+=over 4
+
+=item B<TREECHILDREN["separator"]>
+
+Replaced by links to the sections defined as children of the current section 
+in the I<config/class-map> file. The list will be separated by " | " or the
+optional separator string given in the tag.
+
+=item B<TREEPARENT>
+
+Replaced by a link to the section defined as the parent of the current section 
+in the I<config/class-map> file.
+
+=item B<RELATED["separator"]>
+
+Replaced by links to the sections defined as related to the current section 
+in the I<config/class-map> file. The list will be separated by " | " or the
+optional separator string given in the tag.
+
+=item B<SECTION-EDITOR>
+
+Replaced by the name of the current section's section editor, as defined in
+I<config/section-editors>.
+
+=item B<SECTION-EDITOR-PAGE>
+
+Replaced by the filename of the current section's section editor, as defined in
+I<config/section-editors>.
+
+
+=back
 
 =head2 Survey program
 
@@ -921,6 +1033,11 @@ Replaced by B<\$CGIvar{originalhandle}> if present.
 =item B<QUERY>
 
 Replaced by B<\$query> if present.
+
+=item B<SEARCHHINT>
+
+Replaced by a randomly selected one-line string from 
+B<\$ROADS::Config/multilingual/*/search-hints/hints.data>.
 
 =item B<SELECTLISTING>
 

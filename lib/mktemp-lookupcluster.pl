@@ -4,7 +4,7 @@
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #
-# $Id: mktemp-lookupcluster.pl,v 1.7 1998/09/05 13:59:29 martin Exp $
+# $Id: mktemp-lookupcluster.pl,v 1.8 1999/05/04 15:57:37 jon Exp $
 #
 
 sub LookupCluster {
@@ -31,9 +31,23 @@ HeadOfForm
     # Output the hidden record creation/verification attributes
     #
     if($CGIvar{mode} eq "edit") {
-        print STDOUT <<"HeadOfForm";
-<INPUT TYPE="hidden" NAME="IAFARecordCreatedDate" VALUE="$TEMPLATE{RecordCreatedDate}">
-<INPUT TYPE="hidden" NAME="IAFARecordCreatedEmail" VALUE="$TEMPLATE{RecordCreatedEmail}">
+      if ($TEMPLATE{RecordCreatedDate} && $TEMPLATE{RecordCreatedEmail}) { # ANH 1999-05-03
+        $rcd = $TEMPLATE{RecordCreatedDate};    # ANH 1999-05-03
+        $rce = $TEMPLATE{RecordCreatedEmail};   # ANH 1999-05-03
+      } elsif ($CGIvar{IAFARecordCreatedDate} &&
+             $CGIvar{IAFARecordCreatedEmail}) { # ANH 1999-05-03
+        $rcd = $CGIvar{IAFARecordCreatedDate};  # ANH 1999-05-03
+        $rce = $CGIvar{IAFARecordCreatedEmail}; # ANH 1999-05-03
+      } else {                                  # ANH 1999-05-03
+        $rcd = "eaten by a bug";                # ANH 1999-05-03
+        $rce = "eaten by a bug";                # ANH 1999-05-03
+      }                                         # ANH 1999-05-03
+
+      $rce =~ s/\n//g;                          # ANH 1999-05-03
+      $rcd =~ s/\n//g;                          # ANH 1999-05-03
+      print STDOUT <<"HeadOfForm";
+<INPUT TYPE="hidden" NAME="IAFARecordCreatedDate" VALUE="$rcd">
+<INPUT TYPE="hidden" NAME="IAFARecordCreatedEmail" VALUE="$rce">
 HeadOfForm
     }
     #
