@@ -1,11 +1,15 @@
 
-                   ROADS software version 2.00
-                   ---------------------------
+                   ROADS software version 2.1
+                   --------------------------
 
 WHAT IS THIS ?
 
 The ROADS software is a collection of tools which can be used in
-building on-line catalogues.  Key features of the package are :-
+building on-line catalogues.  You could think of it as a free version
+of Yahoo, with lots of value-added features to make life easier for
+the service operator.
+
+Key features of the package are :-
 
   . Simple text based resource description format
   . World-Wide Web forms based resource description editor
@@ -42,24 +46,37 @@ Most of these tools can be used independently of each other.  You
 could choose, for example, not to support searching via WHOIS++ - or
 not to generate subject category breakdowns of your resource
 descriptions.  However, all of the tools are written to manipulate
-their data in the IAFA template format, a popular way of writing
-simple Internet resource descriptions.
+their data in the IAFA template format, a simple way of writing simple
+Internet resource descriptions.
 
 
 BACKGROUND
 
 The aim of this work is to provide infrastructure software to support
-a number of Subject Based Services, sometimes referred to as SBIGs.
+a growing number of Subject Based Information Gateways, sometimes
+referred to as SBIGs.  Examples of existing gateway services using the
+ROADS software include:
 
-The development of this software was funded by the Resource
-Organisation and Discovery in Subject-based Services (ROADS) project
-of the UK Electronic Libraries Programme (aka eLib), and by the
-European Commission under the Telematics for Research programme.  This
-project is known as DESIRE, which is actually short for Development of
-a European Service for Information on Research and Education (phew!).
+  ADAM:    <URL:http://adam.ac.uk/>     - Art, Design & Media
+  Alex:    <URL:http://sunsite.berkeley.edu/alex/>
+                                        - Electronic Texts
+  Biz/ed:  <URL:http://bized.ac.uk/>    - Business & Economics
+  History: <URL:http://ihr.sas.ac.uk/>  - History
+  OMNI:    <URL:http://omni.ac.uk/>     - Health & Medicine
+  SOSIG:   <URL:http://sosig.ac.uk/>    - Social Sciences
 
-More information about ROADS is available at the Institute for
-Learning and Research Technology (ILRT) at Bristol University :-
+The development of this software was initially funded by the Joint
+Information Systems Committee (JISC) of the UK Higher Education
+Funding Councils as part of a project called Resource Organisation and
+Discovery in Subject-based Services (ROADS!).  ROADS is one of a
+number of projects in the UK Electronic Libraries Programme (aka
+eLib).  Further funding has been made available through the European
+Commission's 'DESIRE' project (under the Telematics for Research
+programme), and by TERENA under its Development Programme.
+
+More information about ROADS as a project and the ROADS software is
+available at the Institute for Learning and Research Technology (ILRT)
+at Bristol University :-
 
   <URL:http://www.ilrt.bris.ac.uk/roads/>
 
@@ -69,26 +86,21 @@ based at the University of Bath :-
 
   <URL:http://www.ukoln.ac.uk/elib/>
 
-The DESIRE project has an overall home page :-
-
-  <URL:http://www.desire.org/>
-
-The resource discovery and indexing sub group of DESIRE has a WWW
-presence at :-
-
-  <URL:http://www.ub2.lu.se/desire/>
-
 
 THE AUTHORS
 
 This software was written by Jon Knight and Martin Hamilton, in the
 Department of Computer Studies at Loughborough University of
-Technology, deep in the heart of the English Midlands.  We have been
-aided and abetted by a number of people, who ran alpha and beta test
-versions of the code, contributed bug reports and (best of all!) bug
-fixes.  In particular, we'd like to thank Mark Burrell, Debra Hiom,
-Andy Powell, Rebecca Bradshaw, Bob Parkinson, Dan Brickley, Jasper
-Tredgold, Donal Hanna, Bill Jupp, Thomas Krichel and Virginia Knight.
+Technology, deep in the heart of the English Midlands.
+
+We've been aided and abetted by a number of people who ran alpha and
+beta test versions of the code, contributed bug reports and (best of
+all :-) bug fixes.  Our thanks to you!
+
+In particular, we'd like to thank: Mark Burrell, Debra Hiom, Andy
+Powell, Rebecca Bradshaw, Bob Parkinson, Dan Brickley, Jasper
+Tredgold, Donal Hanna, Bill Jupp, Thomas Krichel, Virginia Knight,
+Peter Valkenburg, Lasse Haataja, Rami Heinisuo and Annemette Hoegsbro.
 
 
 REQUIREMENTS
@@ -112,25 +124,32 @@ you can find by pointing your WWW browser at
   <URL:http://www.perl.com/CPAN/>
 
 The ROADS software was developed mostly under SunOS 4.1.4 and Linux
-2.0, using the Apache HTTP server.  It has also been lightly tested
-under other variants of Unix, including IRIX 5, HP/UX 9, Digital Unix
+using the Apache HTTP server.  It has also been lightly tested under
+other variants of Unix, including IRIX 5, HP/UX 9, Digital Unix
 (OSF/1) and Solaris 2.  Please let us know if you have any difficulty
 in getting it running on your platform!
 
 
 INSTALLATION
 
-The ROADS software distribution is packaged up as a compressed UNIX
+If you're running RedHat Linux, we've made installation very simple
+for you - ROADS is available as an 'RPM' package which can be
+installed and configured with just a single command at the Unix shell
+prompt.  Check out our software WWW site for more information!
+
+If not, you'll have to do it the hard way :-)
+
+The ROADS software distribution is packaged up as a compressed Unix
 tar file.  To extract the installation from this file use:
 
-  zcat roads-v2.00.tar.Z | tar xvf -
+  zcat roads-v2.1.tar.Z | tar xvf -
 
 Make sure that you use binary mode if you transfer the compressed tar
-file across the network using FTP otherwise it will be damaged in
+file over the Internet using FTP.  If not, it will be damaged in
 transit and will not be usable.
 
 Once the tar file has been expanded you should find that you have a
-directory called roads-v2.00.
+directory called roads-v2.1.
 
 Before you start installing the software, we suggest that you read the
 installation guide, which you will find along with our other on-line
@@ -138,7 +157,7 @@ documentation at:
 
   http://www.roads.lut.ac.uk/v2/Manual/
 
-To install the software, enter the roads-v2.00 directory and type:
+To install the software, enter the roads-v2.1 directory and type:
 
   ./Configure
 
@@ -225,6 +244,9 @@ package, please contact the ROADS team :-
 
   roads-liaison@bristol.ac.uk
 
+Note that this alias expands to several people, and has a publicly
+readable archive on the WWW!
+
 You may also find it worthwhile subscribing to the open-roads mailing
 list.  This is a public forum for users of the ROADS software.
 
@@ -243,4 +265,4 @@ Cheers!
 Jon Knight <J.P.Knight@lut.ac.uk>
 Martin Hamilton <M.T.Hamilton@lut.ac.uk> 
 
-$Id: README,v 3.13 1998/09/05 14:04:15 martin Exp $
+$Id: README,v 3.18 1998/12/09 15:01:46 martin Exp $

@@ -1,7 +1,7 @@
 TARGETS=Makefile Configure CHANGES README TODO \
         bin admin-cgi cgi-bin config source htdocs lib
 #VERSION=`grep 'Version =' lib/ROADS.pm|sed -e 's/.*"\(.*\)".*/\1/'`
-VERSION="v2.00"
+VERSION="v2.1"
 RV="roads-$(VERSION)"
 SNAPPATH="/home/ftp/pub/ROADS/alpha/roads-snapshot.tar.Z"
 

@@ -3,17 +3,26 @@ use lib "/home/roads2/lib";
 
 # harvest_centroid.pl - extract centroid from collection of SOIF records,
 #                       Harvest Gatherer or Broker
+# Uses Berkeley DB package B-trees as a backend database [valkenburg@terena.nl]
 
 # Author: Martin Hamilton <martinh@gnu.org>
-# $Id: harvest_centroid.pl,v 3.0 1998/08/18 20:29:07 martin Exp $
+#         Peter Valkenburg <valkenburg@terena.nl>
+# $Id: harvest_centroid.pl,v 3.1 1998/11/27 19:40:49 martin Exp $
 
 use Getopt::Std;
 use POSIX;
 use Socket;
 
-getopts("dh:p:s:");
+# This needs Perl 5 with Berkeley DB support (DB_File package).
+use DB_File;
+$BTREE = new DB_File::BTREEINFO;
+# NOTE: a memory cache is used; actual memory may be > 4x this size
+$BTREE->{'cachesize'} =  8 * 1024 * 1024;	# advise 8 Mb memory cache
+
+getopts("dh:p:s:t:");
 
 $debug = $opt_d;
+$tmpdb = "$opt_t" ? "$opt_t$$.db" : undef;
 
 # phase 0 - if necessary, fetch the centroid from a Gatherer/Broker
 
@@ -61,7 +70,17 @@ if ($opt_h) {
 # phase 1 - create hash array based on attribute value pairs in the
 #           harvest SOIF database
 
+# Use Berkeley DB BTREE implementation for an in-memory or on-disk database.
+# This will keep the keys sorted, which saves ordering them afterwards
+tie (%HASH, "DB_File", $tmpdb, O_RDWR|O_CREAT, 0600, $BTREE)
+  || die ("Cannot open temporary db '$tmpdb' for centroid: $!");
+
 warn "1: Reading centroid...\n" if $debug;
+
+# variables for mapping attribute names to sequence numbers and vice versa
+$attr_cnt = 0;
+@attr_vec;
+%attr_seq;
 
 while (<$FIN>) {
   chop;
@@ -77,6 +96,10 @@ while (<$FIN>) {
     $attribute =~ tr [a-z] [A-z];
   
     $the_rest_length = $value_length - length($early_value);
+    if ($the_rest_length < 0) {				# skip bad records
+      warn "1: skipping bad record (negative length)\n" if $debug;
+      next;
+    }
     read $FIN, $the_rest, $the_rest_length;
 
     next if
@@ -84,9 +107,18 @@ while (<$FIN>) {
 
     $the_rest =~ s/[\r\n]/ /gm;
     foreach $term (split(/\W+/, "$early_value $the_rest")) {
-      unless ($HASH{"$attribute"}{"$term"}) {
-        $HASH{"$attribute"}{"$term"} = 1;
-        warn "1: added HASH{$attribute}{$term}\n" if $debug;
+      next unless $term;
+
+      # we use an attribute sequence number for storage, rather than a full name
+      unless (exists $attr_seq{"$attribute"}) {
+	$attr_seq{"$attribute"} = $attr_cnt;
+	$attr_vec[$attr_cnt] = "$attribute";
+	$attr_cnt++;
+      }
+
+      unless (exists $HASH{"$attr_seq{$attribute}:$term"}) {
+        $HASH{"$attr_seq{$attribute}:$term"} = "";
+        warn "1: added $attribute: $term\n" if $debug;
       }
     }
   }
@@ -111,26 +143,34 @@ print <<EOF;
  Version-number: 1.0\r
  Start-time: 000000000000\r
  End-time: $NowTime\r
- Case-Sensitive: FALSE\r
+ Case-Sensitive: TRUE\r
  Server-handle: $serverhandle\r
 # BEGIN TEMPLATE\r
  Template: SOIF\r
- Field: Any-Field\r
+ Any-Field: TRUE\r
 EOF
 
-foreach $key_attribute (sort keys %HASH) {
-  $line = 0;
-  print "# BEGIN FIELD\nField-Name: $key_attribute\nValue: ";
-  foreach $key_term (sort keys %{ $HASH{"$key_attribute"} }) {
-    next if $key_term =~ /^$/;
-    print "-" unless $line eq 0;
-    $line++;
-    print "$key_term\r\n"; 
+while (($key, $value) = each %HASH) {
+  ($key_seq, $key_term) = split (':', $key);
+  $key_attribute = $attr_vec[$key_seq];
+  if ($old_attribute ne $key_attribute) {
+    print "# END FIELD\r\n" if $old_attribute;
+    $old_attribute = $key_attribute;
+    print "# BEGIN FIELD\r\n Field: $key_attribute\r\n Data: ";
   }
-  print "# END FIELD\r\n";
+  else {
+    next unless $key_term;
+    print "-";
+  }
+  print "$key_term\r\n"; 
 }
+print "# END FIELD\r\n" if $key_attribute;
+
 print "# END TEMPLATE\r\n";
 print "# END CENTROID-CHANGES\r\n";
+
+# untie %HASH;
+unlink "$tmpdb" if $tmpdb;		# unlink database file
 
 warn "3: Done!\n" if $debug;
 exit;
@@ -143,7 +183,7 @@ B<bin/harvest_centroid.pl> - extract centroid from SOIF or Harvest Broker/Gather
 
 =head1 SYNOPSIS
 
-  bin/harvest_centroid.pl [-d] [-h host] [-p port] [-s serverhandle]
+  bin/harvest_centroid.pl [-d] [-t tmpdb] [-h host] [-p port] [-s serverhandle]
 
 =head1 DESCRIPTION
 
@@ -178,6 +218,9 @@ Note that when generating a centroid from a flat file collection of
 SOIF templates, the B<-s> argument should be used to specify a
 serverhandle for the resulting centroid.
 
+A Berkeley DB database is used as temporary working storage - your
+Perl installation must support DB via the B<DB_File> module.
+
 =head1 OPTIONS
 
 =over 4
@@ -185,6 +228,12 @@ serverhandle for the resulting centroid.
 =item B<-d>
 
 Turn on debugging output - very verbose!
+
+=item B<-t> I<tmpdb>
+
+The path prefix of the temporary database for building the
+centroid.  The size of this database is typically three
+times that of the final centroid.
 
 =item B<-h> I<host>
 
@@ -239,4 +288,4 @@ development programme.
 =head1 AUTHOR
 
 Martin Hamilton E<lt>martinh@gnu.orgE<gt>
-
+Peter Valkenburg E<lt>valkenburg@terena.nlE<gt>

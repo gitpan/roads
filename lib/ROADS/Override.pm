@@ -3,12 +3,12 @@
 #               what page to display in their stead
 #
 # Authors: Martin Hamilton <martinh@gnu.org>
-# $Id: Override.pm,v 3.9 1998/08/18 19:21:25 martin Exp $
+# $Id: Override.pm,v 3.11 1998/12/08 15:22:25 jon Exp $
 
 package ROADS::Override;
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(Override);
+@EXPORT = qw(Override %override);
 
 use ROADS::ErrorLogging;
 

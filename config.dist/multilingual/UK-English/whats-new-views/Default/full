@@ -1,5 +1,5 @@
 <BR><BR>Resources added at <EM><ADDEDTIME></EM><P>
 <LI>
 <A HREF="<@URI>">
-  <@TITLE></A>.  Here's a <A HREF="/<CGI-BIN>/tempbyhand.pl?query=<HANDLE>&database=<DATABASE>"> description</A> of the resource.
+  <@TITLE></A>.  Here's a <A HREF="/<CGI-BIN>/tempbyhand.pl?query=<@HANDLE>&database=<DATABASE>"> description</A> of the resource.
 

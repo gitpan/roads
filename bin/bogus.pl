@@ -4,7 +4,7 @@ use lib "/home/roads2/lib";
 # bogus.pl - flag errors in ROADS installation
 
 # Author: Martin Hamilton martinh@gnu.org
-# $Id: bogus.pl,v 3.9 1998/09/05 14:00:05 martin Exp $
+# $Id: bogus.pl,v 3.10 1998/10/01 20:12:24 martin Exp $
 
 require ROADS;
 
@@ -178,7 +178,7 @@ exit;
 
 
 # used by File::Find
-sub wanted { !-w && do {
+sub wanted_dir { !-w && do {
   print "can't write to $File::Find::name\n";
   $phase4++;
   $total_errors++;

@@ -3,7 +3,7 @@
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #
-# $Id: mktemp-editform.pl,v 1.26 1998/09/05 13:59:29 martin Exp $
+# $Id: mktemp-editform.pl,v 1.31 1998/12/03 17:17:25 martin Exp $
 #
 
 sub editform {
@@ -41,6 +41,7 @@ HeadOfForm
     #
     # Output the plain fields of the template
     #
+    $ROADS::WWWHtDocs = "" if($ROADS::WWWHtDocs eq "/");
     $DisplayedPlains = 0;
     if ($HavePlainFields == 1) {
         foreach $Field (@PlainFields) {
@@ -296,7 +297,7 @@ EOF
                         $DisplayedVariants = 1;
                     }
                     if($DisplayedThisVariant == 0) {
-                        print STDOUT "<LI><H2>Variant $Variant</H2><TABLE>\n";
+                        print STDOUT "</TABLE><LI><H2>Variant $Variant</H2><TABLE>\n";
                         $DisplayedThisVariant = 1;
                     }
                     print STDOUT "<TR><TD><A HREF=\"/$ROADS::WWWHtDocs/IAFA-help/$tt.html#$real\">";

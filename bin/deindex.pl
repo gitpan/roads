@@ -4,7 +4,7 @@ use lib "/home/roads2/lib";
 # Program to deindex IAFA templates from the inverted filesystem index
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
-# $Id: deindex.pl,v 3.14 1998/08/28 17:36:21 martin Exp $
+# $Id: deindex.pl,v 3.15 1998/11/12 14:35:45 jon Exp $
 
 use Getopt::Std;
 
@@ -175,8 +175,11 @@ while(<INDEX1>) {
       next;
     }
   }
-  print INDEX2 "$template:$attribute:$term:$handles\n"
-    unless $handles =~ /^$/ || $handles =~ /^\s+$/;
+  if(!($handles =~ /^$/ || $handles =~ /^\s+$/)) {
+    print INDEX2 "$template:$attribute:$term:$handles\n";
+    print TMPFILE4 "$term:$indexpos\n";
+    $indexpos = $indexpos+length("$template:$attribute:$term:$handles\n");
+  }
 }
 
 close(INDEX1);
@@ -214,8 +217,7 @@ while(<TMPFILE5>) {
   ($term,$position) = split(/:/);
 
   $last_term = $term if $last_term eq "";
-  $caseless_term = $last_term;
-  $caseless_term =~ tr/a-z/A-Z/;
+  $caseless_term = lc($last_term);
 
   if ($term ne $last_term) {
     print INDEX3 "$last_term:$positions\n";
@@ -240,8 +242,7 @@ while(<TMPFILE5>) {
   $positions = $positions ? "$positions $position" : $position;
 }
 print INDEX3 "$term:$positions\n";
-$caseless_term = $term;
-$caseless_term =~ tr/a-z/A-Z/;
+$caseless_term = lc($last_term);
 $IDX{$caseless_term} = $indexpos;
 close(TMPFILE5);
 unlink $tmpfile5 unless $debug;

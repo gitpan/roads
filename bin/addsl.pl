@@ -6,7 +6,7 @@ use lib "/home/roads2/lib";
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #         Martin Hamilton <martinh@gnu.org>
-# $Id: addsl.pl,v 3.23 1998/09/10 17:15:59 jon Exp $
+# $Id: addsl.pl,v 3.26 1998/11/05 19:50:37 jon Exp $
 
 use Getopt::Std;
 
@@ -222,7 +222,8 @@ if (($NewHTML == 1 || $opt_i) && !$opt_A) {
     @handles = ();
     foreach $longname (sort(keys %long2short)) {
 	$filename = $long2short{"$longname"};
-
+        next unless (-e "$ListingDirectory/$filename.lst" && 
+                     -s "$ListingDirectory/$filename.lst");
 	$TEMPLATE{"$filename"} =
 	  "# FULL DOCUMENT $ROADS::Serverhandle $filename\n"
 	. " TITLE: $longname\n"
@@ -244,10 +245,13 @@ if (($NewHTML == 1 || $opt_i) && !$opt_N) {
     open(STDOUT,">$NumListFile")
       || &WriteToErrorLogAndDie("addsl", "Can't write to $NumListFile: $!");
 
+    @handles = ();
+    undef %TEMPLATE;
     foreach $classno (sort(keys %shortname)) {
 	$filename = $shortname{"$classno"};
 	$longname = $namelist{"$classno"};
-
+        next unless (-e "$ListingDirectory/$filename.lst" && 
+                     -s "$ListingDirectory/$filename.lst");
 	$TEMPLATE{"$classno"} =
 	  "# FULL DOCUMENT $ROADS::Serverhandle $filename\n"
 	. " TITLE: $longname\n"
@@ -415,7 +419,7 @@ sub addtosubjlist {
     # See if a subject listing for this subject class number already exists
     # and if not generate one.  If one does exist, merge the current template
     # into the file.
-    my($inserted) = 0;
+    $inserted = 0;
     if(!-e "$ListingDirectory/$shortname{\"$number\"}.lst") {
         &WriteToErrorLog("addsl",
 	 "$ListingDirectory/$shortname{$number}.lst doesn't exist - creating");

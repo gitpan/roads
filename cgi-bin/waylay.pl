@@ -4,7 +4,7 @@ use lib "/home/roads2/lib";
 # waylay.pl - generate a page of HTML for a given URL protocol scheme
 #
 # Author: Martin Hamilton <martinh@gnu.org>
-# $Id: waylay.pl,v 3.13 1998/08/18 19:23:35 martin Exp $
+# $Id: waylay.pl,v 3.14 1998/11/05 18:39:00 jon Exp $
 
 # Fix for stupid Netscape server bug/misfeature
 close(STDERR) if $ENV{"SERVER_NAME"} =~ /netscape/i;
@@ -16,6 +16,7 @@ require ROADS;
 use ROADS::CGIvars;
 use ROADS::ErrorLogging;
 use ROADS::HTMLOut;
+use ROADS::Override
 
 &cleaveargs;
 

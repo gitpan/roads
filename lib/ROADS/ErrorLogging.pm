@@ -3,7 +3,7 @@
 #
 # Authors: Jon Knight <jon@net.lut.ac.uk>
 #          Martin Hamilton <martinh@gnu.org>
-# $Id: ErrorLogging.pm,v 3.11 1998/09/05 13:58:57 martin Exp $
+# $Id: ErrorLogging.pm,v 3.12 1998/12/01 17:59:05 jon Exp $
 #
 
 package ROADS::ErrorLogging;
@@ -56,7 +56,7 @@ sub WriteToErrorLogAndDie {
     flock(ERRLOG,8);
     close(ERRLOG);
 
-    exit;
+    exit(-2);
 }
 
 sub WriteToAdminLog {

@@ -4,7 +4,7 @@ use lib "/home/roads2/lib";
 # addwn.pl
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
-# $Id: addwn.pl,v 3.16 1998/09/05 14:00:05 martin Exp $
+# $Id: addwn.pl,v 3.17 1998/11/05 19:36:35 jon Exp $
 
 use Getopt::Std;
 use POSIX;
@@ -189,14 +189,14 @@ sub GenHTML {
 	# tart up the added time info so it's useful
 	($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
 	    gmtime($addedtime);
-	$year += 1900 if ($year < 100);
+	$year += 1900;
 	$month=(Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec)[$mon];
 	$day=(Sun,Mon,Tue,Wed,Thu,Fri,Sat)[$wday];
 	
 	# tart up the last modified time so its useful
 	($mod_sec,$mod_min,$mod_hour,$mod_mday,$mod_mon,$mod_year,
 	 $mod_wday,$mod_yday,$mod_isdst) = gmtime($mtime);
-	$mod_year += 1900 if ($mod_year < 100);
+	$mod_year += 1900;
 	$mod_month=
 	    (Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec)[$mod_mon];
 	$mod_day=(Sun,Mon,Tue,Wed,Thu,Fri,Sat)[$wday];

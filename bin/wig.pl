@@ -1,11 +1,12 @@
 #!/usr/bin/perl
 use lib "/home/roads2/lib";
+
 #
 # wig.pl - The WHOIS++ Index Gatherer
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #
-# $Id: wig.pl,v 3.8 1998/09/10 17:23:02 jon Exp $
+# $Id: wig.pl,v 3.9 1998/11/27 19:37:50 martin Exp $
 #
 
 require ROADS;
@@ -294,7 +295,8 @@ sub ReadPolleeResponse {
       } else {
         /^\s+Field:\s*(.*)/i && (($FieldName = $1) =~ tr/A-Z/a-z/);
         /^\s+Data:\s*(.*)/i && (@FieldData = ($1));
-        /^\-(.*)/ && (@FieldData = (@FieldData, $1));
+        # /^\-(.*)/ && (@FieldData = (@FieldData, $1));
+        /^\-(.*)/ && (push @FieldData, $1);     # use push() for efficiency
       }
     }
   }
@@ -402,8 +404,8 @@ sub FinishCentroid {
   close(INDEXFILE);
   dbmclose(DBMINDEX);
 
-  # Copy the new index into the normal place  
-  system($ROADS::CpPath, "$ROADS::TmpDir/$ServerHandle.idx.$$",
+  # Copy, errr, MOVE the new index into the normal place  
+  system($ROADS::MvPath, "$ROADS::TmpDir/$ServerHandle.idx.$$",
     "$ROADS::Guts/wig/$ServerHandle/centroids.idx");
 
 }

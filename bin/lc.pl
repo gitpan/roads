@@ -2,11 +2,11 @@
 use lib "/home/roads2/lib";
 
 # simple IAFA/HTML link checker
-# needs libwww-perl - cf. <URL:http://www.oslonett.no/home/aas/perl/www/>
+# needs libwww-perl - cf. <URL:http://www.linpro.no/lwp/>
 # recommend you use perl 5.003 or above and libwww-perl 5
 
 # Author: Martin Hamilton <martinh@gnu.org>
-# $Id: lc.pl,v 3.16 1998/09/05 14:00:05 martin Exp $
+# $Id: lc.pl,v 3.19 1998/11/05 20:55:10 jon Exp $
 
 require LWP::Protocol::http;
 require LWP::UserAgent;
@@ -175,8 +175,9 @@ sub check_url {
       $suffix = $1;
       $suffix =~ s/#.*//; # get rid of internal anchor info if present
       print STDERR "  check_url: > suffix... $suffix\n" if $debug;
-      if (grep(/$1/i, @EX)) {
-        print STDERR "  check_url: > skipping... $file: $1\n" if $debug;
+      $suffix =~ s/\?.*//;
+      if (grep(/$suffix/i, @EX)) {
+        print STDERR "  check_url: > skipping... $file: $url\n" if $debug;
         print STDERR "$file: $url\n" if $opt_u;
         return;
       }

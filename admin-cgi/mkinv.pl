@@ -5,7 +5,7 @@ use lib "/home/roads2/lib";
 #
 # Authors: Jon Knight <jon@net.lut.ac.uk>
 #          martin hamilton <martinh@gnu.org>
-# $Id: mkinv.pl,v 2.16 1998/08/18 19:24:45 martin Exp $
+# $Id: mkinv.pl,v 2.17 1998/12/01 17:54:07 jon Exp $
 
 # Fix for stupid Netscape server bug/misfeature
 close(STDERR) if $ENV{"SERVER_NAME"} =~ /netscape/i;
@@ -111,7 +111,7 @@ EndOfHTML
 
 # Index the templates with the specified handles.
 ($handles = $CGIvar{handles}) =~ tr/a-zA-Z0-9\-/ /c;
-system("$ROADS::Bin/mkinv.pl", $handles);
+system("$ROADS::Bin/mkinv.pl", split(/\s+/,$handles));
 $status = $?;
 
 print <<"EndOfHTML";

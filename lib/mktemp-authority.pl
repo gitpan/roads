@@ -4,7 +4,7 @@
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #
-# $Id: mktemp-authority.pl,v 1.11 1998/09/05 13:59:29 martin Exp $
+# $Id: mktemp-authority.pl,v 1.12 1998/11/27 18:46:44 martin Exp $
 #
 
 sub AuthorityLookup {
@@ -121,7 +121,7 @@ HeadOfForm
     if(!(open(AUTHFILE,"$authfile"))) {
         print STDOUT "Oops!  No authority file<BR>\n";
     } else {
-	$type =~ s/-//;
+	$type =~ s/-//g;
         while(<AUTHFILE>) {
             chomp;
             next if /^#/;

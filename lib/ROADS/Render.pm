@@ -4,7 +4,7 @@
 # Authors: Jon Knight <jon@net.lut.ac.uk>
 #          Martin Hamilton <martinh@gnu.org>
 #
-# $Id: Render.pm,v 3.28 1998/09/05 14:10:16 martin Exp $
+# $Id: Render.pm,v 3.29 1998/11/05 18:42:07 jon Exp jon $
 
 package ROADS::Render;
 require Exporter;
@@ -396,9 +396,9 @@ sub render {
                 foreach $protocol ("http", "gopher", "ftp", "telnet",
                                    "wais", "mailto", "other") {
                     if ($URI{"$protocol"}) {
-                        if ($override{"$protocol"}) {
+                        if ($::override{"$protocol"}) {
                             $URI{"$protocol"} =~ 
-                                s/HREF="/HREF="$waylay?url=/gim;
+                                s/HREF="/HREF="$::waylay?url=/gim;
                         }
                         if ($for_each eq "yes") {
                             print "$URI{\"$protocol\"}\n";

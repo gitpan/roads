@@ -13,12 +13,12 @@
 #
 # Author: Jon Knight <jon@net.lut.ac.uk>
 #
-# $Id: CIPv3.pm,v 1.6 1998/09/05 13:58:57 martin Exp $
+# $Id: CIPv3.pm,v 1.8 1998/12/09 17:42:02 martin Exp $
 
 package ROADS::CIPv3;
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(doreferrals, pollserver);
+@EXPORT = qw(pollserver);
 
 use Socket;
 use Sys::Hostname;

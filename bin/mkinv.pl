@@ -6,7 +6,7 @@ use lib "/home/roads2/lib";
 # Authors: Jon Knight <jon@net.lut.ac.uk>
 #          Martin Hamilton <martinh@gnu.org>
 #
-# $Id: mkinv.pl,v 3.23 1998/08/28 17:36:21 martin Exp $
+# $Id: mkinv.pl,v 3.24 1998/11/12 14:37:30 jon Exp $
 
 use Getopt::Std;
 getopts('adhi:m:s:t:ux:y:z:');
@@ -316,8 +316,7 @@ while(<TMPFILE5>) {
   $positions = ($positions ne "") ? "$positions $position" : $position;
 }
 print TMPFILE6 "$term:$positions\n";
-$caseless_term = $term;
-$caseless_term =~ tr/a-z/A-Z/;
+$caseless_term = lc($last_term);
 $IDX{$caseless_term} = $indexpos;
 close(TMPFILE5);
 unlink $tmpfile5 if ($opt_u || !$debug);

@@ -3,7 +3,7 @@
 #
 # Authors: Jon Knight <jon@net.lut.ac.uk>
 #          Martin Hamilton <>martinh@gnu.org>
-# $Id: HTMLOut.pm,v 3.29 1998/09/10 17:37:25 jon Exp $
+# $Id: HTMLOut.pm,v 3.30 1998/11/05 18:18:36 jon Exp $
 #
 
 package ROADS::HTMLOut;
@@ -569,7 +569,11 @@ sub GenericSubs {
     }
 
     if (/<HTDOCS>/i) {
-	s/<HTDOCS>/$ROADS::WWWHtDocs/ig;
+      if($ROADS::WWWHtDocs eq "" || $ROADS::WWWHtDocs eq "/") {
+        s/\/*<HTDOCS>\/*/\//ig;
+      } else {
+        s/<HTDOCS>/$ROADS::WWWHtDocs/ig;
+      }
     }
 
     if (/<CGI-BIN>/i) {
