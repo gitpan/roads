@@ -1,0 +1,21 @@
+<dl>
+<dt>
+<a href="<@URI>">
+<b><@TITLE "no title available"></b></A>
+<dd>
+<em>Description:</em><br>
+<@DESCRIPTION "no description supplied"> 
+<br>
+<em>Keywords:</em><br>
+<@KEYWORDS "no keywords supplied">
+<br>
+<em>To-Be-Reviewed-Date:</em><br>
+<@TO-BE-REVIEWED-DATE "no review date supplied">
+<p>
+<em>Accessible from:</em><br>
+<ul>
+<FOREACH "<li> not available on-line"> <li> <a href="<@URI>"><@URI></a>
+</ul>
+<p>
+</dl>
+

@@ -1,0 +1,222 @@
+<HTML>
+<HEAD>
+<TITLE>Field Descriptions for DOCUMENT, SOFTWARE, etc templates</TITLE>
+</HEAD>
+<BODY>
+<H1>Field Descriptions for DOCUMENT, SOFTWARE, IMAGE, SOUND, VIDEO,
+MAILARCHIVE, USENET, DATASET and FAQ IAFA Template Types</H1>
+
+This document is extracted from the IAFA Templates Internet Draft and is
+intended to provide a little online guidance on the sort of the things
+that should be placed in the various fields.  Note that not all fields
+need to be filled in; which ones you use as a "minimum" set depend on
+your application.
+
+The templates for Documents, Datasets, Mailing List Archives, Usenet
+Archives, Software Packages, Images, Sounds, Videos and Frequently Asked
+Questions (FAQ) files all contain the same fields, but have different
+"Template-Type" values.  The standard Template-Types are:
+
+<PRE>
+   <STRONG>Type of Object                      Template-Type</STRONG>
+   Arbitrary data set:                 DATASET
+   Document:                           DOCUMENT
+   Image:                              IMAGE
+   Software Package:                   SOFTWARE
+   Mailing List Archive:               MAILARCHIVE
+   Usenet Archive:                     USENET
+   Sound File:                         SOUND
+   Video File:                         VIDEO
+   Frequently Asked Questions File:    FAQ
+</PRE>
+
+<HR>
+<H2>Description of Field Contents</H2>
+
+<PRE>
+<EM>   Data Element Name        Description.</EM>
+
+<A NAME="Handle">   <STRONG>Handle:</STRONG>                  Handle of object.
+<A NAME="Category">   <STRONG>Category:</STRONG>                Type of object. See <A HREF="#note1">Note &lt;1&gt;</A>
+<A NAME="Title">   <STRONG>Title:</STRONG>                   Complete title of the object.
+<A NAME="URI">   <STRONG>URI-v*:</STRONG>                  Description of access to object.
+<A NAME="Short-Title">   <STRONG>Short-Title:</STRONG>             Summary title (if the Title is
+                            very long).
+<A NAME="Alternative-Title">   <STRONG>Alternative-Title:</STRONG>     An alternative to
+                            the <A HREF="#Title">Title</A> or <A HREF="#Short-Title">Short-Title</A>
+                            title fields.
+<A NAME="Author">   <STRONG>Author-(<A HREF="user.html">USER</A>*):</STRONG>          Description/contact information
+                            about the authors/creators of
+                            the object.
+<A NAME="Admin">   <STRONG>Admin-(<A HREF="user.html">USER</A>*):</STRONG>           Description/contact information
+                            about the
+                            administrators/maintainers of
+                            the object.
+<A NAME="Source">   <STRONG>Source:</STRONG>                  Information as to the definitive version
+                            of the object.
+<A NAME="Requirements">   <STRONG>Requirements:</STRONG>            Any requirements for the use of
+                            the object. A free text descrip-
+                            tion of any hardware/software
+                            requirements necessary to use
+                            the object.
+<A NAME="Description">   <STRONG>Description:</STRONG>             Description (that is, "abstract"
+                            in the case of documents) of the
+                            object.
+<A NAME="Citation">   <STRONG>Citation:</STRONG>                The prefered method of refering to
+                            this object when used in other works.
+<A NAME="Publication-Status">   <STRONG>Publication-Status:</STRONG>      Current publication status of
+                            object (draft, published etc.).
+<A NAME="Publisher">   <STRONG>Publisher-(<A HREF="organization.html">ORGANIZATION</A>*):</STRONG>Description/contact information
+                            about object publisher.
+<A NAME="Copyright">   <STRONG>Copyright:</STRONG>               The copyright statement. Any
+                            additional information on the
+                            copying policy may be included.
+<A NAME="Creation-Date">   <STRONG>Creation-Date:</STRONG>           The creation date for the
+                            object.
+<A NAME="Discussion">   <STRONG>Discussion:</STRONG>              Free text description of possi-
+                            ble discussion forums (USENET
+                            groups, mailing lists) appropri-
+                            ate for this object.
+<A NAME="Keywords">   <STRONG>Keywords:</STRONG>                Appropriate keywords for this
+                            object.
+<A NAME="Version">   <STRONG>Version-v*:</STRONG>              A version designator for the
+                            object.
+<A NAME="Format">   <STRONG>Format-v*:</STRONG>               Formats in which the object is
+                            available. (See <A HREF="#note2">Note &lt;2&gt;</A>)
+<A NAME="Size">   <STRONG>Size-v*:</STRONG>                 Length of object in bytes
+                            (octets).
+<A NAME="Language">   <STRONG>Language-v*:</STRONG>             The name of the language in
+                            which the object is written. For
+                            documents this would be the
+                            natural language. For software
+                            this would be the programming
+                            language.
+<A NAME="Character-Set">   <STRONG>Character-Set-v*:</STRONG>        The character set of the object.
+                            This should be a well-known
+                            value for example "ASCII" or
+                            "ISO Latin-1".
+<A NAME="ISBN">   <STRONG>ISBN-v*:</STRONG>                 The International Standard Book
+                            Number of the object.
+<A NAME="ISSN">   <STRONG>ISSN-v*:</STRONG>                 The International Standard
+                            Serial Number of the object.
+<A NAME="Last-Revision-Date">   <STRONG>Last-Revision-Date-v*:</STRONG>   Last date that the object was
+                            revised.
+<A NAME="Subject-Descriptor-Scheme">   <STRONG>Subject-Descriptor-Scheme-v*:</STRONG>Name of classification
+                            scheme used in the corresponding 
+                            <A HREF="#Subject-Descriptor">Subject-Descriptor</A> field.
+<A NAME="Subject-Descriptor">   <STRONG>Subject-Descriptor-v*:</STRONG>   A classification
+                            mark for the resource.
+<A NAME="To-Be-Reviewed-Date">   <STRONG>To-Be-Reviewed-Date:</STRONG>     Date on which the resource is
+                            expected to require re-assessment.
+<A NAME="Record-Last-Verified-Email">   <STRONG>Record-Last-Verified-Email:</STRONG>Email address of the
+                            person who last verified this 
+                            template.
+<A NAME="Record-Last-Verified-Date">   <STRONG>Record-Last-Verified-Date:</STRONG>Date of the last
+                            verification of this template.
+<A NAME="Comments">   <STRONG>Comments:</STRONG>                Comments by the template
+                            creator(s).
+<A NAME="Destination">   <STRONG>Destination:</STRONG>             Records which database(s)
+                            a template will go into once
+                            evaluation procedures have 
+                            been completed.
+</PRE>
+<HR>
+Notes for these templates:
+<P>
+<A NAME="note1">&lt;1&gt;  The intention of this field is to define the category
+     of the object. For example, in the case of documents it
+     could be "Technical Report", or "Conference Paper" and
+     the name and date of the conference at which the paper
+     was presented. It may also be something like "General
+     Guide" or "User manual".
+<P>
+<A NAME="note2">&lt;2&gt;  Objects are often available in several formats. For
+     example, documents may be in PostScript, ASCII text,
+     DVI etc. For images this may be GIF, JPEG, TIFF etc.
+     Format should be specified in MIME type syntax and
+     semantics where possible (See RFC1521).
+<P>
+<HR>
+<H2>Example 1:</H2>
+
+Example of DOCUMENT record.
+<PRE>
+   Template-Type:           DOCUMENT
+
+   Title:                   The Function of Homeoboxes in
+                            Yeast Chromosome 1
+   Author-Name:             John Doe
+   Author-Email:            jdoe@yeast.foobar.com
+   Author-Home-Phone:       +1 898 555 1212
+   Author-Name:             Jane Buck
+   Author-Email:            jane@fungus.newu.edu
+   Last-Revision-Date:      27 Nov 1991
+   Category:                Conference paper. Yeastcon,
+                            January 1992, Mushroom Rock, CA,
+                            USA
+   Description:             Homeoboxes have been shown to
+                            have a significant impact on the
+                            expressions of genes in Chromo-
+                            some 1 of Bakers' Yeast.
+   Citation:                J. Doe, J. Buck, The function of
+                            homeoboxes in Yeast Chromosome
+                            1, Conf.  proc. Yeastcon, Janu-
+                            ary 1992, Mushroom Rock, pp.
+                            33-50
+   Publication-Status:      Published
+   Publisher-Organization-Name:
+                            Yeast-Hall
+   Publisher-Organization-Postal:
+                            1212 5th Avenue NY, NY, 12001
+   Copyright:               The copyright on this document
+                            is held by the authors. It may
+                            be freely copied and quoted as
+                            long as the contribution of the
+                            authors is acknowledged
+   Subject-Descriptor-Scheme-v1:
+                            LCC 
+   Subject-Descriptor-v1:   1701D
+   Keywords:                homeobox, yeast, chromosome,
+                            DNA, sequencing, yeastcon
+   Format-v:                Application/PostScript
+   URI-v0:                  ftp://ftp.fungus.newu.edu/pub/yeast/homeobox1.ps
+   Language-v0              English
+   Size-v0:                 18 pages
+   Format-v1                text/plain; charset=US-ASCII
+   URI-v1                   ftp://ftp.fungus.newu.edu/pub/yeast/homeobox1.txt
+   Size-v1                  13 pages
+   Language-v1              Russian
+</PRE>
+
+<H2>Example 2:</H2>
+
+This is an example of a SOFTWARE record. Note the use of the
+software maintainer's "handle" instead of the explicit con-
+tact information.
+
+<PRE>
+   Template-Type:           SOFTWARE
+   Title:                   Beethoven's Fifth Player
+   Version:                 67
+   Author-Name:             Ludwig Van Beethoven
+   Author-Email:            beet@romantic.power.org
+   Author-Fax:              +43 1 123 4567
+   Admin-Handle:            berlioz01
+   Description:             The program provides the novice
+                            to Transitional Classical-
+                            Romantic music a V-window inter-
+                            face to the author's latest com-
+                            position
+   Abstract:                V-window based music player
+   Requirements:            Requires the V-Window system
+                            version 10 or higher
+   Discussion:              USENET rec.music.classical
+   Copyright:               Freely redistributable for non-
+                            commercial use.  Copyright held
+                            by author
+   Keywords:                Classical music, V-windows
+   Format:                  LZ compressed
+   URI:                     gopher://power.org/00/pub/Vfifth.tar.Z
+</PRE>
+</BODY>
+</HTML>

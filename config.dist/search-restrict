@@ -1,0 +1,106 @@
+Template-Type: DOCUMENT
+Title:
+Description:
+Keywords:
+Subject-(DESCRIPTOR*):
+Destination:
+URI-v*:
+
+Template-Type: DATASET
+Title:
+Description:
+Keywords:
+Subject-(DESCRIPTOR*):
+Destination:
+URI-v*:
+
+Template-Type: FAQ
+Title:
+Description:
+Keywords:
+Subject-(DESCRIPTOR*):
+Destination:
+URI-v*:
+
+Template-Type: IMAGE
+Title:
+Description:
+Keywords:
+Subject-(DESCRIPTOR*):
+Destination:
+URI-v*:
+
+Template-Type: MAILARCHIVE
+Title:
+Description:
+Keywords:
+Subject-(DESCRIPTOR*):
+Destination:
+URI-v*:
+
+Template-Type: SOFTWARE
+Title:
+Description:
+Keywords:
+Subject-(DESCRIPTOR*):
+Destination:
+URI-v*:
+
+Template-Type: SOUND
+Title:
+Description:
+Keywords:
+Subject-(DESCRIPTOR*):
+Destination:
+URI-v*:
+
+Template-Type: USENET
+Title:
+Description:
+Keywords:
+Subject-(DESCRIPTOR*):
+Destination:
+URI-v*:
+
+Template-Type: VIDEO
+Title:
+Description:
+Keywords:
+Subject-(DESCRIPTOR*):
+Destination:
+URI-v*:
+
+Template-Type: SERVICE
+Title:
+Copyright-Owner:
+Description:
+Keywords:
+Subject-(DESCRIPTOR*):
+Admin-Name:
+Subject:
+Destination:
+URI-v*:
+
+Template-Type: USER
+
+Template-Type: ORGANIZATION
+
+Template-Type: PROJECT
+Title:
+Programme:
+Programme-Area:
+Description:
+Lead-(ORGANIZATION*):
+Partner-(ORGANIZATION*):
+Project-Contact-(USER*):
+Keywords:
+Subject-(DESCRIPTOR*):
+Subject-Descriptor:
+URI:
+
+Template-Type: TRAINMAT
+Title:
+Keywords:
+Description:
+URI:
+

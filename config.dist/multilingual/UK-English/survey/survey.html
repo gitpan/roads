@@ -1,0 +1,142 @@
+<HTML>
+<HEAD>
+<TITLE><ROADSSERVICENAME> Survey Questionnaire</TITLE>
+</HEAD>
+<BODY>
+<H1><ROADSSERVICENAME> Survey Questionnaire</H1>
+
+We would be very greatful if you can spare a few minutes to fill out
+this form.  This will help us to develop the service and identify any
+areas where improvements would be useful.<p>
+
+<FORM METHOD="POST" ACTION="<MYURL>">
+ <HR>
+ <X-HANDLE>
+<INPUT TYPE="hidden" NAME="list" VALUE="status,for-whom,purpose,location,heard-about,how-accessed,how-other,training,training-useful,nohits,subject-area,method,frequency,spacing,otherservices,badpoints,useagain,newurls,othercomments">
+
+<TABLE>
+<TR><TD>What is your status?<TD><SELECT NAME="status">
+<OPTION VALUE="1">Academic staff
+<OPTION VALUE="2">Research staff
+<OPTION VALUE="3">Library Staff
+<OPTION VALUE="4">Computing Staff
+<OPTION VALUE="5">Support Staff (e.g., secretaries, technicians)
+<OPTION VALUE="6">Other Staff
+<OPTION VALUE="7">Research Post-graduate
+<OPTION VALUE="8">Taught Post-graduate
+<OPTION VALUE="9">Undergraduate
+<OPTION VALUE="10">Business or industry
+<OPTION VALUE="11">Other
+</SELECT>
+
+<TR><TD>Who are you using this service for?<TD><SELECT NAME="for-whom">
+<OPTION VALUE="1">Yourself
+<OPTION VALUE="2">Others
+</SELECT>
+
+<TR><TD>For what purpose are you using this service?<TD><SELECT NAME="purpose">
+<OPTION VALUE="1">Research
+<OPTION VALUE="2">Teaching
+<OPTION VALUE="3">Commercial
+<OPTION VALUE="4">Training on using the system
+<OPTION VALUE="5">Other
+</SELECT>
+
+<TR><TD>Where are you accessing this service from?<TD><SELECT NAME="location">
+<OPTION VALUE="1">Own Office
+<OPTION VALUE="2">Shared facility
+<OPTION VALUE="3">Home
+<OPTION VALUE="4">Other
+</SELECT>
+
+<TR><TD>Where did you hear about this service?<TD>
+<INPUT TYPE="text" NAME="heard-about" SIZE="60">
+
+<TR><TD>How do you access this service from your browser?<TD>
+<SELECT NAME="how-accessed">
+<OPTION VALUE="1">Through HENSA
+<OPTION VALUE="2">Bookmark
+<OPTION VALUE="3">On home page
+<OPTION VALUE="4">Other
+</SELECT>
+
+<TR><TD>If "other", please specify how:<TD>
+<INPUT TYPE="text" NAME="how-other" SIZE="60">
+
+<TR><TD>Did you receive training?<TD>
+<SELECT NAME="training">
+<OPTION VALUE="1">Yes
+<OPTION VALUE="2">No
+</SELECT>
+
+<TR><TD>If so, was it useful?<TD>
+<SELECT NAME="training-useful">
+<OPTION VALUE="1">Yes
+<OPTION VALUE="2">No
+</SELECT>
+
+<TR><TD>What do you do if your search produces no results?<TD>
+<SELECT NAME="nohits">
+<OPTION VALUE="1">try again
+<OPTION VALUE="2">give up
+<OPTION VALUE="3">go elsewhere
+</SELECT>
+
+<TR><TD>What is the main subject area you are working in?<TD>
+<INPUT TYPE="text" NAME="subject-area" SIZE="50">
+
+<TR><TD>Are you using the system to seek specific information, or more for
+browsing to see what types of information are available?<TD>
+<SELECT NAME="method">
+<OPTION VALUE="1">Specific
+<OPTION VALUE="2">Browsing
+</SELECT>
+
+<TR><TD>How often do you use this service?<TD>
+<SELECT NAME="frequency">
+<OPTION VALUE="1">this is the first time
+<OPTION VALUE="2">every 3 months
+<OPTION VALUE="3">monthly
+<OPTION VALUE="4">weekly
+<OPTION VALUE="5">more often
+</SELECT>
+
+<TR><TD>When you use facilities like this is it:<TD>
+<SELECT NAME="spacing">
+<OPTION VALUE="1">Frequently in a short time span
+<OPTION VALUE="2">regularly spaced out?
+</SELECT>
+
+<TR><TD>What other services would you like to see?<TD>
+<INPUT TYPE="text" NAME="otherservices" SIZE="80">
+
+<TR><TD>What is particularly good about the service?<TD>
+<INPUT TYPE="text" NAME="goodpoints" SIZE="80">
+
+<TR><TD>What is not so good (or even poor) about the service?<TD>
+<INPUT TYPE="text" NAME="badpoints" SIZE="80">
+
+<TR><TD>Do you plan to use it again?<TD>
+<SELECT NAME="useagain">
+<OPTION VALUE="1">Yes
+<OPTION VALUE="2">No
+</SELECT>
+</TABLE>
+
+Are there any information sites you think should be added to this system?
+If so please type in their addresses (URLs) below...<BR>
+<TEXTAREA NAME="newurls" ROWS="8" COLS="80"></TEXTAREA><BR>
+
+Any other comments?<BR>
+<TEXTAREA NAME="othercomments" ROWS="8" COLS="80"></TEXTAREA>
+<P>
+<HR>
+ <INPUT TYPE="submit" VALUE="Return Completed Survey">
+</FORM>
+<HR>
+<ADDRESS>Developed by <A HREF="http://hill.lut.ac.uk/People/jon.html">Jon 
+Knight</A> and <A HREF="http://www.net.lut.ac.uk/~martin/">Martin
+Hamilton</A>
+</ADDRESS>
+</BODY>
+</HTML>

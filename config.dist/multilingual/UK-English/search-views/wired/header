@@ -1,0 +1,12 @@
+<html>
+<head>
+<title>Search results for <QUERY> in <ROADSSERVICENAME></title>
+<LINK REL="StyleSheet" HREF="/<HTDOCS>/looknfeel/thatroadslook.css"
+  TYPE="text/css">
+</head>
+<body background="/<HTDOCS>/icons/tshirt-line.jpg" link=#ff0000 vlink=#00ff00>
+
+<h2>Matches for query: <QUERY> in <ROADSSERVICENAME></h2>
+
+Number of matches in the database: <MATCHES>.<p>
+

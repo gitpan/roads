@@ -1,0 +1,2807 @@
+#!/usr/bin/perl
+
+# Configure - Perl program to do ROADS v2 installation
+
+# martin hamilton <m.t.hamilton@lut.ac.uk>
+# $Id: Configure,v 2.60 1998/09/10 17:43:04 jon Exp $
+
+use Config;
+use Cwd;
+
+# built-in defaults
+$ROADS::Version = "v2.00";
+$ROADS::PerlPath = &find("perl");
+
+$ROADS::Dir = 
+  ask("Where is the top level ROADS directory?\n", getcwd(), "D");
+$TopDir = $ROADS::Dir;
+
+$ROADS::AdminCgi = "$ROADS::Dir/admin-cgi";
+$ROADS::Bin = "$ROADS::Dir/bin";
+$ROADS::Config = "$ROADS::Dir/config";
+$ROADS::CgiBin = "$ROADS::Dir/cgi-bin";
+$ROADS::Guts = "$ROADS::Dir/guts";
+$ROADS::HtDocs = "$ROADS::Dir/htdocs";
+$ROADS::IndexDir = "$ROADS::Dir/guts";
+$ROADS::Lib = "$ROADS::Dir/lib";
+$ROADS::Logs = "$ROADS::Dir/logs";
+$ROADS::IafaSource = "$ROADS::Dir/source";
+$ROADS::WWWAdminCgi = "ROADS/admin-cgi";
+$ROADS::WWWCgiBin = "ROADS/cgi-bin";
+$ROADS::WWWHtDocs = "ROADS";
+
+$ROADS::ServiceName = "ROADS TEST SERVER";
+$ROADS::MyHostname = "$Config{myhostname}$Config{mydomain}";
+$ROADS::MyPortNumber = "80";
+$ROADS::SysAdminEmail = "$Config{perladmin}";
+chop($me = `whoami` || "root");
+$mydomain = "$Config{myhostname}$Config{mydomain}";
+$ROADS::DBAdminEmail = "$me\@$mydomain";
+
+$ROADS::AdminMaxhits = 100;
+$ROADS::DefaultMaxfull = 100;
+$ROADS::DefaultMaxhits = 100;
+$ROADS::HitCount = 1;
+$ROADS::ToBeReviewedDate = 3*28*24*60*60; # Default 3 month expiry date
+$ROADS::CheckedByDate = 3*28*24*60*60; # Default 3 month expiry date
+$ROADS::Serverhandle = "${ROADS::MyHostname}01";
+$ROADS::Serverhandle =~ s/\.//g;
+$ROADS::WHOISPortNumber = 8237;
+$ROADS::WGIThesaurus = "$ROADS::Bin/simplethes.pl";
+
+$ROADS::MailerPath = &find("mailx", "Mail", "mail");
+$ROADS::SortPath = &find("sort");
+$ROADS::MvPath = &find("mv");
+$ROADS::CpPath = &find("cp");
+$ROADS::UniqPath = &find("uniq");
+$ROADS::CatPath = &find("cat");
+$ROADS::RCSCiPath = &find("ci");
+$ROADS::TmpDir = "/tmp";
+$ROADS::Bullet = "/ROADS/icons/redball.gif";
+$ROADS::ProxyServer = "none";
+
+$ROADS::RegEmail = "roads-regs\@net.lut.ac.uk";
+
+if ($ARGV[0]) {
+  if (-f "$ARGV[0]") {
+    print "Using settings in $ARGV[0] to override defaults!\n";
+    require "$ARGV[0]";
+  } else {
+    print "Couldn't read $ARGV[0] to get current settings\n";
+    exit;
+  }
+} elsif (-r "lib/ROADS.pm") {
+  print "\nFound lib/ROADS.pm.\n";
+  print "Using this info to override factory defaults!\n";
+  require "lib/ROADS.pm";
+} else {
+  print "\nUsing default factory settings.\n";
+}
+$ROADS::Dir = $TopDir;
+# Always use the current version number, even if we read the settings from
+# an older version.
+$ROADS::Version = "v2.00";
+
+print <<EOF;
+
+  Configuring ROADS version $ROADS::Version for your installation...
+
+EOF
+
+&twirl; 
+
+print <<EOF;
+
+This installation program will examine your system and ask you
+questions to determine how the ROADS software should be installed. If
+you get stuck on a question, don't worry - you can run this program
+again as many times as you like.
+
+Many of the questions will have default answers in square brackets;
+typing carriage return will give you the default.
+
+EOF
+
+$setup_wiz = 
+  ask("Would like you like to be offered tips on answering the questions?",
+        "y", "q");
+
+print "\n";
+
+$ROADS::PerlPath = 
+  ask("Where is perl located on your system?", $ROADS::PerlPath, "X");
+
+#$ROADS::SysAdminEmail = "root\@$ROADS::MyHostname";
+$ROADS::SysAdminEmail =
+  ask("What is the email address of the person running the machine ?\n", 
+    $ROADS::SysAdminEmail, "m");
+
+#chop($me = `whoami` || "root");
+#$ROADS::DBAdminEmail = "$me\@$ROADS::MyHostname";
+$ROADS::DBAdminEmail =
+  ask("What is the email address of the ROADS database admin person ?\n", 
+    $ROADS::DBAdminEmail, "m");
+
+$ROADS::ServiceName =
+  ask("What is the name of your service?", $ROADS::ServiceName, "S"); 
+
+&tip ("
+You must have an HTTP daemon running that supports the Common Gateway
+Interface mechanism, aka CGI.  The NCSA 1.x, Apache 1.x, and CERN 3.x
+servers do, for example.  This installation program will need to know
+the the name of the directory where CGI programs are placed.
+
+NB: you don't have to use the server's main cgi-bin directory.  For
+instance, you could have a CGI directory which was dedicated to ROADS
+tools.  You might want to keep the ROADS cgi-bin programs in the
+ROADS directory where you unpacked them, for instance.
+");
+
+print <<EOF;
+
+We need to know some details of your World-Wide Web server
+configuration in order to run the WWW based tools included in the
+ROADS software.  The following defaults may be OK for you :-
+
+  Domain name            - $ROADS::MyHostname
+  HTTP port number       - $ROADS::MyPortNumber
+  HTML documents         - $ROADS::HtDocs
+  CGI programs           - $ROADS::CgiBin
+  Admin CGI programs     - $ROADS::AdminCgi
+
+  WWW paths:
+   to HTML documents     - $ROADS::WWWHtDocs
+   to CGI programs       - $ROADS::WWWCgiBin
+   to Admin CGI programs - $ROADS::WWWAdminCgi
+
+  URL of Proxy Server    - $ROADS::ProxyServer
+
+EOF
+
+$askforwww = 
+  ask("Do you want to change any of these details?", "n", "q");
+
+if ($askforwww eq "y") {
+
+$ROADS::MyHostname =
+  ask("What is your machine's domain name?", $ROADS::MyHostname, "S");
+
+$ROADS::MyPortNumber = 
+  ask("What port number is your WWW server running on?", 
+    $ROADS::MyPortNumber, "n");
+
+$ROADS::CgiBin = 
+  ask("WWW server executables directory ?\n", $ROADS::CgiBin, "d");
+
+&tip("
+Now we need to know what name the outside world will use to get to
+the ROADS executable directory on your Web server, e.g. 
+'/ROADS/cgi-bin/', or just '/cgi-bin/'.
+");
+
+$ROADS::WWWCgiBin =
+  ask("WWW path to ROADS executables directory on HTTP server ?\n", 
+    $ROADS::WWWCgiBin, "S");
+
+$ROADS::WWWCgiBin =~ s/^\///g;
+$ROADS::WWWCgiBin =~ s/\/$//g;
+
+&tip ("
+Some of the ROADS tools create Web pages - you can have these put
+anywhere you like in your computer's filing system, including the
+directory where you unpacked the ROADS software.  Watch out,
+though!  If the directory where you opt to have these files installed
+already has any files in it, these may be overwritten.  For example,
+an 'index.html' file is automatically copied into place.
+
+We suggest that you put the ROADS related Web documents into a
+directory of their own.
+");
+
+$ROADS::HtDocs =
+  ask("Absolute path to ROADS related HTML documents directory ?\n",
+    $ROADS::HtDocs, "d");
+
+&tip ("
+Most WWW servers let you choose the path name by which your HTML
+documents are made visible to the outside world.  For example,
+although you may have installed the ROADS Web documents tree in
+say /local/roads/htdocs, you can usually tell your Web server to
+make this area visible to the rest of the world as say /ROADS/
+
+You might want to export these documents using the name of your
+service.
+");
+
+$ROADS::WWWHtDocs =
+  ask("What is the Web path to the ROADS HTML documents directory ?\n",
+     $ROADS::WWWHtDocs, "S");
+
+$ROADS::WWWHtDocs =~ s/^\///g;
+$ROADS::WWWHtDocs =~ s/\/$//g;
+
+&tip ("
+The ROADS software comes with a number of World-Wide Web based tools
+for administration.  It is essential that you have these in an area
+of your WWW server which is protected from casual access - the only
+people able to run these programs should be the people who are
+looking after the ROADS installation.
+
+If you install these programs in your server's regular directory for
+CGI executables, you will need to be running a WWW server which lets
+you impose access controls on individual programs.  The default is to
+install them in a directory of their own - 'admin-cgi' under the 
+directory where the ROADS software was unpacked.
+");
+
+$ROADS::AdminCgi = 
+  ask("WWW based admin programs directory ?\n", $ROADS::AdminCgi, "S");
+
+&tip("
+Now we need to know what the outside world sees this directory as.
+For example, if you put the administrative programs in the directory
+which was mapped on your Web server to '/ROADS/admin-cgi/', you would
+enter this here.  Note that if this directory is not your regular
+'cgi-bin', you will probably need to enable CGI processing for it.
+");
+
+$ROADS::WWWAdminCgi =
+  ask("WWW path to admin executables directory ?\n", 
+    $ROADS::WWWAdminCgi, "S");
+
+$ROADS::WWWAdminCgi =~ s/^\///g;
+$ROADS::WWWAdminCgi =~ s/\/$//g;
+
+&tip ("
+The link checking tool distributed with the ROADS software can make
+use of a caching proxy server.  We strongly advise you to use this
+feature if you are going to run the link checker.
+");
+
+$ROADS::ProxyServer =
+  ask("Enter the URL of your proxy server", $ROADS::ProxyServer, "S");
+
+&tip ("
+You can choose to have the ROADS package configured to run in the
+directory where it was unpacked, or have individual parts of it
+installed in separate directories - e.g. you might want the HTML
+documents to be copied to your WWW server's file space, and so on.
+");
+
+} ##### end of optional WWW config section #####
+
+$singledir = 
+  ask("Do you want to run ROADS from the $ROADS::Dir directory?", "y", "q");
+
+##### only do this secton if they don't want the default single #####
+##### directory installation                                    #####
+
+if ($singledir eq "n") {   
+
+&tip ("
+The ROADS internal programs all live in a single directory.  By
+default it is the 'bin' subdirectory of the ROADS installation
+directory.  You can opt to change this to be any directory in your
+computer's filing system - e.g. '/usr/local/bin'.
+");
+
+$ROADS::Bin =
+  ask("Absolute pathname for the directory to hold the internal programs?\n",
+    $ROADS::Bin, "d");
+
+&tip ("
+The ROADS package uses a number of configuration files.  Normally
+these live in a subdirectory of the ROADS installation directory
+called 'config', but you can have them put anywhere you like.
+");
+
+$ROADS::Config = 
+  ask("Default config file directory?", $ROADS::Config, "d");
+
+&tip ("
+Some of the ROADS programs create files for internal use, e.g. the
+index of your resource descriptions.  The default location for these
+is in the 'guts' subdirectory of the top level ROADS directory, but
+you can have them placed wherever you like.
+");
+
+$ROADS::Guts =
+  ask("Absolute path to guts directory?", $ROADS::Guts, "d");
+
+&tip ("
+There are a number of library files which are used by various parts of
+the ROADS software.  These normally live in the 'lib' directory, under
+the top level ROADS installation directory.  To have them installed in
+an alternative directory, type its name in here.
+");
+
+$ROADS::Lib =
+  ask("Absolute path to library directory?", $ROADS::Lib, "d");
+
+&tip ("
+Some of the ROADS tools generate log files as part of their operation
+and these are normally placed in a directory called 'logs', under the
+top level ROADS installation directory.  You can override this by
+typing in a new log file directory here.
+");
+
+$ROADS::Logs =
+  ask("Absolute path to log directory?", $ROADS::Logs, "d");
+
+&tip ("
+This package has a default directory in which the IAFA resource
+templates are held.  If you would like to change this, enter a new
+directory name.
+");
+
+$ROADS::IafaSource =
+  ask("Absolute path to ROADS template directory?", $ROADS::IafaSource, "d");
+
+} else {
+  # We need this little lot to ensure that old installation's ROADS.pm files
+  # are not inadvertently used by this installation.
+  $ROADS::Config = "$ROADS::Dir/config";
+  $ROADS::Bin = "$ROADS::Dir/bin";
+  $ROADS::Guts = "$ROADS::Dir/guts";
+  $ROADS::Lib = "$ROADS::Dir/lib";
+  $ROADS::Logs = "$ROADS::Dir/logs";
+  $ROADS::IafaSource = "$ROADS::Dir/source";
+  $ROADS::IndexDir = $ROADS::Guts;
+} ##### end of optional directory selection section #####
+
+$ROADS::Serverhandle = $ROADS::MyHostname."01";
+$ROADS::Serverhandle =~ s/\.//g;
+
+print <<EOF;
+
+The searching component of the ROADS software comes with its own
+WHOIS++ server.  The default configuration we ship for this should be
+fine for most people, but you can change it if you want to :-
+
+  Server "handle"                   - $ROADS::Serverhandle
+  WHOIS++ port number               - $ROADS::WHOISPortNumber
+  Max. records to return in full    - $ROADS::DefaultMaxfull
+  Max. records to return            - $ROADS::AdminMaxhits
+  Normal number of records returned - $ROADS::DefaultMaxhits
+  Return hit count with results     - $ROADS::HitCount
+
+EOF
+
+$askforwpp = 
+  ask("Do you want to change any of these details?", "n", "q");
+
+if ($askforwpp eq "y") {
+
+&tip (" Your ROADS WHOIS++ server needs to be given a unique 'server
+handle' which identifies it.  The installation process will attempt to
+come up with one of these for you, based on your machine's hostname -
+e.g. gizmolutacuk01.  If you are already using this server handle, or
+would prefer to use another, enter it below.  ");
+
+$ROADS::Serverhandle =
+  ask("Server handle?", $ROADS::Serverhandle, "S");
+
+$ROADS::WHOISPortNumber =
+  ask("What port number will your WHOIS++ server be listening on ?",
+    $ROADS::WHOISPortNumber, "n");
+
+&tip ("
+What is the upper limit on the number of results which your WHOIS++
+server should return in full ?  e.g. if the limit were 100, and a
+search matched over 100 resource descriptions, only a summary response
+would be returned.
+");
+
+$ROADS::DefaultMaxfull =
+  ask("Maximum number of results with full response?",
+    $ROADS::DefaultMaxfull, "n");
+
+&tip ("
+What is the upper limit on the number of results which your WHOIS++
+server should be allowed to return ?  e.g. if the limit were 25, and a
+user asked for 100, they would only be returned the first 25.
+");
+
+$ROADS::AdminMaxhits = 
+  ask("What is the upper limit on the number of results to return?",
+    $ROADS::AdminMaxhits, "n");
+
+$ROADS::DefaultMaxhits =
+  ask("Default maximum number of results to return?",
+    $ROADS::DefaultMaxhits, "n");
+
+&tip ("
+You can choose whether or not your WHOIS++ server should return a hit
+count with its response to each search.  If you choose not to return a
+hit count, your users will have no way of knowing how many records
+there are in your database.  This may be desirable for some
+applications, e.g. White Pages databases.
+");
+
+if (ask("Do you want to return a hit count with the search results?", 
+      "y", "q") eq "y") {
+  $ROADS::HitCount = 1;
+} else {
+  $ROADS::HitCount = 0;
+}
+
+} ##### end of WHOIS++ optional section #####
+
+print <<EOF;
+
+Some of the ROADS tools make use of standard Unix utilities, such
+as sort and uniq.  Here are the absolute paths to them which the
+ROADS software will use unless you tell it otherwise :-
+
+  sort - $ROADS::SortPath
+  mv   - $ROADS::MvPath
+  cp   - $ROADS::CpPath
+  uniq - $ROADS::UniqPath
+  cat  - $ROADS::CatPath 
+  mail - $ROADS::MailerPath
+  ci   - $ROADS::RCSCiPath (RCS checkin program)
+
+NB: the GNU version of sort may be preferable to the one distributed
+by your vendor, since it does not impose a size limit on the line
+length.
+
+EOF
+
+$askforpaths = 
+  ask("Do you want to change any of these paths?", "n", "q");
+
+##### only do this secton if they don't want the default paths #####
+
+if ($askforpaths eq "y") {   
+
+$ROADS::SortPath =
+  ask("Absolute path to sort program?", $ROADS::SortPath, "X");
+
+$ROADS::MvPath = 
+  ask("Absolute path to mv executable?", $ROADS::MvPath, "X");
+
+$ROADS::CpPath = 
+  ask("Absolute path to cp executable?", $ROADS::CpPath, "X");
+
+$ROADS::UniqPath = 
+  ask("Absolute path to uniq executable?", $ROADS::UniqPath, "X");
+
+$ROADS::CatPath = 
+  ask("Absolute path to cat executable?", $ROADS::CatPath, "X");
+
+&tip ("
+You must have the GNU Revision Control System (RCS) Checkin program
+(ci) available on your machine if you wish to archive copies of
+templates that have been deindexed.
+");
+
+$ROADS::RCSCiPath =
+  ask("Absolute path to ci executable?", $ROADS::RCSCiPath, "s");
+
+&tip ("
+Some of the ROADS programs can email information to administrators.
+What program should they use to do this?  NB: this program should
+support the '-s' argument to set the subject line, e.g. Mail, mailx,
+or Elm.
+");
+
+$ROADS::MailerPath =
+  ask("Absolute path to mailer executable?", $ROADS::MailerPath, "X");
+
+} ##### End of optional path choosing section #####
+
+&tip ("
+Some ROADS programs make use of temporary files which are held in one
+of your system's temporary directories.  What is the absolute path of
+the directory you wish to use for temporary files on this machine?
+");
+
+$ROADS::TmpDir =
+  ask("Absolute path to temporary directory?", $ROADS::TmpDir, "d");
+
+&tip ("
+The default WWW interface to the ROADS software uses an inlined image
+as a bullet point.  You can specify the image which should be used
+here.
+");
+
+$ROADS::Bullet =
+  ask("URL of bullet point image on your Web server?", $ROADS::Bullet, "S");
+
+##### Now do it! #####
+
+print "\nPerforming substitutions on internal programs...\n";
+&do_subs("bin");
+print "Performing substitutions on WWW CGI programs...\n";
+&do_subs("cgi-bin");
+print "Performing substitutions on WWW based admin programs...\n";
+&do_subs("admin-cgi");
+print "Done substituting!\n";
+
+if (-d "$ROADS::Config") {
+  print "\nYou already have the config directory \"$ROADS::Config\"\n";
+
+  if (ask("Do you want to overwrite it with the factory defaults?",
+            "n", "q") eq "y") {
+
+    if (ask("Do you want to keep a safe copy of it ?", "y", "q") eq "y") {
+      print "Saving old config directory as \"${ROADS::Config}.FCS\"\n";
+      rename "${ROADS::Config}", "${ROADS::Config}.FCS";
+    } else {
+      system "rm -rf ${ROADS::Config}";
+    } 
+
+    system("mkdir -p $ROADS::Config");
+    print "Oops, couldn't create $ROADS::Config...\n" unless $? == 0;
+
+    print "\nUnpacking shrink wrapped config files...\n";
+    &do_install("config.dist", $ROADS::Config);
+  }
+} else {
+  print "\nUnpacking shrink wrapped config files...\n";
+  system("mkdir -p $ROADS::Config");
+  print "Oops, couldn't create $ROADS::Config...\n" unless $? == 0;
+  &do_install("config.dist", $ROADS::Config);
+}
+
+if (-d "$ROADS::IafaSource") {
+  print "\nYou already have the templates directory \"$ROADS::IafaSource\"\n";
+
+  if (ask("Do you want to overwrite it with the factory samples?",
+            "n", "q") eq "y") {
+
+    if (ask("Do you want to keep a safe copy of it ?", "y", "q") eq "y") {
+      print "Saving old source directory as \"${ROADS::IafaSource}.FCS\"\n";
+      rename "${ROADS::IafaSource}", "${ROADS::IafaSource}.FCS";
+    } else {
+      system "rm -rf ${ROADS::IafaSource}";
+    } 
+
+    system("mkdir -p $ROADS::IafaSource");
+    print "Oops, couldn't create $ROADS::IafaSource...\n" unless $? == 0;
+
+    print "\nUnpacking sample data...\n";
+    &do_install("source.dist", $ROADS::IafaSource);
+
+    system "mkdir -p $ROADS::Guts" unless -d "$ROADS::Guts";
+    system "mv $ROADS::IafaSource/alltemps $ROADS::Guts";
+  }
+} else {
+  &tip ("
+The ROADS software comes with a sample database of UK Electronic Libraries
+Programme (eLib) projects.
+");
+
+  if (ask("Would you like to install the ROADS sample database ?",
+        "n", "q") eq "y") {
+    print "\nUnpacking sample data...\n";
+    system("mkdir -p $ROADS::IafaSource");
+    print "Oops, couldn't create $ROADS::IafaSource...\n" unless $? == 0;
+    &do_install("source.dist", $ROADS::IafaSource);
+  
+    system "mkdir -p $ROADS::Guts" unless -d "$ROADS::Guts";
+    system "mv $ROADS::IafaSource/alltemps $ROADS::Guts";
+  }
+}
+
+print "\nChecking directories exist:\n\n";
+
+foreach $DIR ($ROADS::Bin, $ROADS::AdminCgi, $ROADS::CgiBin, $ROADS::Guts, 
+              $ROADS::HtDocs, $ROADS::Lib, $ROADS::Logs, $ROADS::IafaSource,
+              $ROADS::TmpDir, "$ROADS::Guts/subject-listing",
+              "$ROADS::Guts/subject-listing/Default",
+              "$ROADS::Guts/whats-new" ) {
+  print "  $DIR ........ ";
+  if (-d "$DIR") {
+    print "ok!\n";
+  } else {
+    print "trying to create\n";
+    system "mkdir -p $DIR";
+  }
+}
+
+if (-f "$ROADS::Config/databases") {  ### this needs more work! ###
+    print "\nYou already have \"$ROADS::Config/databases\"\n";
+
+    if (ask("Do you want to keep a safe copy of it ?", "y", "q") eq "y") {
+      print "Saving old database list as \"${ROADS::Config}/databases.FCS\"\n";
+      rename "${ROADS::Config}/databases", "${ROADS::Config}/databases.FCS";
+    } 
+}
+
+if (open(OUT, ">$ROADS::Config/databases")) {
+  print OUT <<EOF;
+# Known Whois++ servers 
+#
+# Format is:
+#
+#   friendly name:hostname:port number:value of Destination:server handle
+#
+# The destination attribute may be left blank
+#
+${ROADS::ServiceName}:${ROADS::MyHostname}:${ROADS::WHOISPortNumber}::${ROADS::Serverhandle}
+EOF
+  close(OUT);
+} else {
+  warn "$0: Couldn't open $ROADS::Config/databases: $!";
+}
+
+### should be creating any more default config stuff here ? ###
+
+$ROADS::SysAdminEmail =~ s/\@/\\@/;
+$ROADS::DBAdminEmail =~ s/\@/\\@/;
+$ROADS::RegEmail =~ s/\@/\\@/;
+
+print "\nDumping configuration to lib/ROADS.pm...\n\n";
+&dump_config("lib/ROADS.pm");
+
+print "\nInstalling individual ROADS components...\n";
+&do_install("bin", $ROADS::Bin);
+&do_install("admin-cgi", $ROADS::AdminCgi);
+&do_install("cgi-bin", $ROADS::CgiBin);
+&do_install("htdocs", $ROADS::HtDocs);
+&do_install("lib", $ROADS::Lib);
+
+print "\nSymlinking $ROADS::CgiBin/search.pl to $ROADS::AdminCgi/admin.pl...\n";
+-f "$ROADS::AdminCgi/admin.pl" && unlink("$ROADS::AdminCgi/admin.pl");
+system("ln -s $ROADS::CgiBin/search.pl $ROADS::AdminCgi/admin.pl");
+
+print "\nCopying release info into WWW docs directory...\n";
+system("rm -f $ROADS::HtDocs/README");
+system("rm -f $ROADS::HtDocs/CHANGES");
+system("rm -f $ROADS::HtDocs/TODO");
+system("cp README CHANGES TODO $ROADS::HtDocs");
+
+&tip ("
+We encourage you to register your server with us, so that we can get
+an idea of how widely the ROADS software is being used, and keep in
+touch with our users.  If you answer yes to the question below, the
+configuration information you supplied will be sent to us, along with
+information on the versions of the ROADS tools which you have, and
+your machine type and operating system.
+
+If this worries you (remember The Microsoft Network!) say no, and you
+can use the 'server info' utility from the ROADS admin centre to see
+exactly what information would be transmitted.  The admin centre also
+has a utility for registering your ROADS server, so you can register
+from there if you want to :-)
+");
+
+if (ask("\nDo you want to register your server?", "y", "q") eq "y") {
+  print "Sending registration info...\n";
+  system "$ROADS::Bin/info.pl|$ROADS::MailerPath -s registration $ROADS::RegEmail";
+}
+
+print "\nDone!!\n\n";
+
+if (ask("Would you like me to index your database and start a server?", 
+      "y", "q") eq "y") {
+  # delete existing index stuff because otherwise sometimes the DBM
+  # file can't be created.
+  system("rm -f $ROADS::Guts/index*");
+  system("$ROADS::Bin/rebuild.pl -a");
+  system("$ROADS::Bin/wppdc.pl coldstart");
+}
+
+print <<EOF;
+
+NB: Documentation for all Perl programs and library modules inculded
+with this release is available using "perldoc", e.g. type
+
+  perldoc bin/addsl.pl
+
+to find out all about the "addsl.pl" program.
+
+The World-Wide Web forms based management interface to the ROADS
+software should be accessible at:
+
+  http://$ROADS::MyHostname:$ROADS::MyPortNumber/$ROADS::WWWAdminCgi/admincentre
+.pl
+
+We strongly suggest you run the integrity checker tool, to check
+that your WWW server has permission to write to the various files
+and directories used by the ROADS software.
+
+Please note that before any WHOIS++ searches can be done using the
+sample data distributed with this package, you'll need to index it
+and start up your WHOIS++ server :-
+
+  $ROADS::Bin/rebuild.pl -a
+  $ROADS::Bin/wppdc.pl coldstart
+
+If you want your WHOIS++ server to start automatically when your
+machine is booted up, add the second line to your "rc.local" file
+or equivalent.  We also provide a sample System V "init" style
+startup script which can be found in $ROADS::Bin/init.wppd
+
+More information about the things which have changed in veresion 2
+of the ROADS software is available in this program's embedded
+documentation.  To find out more, type :-
+
+  perldoc Configure
+ 
+EOF
+
+exit;
+
+
+##### Done!! #####
+
+
+sub twirl { 					;# BSD is best!
+  $|=1;
+  sleep 1; print "/\010";
+  sleep 1; print "-\010";
+  sleep 1; print "\\\010";
+  sleep 1; print "|\010";
+  sleep 1; print "/\010";
+  sleep 1; print "-\010";
+  sleep 1; print "\\\010";
+  sleep 1; print "|\010";
+  print "\010";
+  #sleep 1; print "\010done.\n";
+  $|=0;
+}
+
+
+sub find {
+  my(@progs) = @_;
+  my($path) = $ENV{PATH};
+  my($component,$prog,$location);
+
+  if (length($path) > 0) {
+      $path .= ":/usr/local/bin:/usr/public/bin:/opt/bin:/gnu/bin:/usr/ucb:";
+      $path .= ":/usr/bsd:/bin:/usr/bin:/sbin:/usr/sbin:/usr/etc";
+  }
+
+  $location="not found";
+  foreach $prog (@progs) {  
+      foreach $component (split(/:/, $path)) {
+	  -x "$component/$prog" && ($location="$component/$prog", last);
+      }
+      last unless $location eq "not found";
+  }
+
+  return $location;
+}
+
+
+sub ask {
+  my($prompt, $default, $type) = @_;
+
+  $satisfied = "no";
+  while ($satisfied eq "no") {
+    print "$prompt [$default] ";
+    chop($answer = <STDIN>);
+
+    # use default value if they just press return
+    $answer = $default if $answer =~ /^(\s+|)$/;
+
+    # simple checks
+    $satisfied = "yes", last if ($type eq "d" || $type eq "s");
+    $satisfied = "yes", last if ($type eq "D" && -d "$answer");
+    $satisfied = "yes", last if ($type eq "m" && $answer =~ /\@/);
+    $satisfied = "yes", last if ($type eq "n" && $answer =~ /\d+/);
+    $satisfied = "yes", last if ($type eq "q" && $answer =~ /^[yn]/i);
+    $satisfied = "yes", last if ($type eq "S" && length($answer));
+    $satisfied = "yes", last if ($type eq "X" && -x "$answer");
+
+    # flag errors
+    print "*** The directory \"$answer\" doesn't exist! ***\n"
+      if ($type eq "D");
+    print "*** Email addresses must contain an \@ sign! ***\n"
+      if ($type eq "m");
+    print "*** The answer must be a number! ***\n"
+      if ($type eq "n");
+    print "*** You must answer yes or no! ***\n"
+      if ($type eq "q");
+    print "*** You must answer this question! ***\n"
+      if ($type eq "S");
+    print "*** The program must exist and be runnable! ***\n"
+      if ($type eq "X");
+  } 
+  return ($answer ? $answer : $default);
+}
+
+
+sub tip {
+  my($helpful_message) = @_;
+  
+  print "$helpful_message\n" if $setup_wiz eq "y";
+}
+
+
+sub do_subs {
+  my($dir) = @_;
+  my($file,$path,$lib,$here);
+
+  opendir(INDIR, "$dir")
+    || die "$0: Couldn't open ROADS $dir directory: $!";
+  @FILES = readdir(INDIR);
+  closedir(INDIR);
+
+  $here = getcwd();
+  chdir("$dir");
+  foreach $file (@FILES){ 
+    next unless $file =~ /\.pl$/;
+
+    open (IN, "$file") || die "$0: couldn't open file $file: $!";
+    chop($path = <IN>);
+    chop($lib = <IN>);
+
+    open (OUT, ">$file.new") || die "$0: couldn't open file $file.new: $!";
+    print OUT "#!$ROADS::PerlPath\n";
+    print OUT "use lib \"$ROADS::Lib\";\n";
+
+    while(<IN>) { print OUT "$_"; }
+    close(IN);
+    close(OUT);
+
+    rename "$file.new", "$file";
+    chmod 0755, "$file";
+  }
+  chdir($here);
+}
+
+
+sub do_install {
+  my($source,$destination) = @_;
+  my($here,$inum1,$inum2);
+  
+  $here = getcwd();
+  print " From \"$source\" into \"$destination\" ... ";
+  $inum1 = (stat($source))[1];
+  $inum2 = (stat($destination))[1];
+  if ($inum1 == $inum2) {
+    print "already there!\n";
+  } else {
+    chdir("$source");
+    system "cp -r * $destination"
+	|| die "$0: couldn't copy files: $!";
+    chdir("$here");
+    print "done\n";
+  }
+}
+
+
+sub dump_config {
+  my($filename) = @_;
+  my($theend) = "__END__";
+  my($e) = "=";
+
+  chop($date = `date`);
+
+  open(GLOBS, ">$filename") || die "$0: Can't write settings out: $!";
+  print GLOBS <<EOF;
+#!perl
+#
+# Global variables used by the ROADS package - in a package!
+# Generated automatically on $date
+#
+# Authors: Martin Hamilton <m.t.hamilton\@lut.ac.uk>
+#          Jon Knight <J.P.Knight\@lut.ac.uk>
+#
+
+package ROADS;
+
+# ROADS software version
+\$Version = "$ROADS::Version";
+
+
+###### Where the components of the ROADS software are installed ########
+
+# Top level ROADS installation directory
+\$Dir = "$ROADS::Dir";
+
+# ROADS "admin-cgi" directory, where WWW admin interfaces live
+\$AdminCgi = "$ROADS::AdminCgi";
+
+# ROADS "bin" directory, where back end admin type programs live
+\$Bin = "$ROADS::Bin";
+
+# ROADS "cgi-bin" directory, where WWW interfaces live
+\$CgiBin = "$ROADS::CgiBin";
+
+# ROADS configuration directory - this is where most of the user
+# serviceable parts can be found
+\$Config = "$ROADS::Config";
+
+# Directory used for internal files.  Leave this well alone!
+\$Guts = "$ROADS::Guts";
+
+# ROADS library directory.  We've tried to turn frequently used code
+# into library routines, and there are also some API type modules
+\$Lib = "$ROADS::Lib";
+
+# Log directory, where things like search and survey results are
+# placed
+\$Logs = "$ROADS::Logs";
+
+# This is the directory where your WWW server keeps its documents,
+# e.g. /usr/local/www/docs
+\$HtDocs = "$ROADS::HtDocs";
+
+# This is the URL of your (preferably caching!) proxy server, or "none"
+# e.g. "http://wwwcache.lut.ac.uk:3128/"
+\$ProxyServer = "$ROADS::ProxyServer";
+
+# The directory where the resource description templates live
+\$IafaSource = "$ROADS::IafaSource";
+
+# The location of the inverted index files used by the search engine
+\$IndexDir = "$ROADS::Guts";
+
+# WWW path to admin programs 
+\$WWWAdminCgi = "$ROADS::WWWAdminCgi";
+
+# WWW path to regular CGI programs
+\$WWWCgiBin = "$ROADS::WWWCgiBin";
+
+# WWW path to HTML documents
+\$WWWHtDocs = "$ROADS::WWWHtDocs";
+
+# Default To-Be-Reviewed-Date for newly created templates
+\$ToBeReviewedDate = "$ROADS::ToBeReviewedDate";
+
+###### Information about your machine ##################################
+
+# The name of the service
+\$ServiceName = "$ROADS::ServiceName";
+
+# Name of machine that this ROADS service is running on
+\$MyHostname = "$ROADS::MyHostname";
+
+# Port number of the HTTP server that the ROADS CGI code lives on.
+\$MyPortNumber = "$ROADS::MyPortNumber";
+
+# The email address of the Server Systems Administrator (the guy with the
+# long hair, bloodshot eyes and a UNIX manual under his arm)
+\$SysAdminEmail = "$ROADS::SysAdminEmail";
+
+# The email address of the Database Administrator (the gal with the hair
+# in a bun, glasses and an AACR2 manual under her arm)
+\$DBAdminEmail = "$ROADS::DBAdminEmail";
+
+
+###### WHOIS++ server info ############################################
+
+# Your server's handle.  This should be a unique identifier
+\$Serverhandle = "$ROADS::Serverhandle";
+
+# Your server's port number.  If less than 1024 you will need to run
+# the server as root, which we discourage!
+\$WHOISPortNumber = "$ROADS::WHOISPortNumber";
+
+# The default maximum number of records to return in full format.
+# If a search gets more hits than this, only a summary is returned
+\$DefaultMaxfull = "$ROADS::DefaultMaxfull";
+
+# Administratively imposed limit on the number of hits which can be
+# returned as the result of a search
+\$AdminMaxhits = "$ROADS::AdminMaxhits";
+
+# Default number of hits which should be returned in response to a
+# query.  The user can override this with the "maxhits" global
+# constraint, but only up to the limit specified above
+\$DefaultMaxhits = "$ROADS::DefaultMaxhits";
+
+# Whether or not to return a hit count with each WHOIS++ search
+# response
+\$HitCount = "$ROADS::HitCount";
+
+# This is absolute path to a simple script that can run as a thesaurus
+# module from the WHOIS++ server
+#\$WGIThesaurus = "$ROADS::WGIThesaurus";
+
+###### Locations of external programs #################################
+
+# Location of the Perl executable
+\$PerlPath = "$ROADS::PerlPath"; 
+
+# Absolute path of mail program, e.g. mail
+\$MailerPath = "$ROADS::MailerPath"; 
+
+# Absolute path of the sort program
+\$SortPath = "$ROADS::SortPath"; 
+
+# Absolute path of the mv program
+\$MvPath = "$ROADS::MvPath";
+
+# Absolute path of the cp program
+\$CpPath = "$ROADS::CpPath";
+
+# Absolute path of the uniq program
+\$UniqPath = "$ROADS::UniqPath";
+
+# Absolute path of the cat program
+\$CatPath = "$ROADS::CatPath";
+
+# Absolute path to the RCS ci program
+\$RCSCiPath = "$ROADS::RCSCiPath"; 
+
+###### Miscellaneous ##################################################
+
+# The directory where the temporary files should be stored
+\$TmpDir = "$ROADS::TmpDir";
+
+# Path to the bullet point image used in the default ROADS installation
+# - this should be relative to the \$HtDocs directory $HtDocs
+\$Bullet = "$ROADS::Bullet";
+
+# Address to send registration info to
+\$RegEmail = "$ROADS::RegEmail";
+
+1;
+$theend
+
+${e}head1 NAME
+
+I<lib/ROADS.pm> - Run-time configuration of the ROADS software
+
+${e}head1 DESCRIPTION
+
+When you run I<Configure> to install the ROADS software, a file
+called I<ROADS.pm> is generated in the ROADS I<lib> directory.
+This is a Perl module which is read in at run-time by all of the
+ROADS tools.  It contains a series of Perl variables which are
+(initially) set from the answers you supply to the Configure
+program.
+
+The tools use the information in I<ROADS.pm> to find out things
+like where on your system the various components of the software
+are installed, what your email address is (for automated reports),
+and your WWW configuration.
+
+Since this information is all gathered together in one place, you
+can change this file once and the change will affect all of the
+ROADS tools.  Note that some of the possible changes might require
+you to re-run particular tools - e.g. if you changed the name by
+which the ROADS I<cgi-bin> directory is known to the Web, the
+links in your statically generated HTML documents would need to be
+updated.
+
+The bottom line is that you can completely alter the behaviour of
+the ROADS software without having to hack at individual programs.
+
+${e}head1 DIRECTORIES
+
+i.e. where the components of the ROADS software are installed
+
+${e}over 4
+
+${e}item B<Dir>
+
+Top level ROADS installation directory, e.g. I<$ROADS::Dir>
+
+${e}item B<TmpDir>
+
+The directory where the temporary files should be stored, e.g.
+I<$ROADS::TmpDir>
+
+${e}item B<AdminCgi>
+
+ROADS I<admin-cgi> directory, where WWW admin interfaces live,
+e.g. I<$ROADS::AdminCgi>
+
+${e}item B<Bin>
+
+ROADS I<bin> directory, where back end admin type programs live,
+e.g. I<$ROADS::Bin>
+
+${e}item B<CgiBin>
+
+ROADS I<cgi-bin> directory, where WWW interfaces live,
+e.g. I<$ROADS::CgiBin>
+
+${e}item B<Config>
+
+ROADS configuration directory - this is where most of the user
+serviceable parts can be found, e.g. I<$ROADS::Config>
+
+${e}item B<Guts>
+
+Directory used for internal files.  Leave this well alone!
+e.g. I<$ROADS::Guts>
+
+${e}item B<Lib>
+
+ROADS library directory.  We've tried to turn frequently used code
+into library routines, and there are also some API type modules,
+e.g. I<$ROADS::Lib>
+
+${e}item B<Logs>
+
+Log directory, where things like search and survey results are
+placed, e.g. I<$ROADS::Logs>
+
+${e}item B<HtDocs>
+
+This is the directory where your WWW server keeps its documents,
+e.g. I<$ROADS::HtDocs>
+
+${e}item B<IafaSource>
+
+The directory where the resource description templates live,
+e.g. I<$ROADS::IafaSource>
+
+${e}item B<IndexDir>
+
+The location of the inverted index files used by the search engine,
+e.g. I<$ROADS::IndexDir>
+
+${e}back
+
+
+${e}head1 WORLD-WIDE WEB RELATED INFORMATION
+
+NB: WWW paths are I<normalisedm> by I<Configure> to remove any
+leading or trailing slashes, e.g. I</ROADS/> becomes I<ROADS>.
+
+${e}over 4
+
+${e}item B<ProxyServer>
+
+This is the URL of your (preferably caching!) proxy server, or
+I<none>, e.g. I<http://wwwcache.lut.ac.uk:3128/>
+
+${e}item B<WWWAdminCgi>
+
+WWW path to admin programs, e.g. I<$ROADS::WWWAdminCgi>
+
+${e}item B<WWWCgiBin>
+
+WWW path to regular CGI programs, e.g. I<$ROADS::WWWCgiBin>
+
+${e}item B<WWWHtDocs>
+
+WWW path to HTML documents, e.g. I<$ROADS::WWWHtDocs>
+
+${e}item B<Bullet>
+
+Path to the bullet point image used in the default ROADS installation
+- this should be relative to the B<HtDocs> directory,
+e.g. I<$ROADS::Bullet>
+
+${e}back
+
+
+${e}head1 INFORMATION ABOUT YOU AND YOUR MACHINE
+
+${e}over 4
+
+${e}item B<ServiceName>
+
+The name of the service, e.g. I<$ROADS::ServiceName>
+
+${e}item B<MyHostname>
+
+Name of machine that this ROADS service is running on,
+e.g. I<$ROADS::MyHostname>
+
+${e}item B<MyPortNumber>
+
+Port number of the HTTP server that the ROADS CGI code lives on,
+e.g. I<$ROADS::MyPortNumber>
+
+${e}item B<SysAdminEmail>
+
+The email address of the Server Systems Administrator.
+Note that the B<@> sign must be prefixed by a backslash,
+e.g. I<$ROADS::SysAdminEmail>
+
+${e}item B<DBAdminEmail>
+
+The email address of the Database Administrator.
+Note that the B<@> sign must be prefixed by a backslash,
+e.g. I<$ROADS::DBAdminEmail>
+
+${e}back
+
+
+${e}head1 WHOIS++ SERVER DETAILS
+
+${e}over 4
+
+${e}item B<Serverhandle>
+
+Your server's handle.  This should be a unique identifier,
+e.g. I<$ROADS::Serverhandle>
+
+${e}item B<WHOISPortNumber>
+
+Your server's port number.  If less than 1024 you will need to run
+the server as root, which we discourage!  e.g. I<$ROADS::WHOISPortNumber>
+
+${e}item B<DefaultMaxfull>
+
+The default maximum number of records to return in full format.
+If a search gets more hits than this, only a summary is returned,
+e.g. I<$ROADS::DefaultMaxfull>
+
+${e}item B<AdminMaxhits>
+
+Administratively imposed limit on the number of hits which can be
+returned as the result of a search, e.g. I<$ROADS::AdminMaxhits>
+
+${e}item B<DefaultMaxhits>
+
+Default number of hits which should be returned in response to a
+query.  The user can override this with the <em>maxhits</em> global
+constraint, but only up to the limit specified above,
+e.g. I<$ROADS::DefaultMaxhits>
+
+${e}item B<HitCount>
+
+Whether or not to return a hit count with each WHOIS++ search
+response, e.g. I<$ROADS::HitCount>
+
+${e}item B<WGIThesaurus>
+
+This is the absolute path to a simple script that can run as a
+thesaurus module from the WHOIS++ server, e.g. I<$ROADS::WGIThesaurus>
+
+${e}back
+
+
+<sect>Locations of external programs
+
+${e}over 4
+
+${e}item B<PerlPath>
+
+Location of the Perl executable, e.g. I<$ROADS::PerlPath>
+
+${e}item B<MailerPath>
+
+Absolute path of mail program, e.g. I<$ROADS::MailerPath>
+
+${e}item B<SortPath>
+
+Absolute path of the sort program, e.g. I<$ROADS::SortPath>
+
+${e}item B<RCSCiPath>
+
+Absolute path to the RCS ci program, e.g. I<$ROADS::RCSCiPath>
+
+${e}back
+
+${e}head1 MISCELLANEOUS
+
+${e}over 4
+
+${e}item B<RegEmail>
+
+Address to send registration info to.
+
+Note that the B<@> sign must be prefixed by a backslash,
+e.g. I<$ROADS::RegEmail>
+
+${e}item B<Version>
+
+ROADS software version, e.g. I<$ROADS::Version>
+
+${e}back
+
+${e}head1 BUILDING YOUR OWN TOOLS USING THIS FRAMEWORK
+
+Furthermore, if you choose to write Perl based tools of your own
+to work within the ROADS framework, you can take advantage of the
+information in I<ROADS.pm> by simply including a line at the
+start of your program which says
+
+  require "/home/roads/lib/ROADS.pm";
+
+where I</home/roads/lib/ROADS.pm> is replaced with the full
+path to the appropriate copy of I<ROADS.pm>.  In a future
+version of the software we may take advantage of the
+I<site_perl> feature of Perl 5, but in the meantime you'll
+have to know where this file lives.
+
+Note that when I<ROADS.pm> is imported into one of the ROADS
+tools, the variables appear in their own namespace, prefixed with
+the word I<ROADS>.  So, the variable B<Version> in
+I<ROADS.pm> would be referred to as B<ROADS::Version> by
+the tool.
+
+If you write a tool which you think would be worth us including in
+the main distribution - drop us a line!
+
+EOF
+  close(GLOBS);
+}
+
+__END__
+
+
+
+=head1 NAME
+
+B<Configure> - Installing the ROADS software
+
+
+=head1 DESCRIPTION
+
+The ROADS software is a suite of programs intended to aid in the
+setting up and day to day running of World-Wide Web based catalogues
+of on-line resources.  A number of these so-called subject gateways
+have been funded under the Access to Network Resources strand of the
+UK Electronic Libraries Programme (eLib), each specializing in a
+particular subject area.
+
+Although designed specifically to meet the requirements of the eLib
+subject gateways, we believe that the ROADS software will be useful
+in a variety of other situations and for a variety of other purposes.
+You can get an idea of what people have done with the ROADS software
+by looking at some of their WWW sites, e.g.
+
+=over 4
+
+=item http://adam.ac.uk/
+
+Art, Design, and Media (ADAM)
+
+=item http://bized.ac.uk/
+
+Business Education (Biz/ed)
+
+=item http://ihr.sas.ac.uk/
+
+History on the Internet
+
+=item http://omni.ac.uk/
+
+Organizing Medical Networked Information (OMNI)
+
+=item http://sosig.ac.uk/
+
+The Social Sciences Information Gateway (SOSIG)
+
+=back
+
+Initial versions of the ROADS software were derived from code
+developed by Jon Knight for the Social Sciences Information Gateway
+(SOSIG).  As the software was used in other situations, it was
+re-written so as to address problems or add new features.
+
+
+=head1 DOCUMENTATION
+
+The ROADS software is self-documenting, using the Perl POD system.
+This means that you can get to the documentation for any program
+or library module by typing I<perldoc> followed by the Unix path
+to the relevant file, e.g.
+
+  perldoc bin/addsl.pl
+
+to learn about the I<addsl> tool.
+
+You can also get to the ROADS documentation in a variety of formats
+via our software and documentation server:
+
+  http://www.roads.lut.ac.uk/
+
+
+=head1 SYSTEM REQUIREMENTS
+
+The ROADS software requires that your machine be running the
+following:
+
+=over 4
+
+=item a variant of the Unix operating system
+
+e.g.  Linux, FreeBSD, NetBSD, OpenBSD, SunOS, Solaris, Digital Unix (OSF/1),
+IRIX, HP/UX.
+
+=item an HTTP server
+
+e.g.  Apache, NCSA or CERN httpd.
+
+=item the Perl language.
+
+=back
+
+We B<will not> be producing a version of the ROADS software to run
+under legacy operating systems such as MacOS, DOS, Windows 3, Windows
+3.11, Windows for Workgroups, Windows 95, Windows NT, OS/2, VMS, VME,
+MPE, CTSS, Multics, GEORGE IV... !
+
+The reasons for this decision are manyfold.  A couple of the more
+important ones are that most versions of Unix do not have problems
+handling lots of processes operating simultaneously (multi-tasking),
+or talking to other computers via the Internet.  The combination of
+the basic Unix features, a very high level development language
+(Perl), and HTML as a user interface means that we can easily deliver
+a customisable package which works on multiple platforms.  It
+would be very difficult to do this in the first place, and a great
+deal more difficult to support it, if we had to produce multiple
+independent versions of the ROADS software for each supported
+operating system and hardware platform.
+
+It should be noted in passing that there are numerous implementations
+of Unix or Unix-like operating systems for PCs based on the Intel
+hardware, and several for the Macintosh hardware.  Many of these are
+freely available, notably FreeBsd, NetBSD, and Linux.
+
+We do not require that you use any particular combination of hardware,
+operating system, and HTTP server software for running ROADS.  In
+general, any HTTP server which supports the Common Gateway Interface
+(CGI) should be capable of running the ROADS software.  ROADS places
+no great demands upon your machine other than the normal process of
+serving up some static HTML documents and some dynamic ones generated
+via CGI.  Your hardware and operating system configuration should,
+needless to say, be powerful enough that it can cope with user demand.
+
+Primary development of the ROADS software is being done under SunOS
+4.1.4 and Linux 2.x, with the NCSA and Apache HTTP servers and Perl 5.
+
+
+=head1 DOWNLOAD
+
+You can get hold of the ROADS software by pointing your WWW browser at
+the URL:
+
+  http://www.roads.lut.ac.uk/
+
+This is the ROADS software and technical documentation server.
+
+
+=head1 UNPACKING
+
+The software distribution comes in the compressed archive format
+conventionally used to distribute Unix software over the Internet.  To
+unpack it, use the I<zcat> and I<tar> commands, e.g.
+
+  % zcat roads-v2.00.tar.Z | tar xvf -
+
+The software distribution will be unpacked into a directory called
+I<roads-v2.00>, in whatever directory you happen to be in at the
+time.  If you choose to keep all or most of your ROADS related files
+in this directory, you may want to make a symbolic link from it to
+some common name which you will carry on using for some time, e.g.
+
+  % ln -s /usr/local/roads-v2.00 /usr/local/roads
+
+or perhaps rename the directory:
+
+  % mv /usr/local/roads-v2.00 /usr/local/roads
+
+Now you can carry on using the name I</usr/local/roads> to refer to
+the ROADS installation, no matter where it actually lives.
+
+Once the software has been unpacked, you should see the following in
+your I<roads-v2.00> (or whatever :-) directory:
+
+  % ls -l roads-v2.00
+  total 466
+  -rw-r--r--  1 martin       7459 Aug  3 20:13 CHANGES
+  -r-xr-xr-x  1 martin      27386 Aug  3 20:42 Configure
+  -rw-r--r--  1 martin        522 Jul 31 04:43 Makefile
+  -rw-r--r--  1 martin       8535 Aug 24 05:02 README
+  -rw-r--r--  1 martin       1526 Aug  3 20:12 TODO
+  drwxrwxr-x  3 martin       1024 Aug 15 23:02 admin-cgi
+  drwxrwxr-x  3 martin       1024 Aug 24 04:53 bin
+  drwxrwxr-x  3 martin        512 Aug 16 09:12 cgi-bin
+  drwxrwxr-x 19 martin       1024 Jul 24 03:45 config.dist
+  drwxrwxrwx  4 martin        512 Aug 24 04:33 guts
+  drwxrwxr-x  7 martin        512 Aug 19 19:28 htdocs
+  drwxrwxr-x  3 martin       1024 Aug 24 03:04 lib
+  drwxrwxrwx  2 martin        512 May 23 12:27 logs
+  drwxr-xr-x  2 martin       1024 Jul 27 17:38 source.dist
+
+Note that the owner, group, date stamps and permissions may be
+different on your system.
+
+
+=head1 HOW IT WORKS
+
+The ROADS software consists of a series of programs written in the
+Perl language.  Perl is a very high level language which is well
+suited to text processing, database handling and networking.  It
+also lends itself to rapid prototyping - since programs can be
+written and re-written quickly.
+
+``ROADS'' consists of the following:
+
+=over 4
+
+=item Administrative programs
+
+e.g. to index your templates, delete a
+template from the database, reindex it, and generate HTML breakdowns
+of the templates in the database.  These are found in the I<bin>
+directory.
+
+=item CGI programs which provide a WWW front-end to the software
+
+e.g. searching, and database administration.  The user-oriented
+programs are found in the I<cgi-bin> directory, and the admin
+oriented programs in the I<admin-cgi> directory.
+
+=item Configuration files which let you alter the behaviour of the
+ROADS software
+
+e.g. by letting you specify the directories where
+the database files may be found, the format of any HTML documents
+produced by the software, and add definitions for new templates.
+These are found in the I<config> directory.
+
+=item Files which are used internally by ROADS and are not user
+serviceable
+
+e.g. the inverted index used by the search engine, and library files
+used by the ROADS programs.  These are found in the I<guts> directory.
+
+=item Static HTML documents which are intended to be inserted into
+your HTTP server's document tree
+
+e.g. help files and manual pages.  These are found in the I<htdocs>
+directory.
+
+=item Log files generated by the software
+
+e.g. the search log.  These are found in the I<logs> directory.
+
+=back
+
+You can configure ROADS to place most of these directories anywhere
+you like, or keep them in the directory where the software
+distribution was unpacked.  This is still not quite as flexible as we
+would like - part of the installation process has to modify some of
+the programs to tell them where their library files are for instance,
+Consequently it is inadvisable to move the software once installed
+unless you either make sure the previous filenames are still valid (by
+making a symbolic link from their old location), or re-install it.
+The consistency checking tool should tell you whether there are any
+problems.
+
+
+=head1 CONFIGURING YOUR WWW SERVER
+
+To run the CGI programs, you will need to either have them installed
+in your HTTP server's I<cgi-bin> directory (or equivalent), or add
+a new I<bin> directory to its configuration.  We strongly urge you
+to use any protection schemes your WWW server may provide - such as
+password and/or IP address access controls.  In particular, you should
+make sure that the administrative CGI programs are only accessible by
+the people who you intend to be using them.  If your machine is shared
+with other users, you may also want to protect the ROADS files from
+being read from or written to by arbitrary passers-by.
+
+For example, if you were using the NCSA or Apache HTTP servers, had
+installed the ROADS software under I</usr/local/roads>, and wanted
+to make the ROADS CGI directories visible on the Web as I</ROADS/>,
+I</ROADS/cgi-bin/>, and I</ROADS/admin-cgi/>, your HTTP server's
+I<srm.conf> would contain something like this:
+
+  ScriptAlias /ROADS/cgi-bin/ /usr/local/roads/cgi-bin/
+  ScriptAlias /ROADS/admin-cgi/ /usr/local/roads/admin-cgi/
+  Alias /ROADS/ /usr/local/roads/htdocs
+
+Note that the order of the above lines is significant.  This approach
+may be attractive since it means that you can have several versions of
+the ROADS software installed on your machine, and use the HTTP
+server's alias mechanism to control which is made visible to the world
+at large as your ``production service''.  See below for more
+information on how this may be done.
+
+You should protect the I<admin-cgi> directory so that only the
+people who are meant to have access to it can run the CGI programs
+within.  If you used the NCSA or Apache servers, by putting the
+following lines in I<access.conf> you could restrict HTTP access to
+the I<admin-cgi> to to those people who were calling from the
+machine with the IP address B<158.125.96.46> and were members of
+the basic authentication group I<roadies>:
+
+  <Directory /usr/local/roads/admin-cgi>
+  Options ExecCGI
+  AuthName ROADS server
+  AuthType Basic
+  AuthUserFile /usr/local/roads/.htpasswd
+  AuthGroupFile /usr/local/roads/.htgroup
+  <Limit GET POST>
+  order deny,allow
+  deny from all
+  allow from 158.125.96.46
+  require group roadies
+  </Limit>
+  </Directory>
+
+Some of the ROADS tools do not have a WWW based user interface (yet),
+and it is necessary to run these from your shell, e.g. in an I<xterm>
+or I<rxvt> window or via a I<telnet> session to the server.  You will
+need to make sure that the directory which contains these tools is in
+your B<PATH>, otherwise your Unix shell will not be able to find them.
+
+
+=head1 MORE ON SECURITY AND ACCESS CONTROL
+
+Note that it may be necessary for the user ID your World-Wide
+Web server runs under to write to the following directories:
+
+=over 4
+
+=item *
+
+The I<logs> directory, which will be used to store search
+statistics and survey results.
+
+=item *
+
+The template I<source> directory, where the actual database
+records live.
+
+=item *
+
+The I<guts> directory under the top level ROADS
+installation directory.  This is used to store various internal files
+which the ROADS server administrator is discouraged from fiddling
+with!
+
+=item *
+
+The temporary directory, e.g. I</tmp> where working copies of
+files are created by many of the ROADS tools.
+
+=item *
+
+The various directories you have configured the ROADS tools to
+create HTML files in - typically under your WWW server's main HTML
+document tree, or in a separate directory tree which is aliased to
+appear in the main HTML tree.
+
+=back
+
+If you are going to mix manual and WWW based administration, you will
+need to make sure that any files or directories produced in the
+process are still writeable by the WWW server.  If you do not, you may
+encounter problems creating templates, indexing them, or generating
+B<What's New> and subject breakdown listings.  We suggest that you
+use the I<bogus.pl> tool's WWW front end to flag any problems with
+permissions.
+
+In order to prevent your ROADS server's administrative capabilities
+from being abused by outsiders, we B<urge> you to protect them
+using the strongest authentication scheme your World-Wide Web server
+supports - for example, message digest authentication or end-to-end
+cryptographic techniques such as the Secure Sockets Layer (SSL).
+
+If you share the machine ROADS is running on with other people, you
+may also find it worthwhile using Unix permissions to control who has
+access to the files and directories where ROADS lives.  Note that
+anyone who has I<super user> (or I<root>) status on the
+machine will be able to subvert these restrictions!
+
+Finally, it is commonplace to run Unix based World-Wide Web servers as
+the user ``nobody''.  This is not necessarily the most appropriate
+approach to take with the ROADS software, because its files and
+directories may need to be manipulated both by CGI based tools and by
+hand.  If you do not have to share your WWW server with anyone else,
+we suggest that you might prefer to create a special user, say
+I<www>, or perhaps even I<roads>, which has write access to all of
+these files, and under whose identity the WWW server runs.  There are
+a number of similar alternative approaches, e.g. doing this purely
+with the group ID the WWW server runs as - and the group ID of the
+files and directories, running a separate WWW server for the ROADS
+based material (most modern WWW servers and Unix versions have virtual
+hosting features), and using a wrapper program such as CGIwrap which
+is launched by the WWW server but then changes its user and/or group
+ID before running any of the ROADS tools.
+
+
+=head1 SITTING COMFORTABLY ?
+
+To install the ROADS software on your machine, you will need to run
+the I<Configure> shell script which can be found in the directory
+you unpacked the distribution in, e.g.
+
+  % cd roads-v2.00
+  % ./Configure
+
+I<Configure> will ask you a number of questions about the your
+machine, and how the ROADS software should be set up for it.  If you
+make any mistakes answering these questions, or change your mind, you
+can run the script again and change your answers.  To make this easier
+for you, the I<Configure> script will offer to re-use any answers
+which you gave on a previous attempt to install the software.
+
+
+=head1 QUESTIONS AND ANSWERS
+
+In this section we go through the questions you will be asked and
+explain them in detail.  Most of this information is also available
+during the installation as ``tips'', which I<Configure> will give you
+the option of reading these as you install the software.
+
+In version 2 of the ROADS software we've simplified the installation
+process, so that you're presented with the questions which the ROADS
+installer program would like to ask you, and have the option of
+simply accepting the default values.
+
+
+=head2 Introductory questions
+
+=over 4
+
+=item I<Where is perl located on your system?>
+
+I<Configure> will attempt to find programs like Perl automatically,
+but will sometimes need helping out.  You might have several versions
+of Perl on your machine, for instance.
+
+=item I<What is the email address of the person running the machine?>
+
+Some of the ROADS tools will send this person email.
+
+=item I<What is the email address of the ROADS database admin person ?>
+
+Some of the ROADS tools will send this person email.
+
+=item I<What is the name of your service?>
+
+This will appear on some of the Web pages generated by the ROADS software.
+
+=back
+
+
+=head2 WWW related questions
+
+=over 4
+
+=item I<What is your machine's domain name?>
+
+This is the name which will be used by the ROADS software to refer to
+your machine.  If it has an alias, such as I<www>.B<swedish-chef.org>,
+you may want to use this here.
+
+=item I<What port number is your WWW server running on?>
+
+Normally HTTP servers run on port 80.
+
+=item I<WWW server executables directory?>
+
+You must have an HTTP daemon running that supports the Common Gateway
+Interface mechanism, aka CGI.  The NCSA 1.x, Apache 1.x, and CERN 3.x
+servers do, for example.  This installation program will need to know
+the the name of the directory where CGI programs are placed.
+
+NB: you don't have to use the server's main I<cgi-bin> directory.
+For instance, you could have a CGI directory which was dedicated to
+ROADS tools.  You might want to keep the ROADS I<cgi-bin> programs
+in the ROADS directory where you unpacked them, for instance.
+
+The factory default is the I<cgi-bin> subdirectory of the directory
+in which you unpacked the ROADS software.
+
+=item I<WWW path to ROADS executables directory on HTTP server?>
+
+Now we need to know what name the outside world will use to get to the
+ROADS executable directory on your Web server, e.g.  I</ROADS/cgi-bin/>,
+or just I</cgi-bin/>.
+
+The factory default is I</ROADS/cgi-bin/>, which could be configured as
+outlined above.
+
+=item I<Absolute path to ROADS related HTML documents directory?>
+
+Some of the ROADS tools create Web pages - you can have these put
+anywhere you like in your computer's filing system, including the
+directory where you unpacked the ROADS software.  Watch out, though!
+If the directory where you opt to have these files installed already
+has any files in it, these may be overwritten.  For example, an
+I<index.html> file is automatically copied into place.
+
+We suggest that you put the ROADS related Web documents into a
+directory of their own.
+
+The factory default is to use the I<htdocs> subdirectory of the
+directory in which you unpacked the ROADS software.
+
+=item I<What is the Web path to the ROADS HTML documents directory?>
+
+Most WWW servers let you choose the path name by which your HTML
+documents are made visible to the outside world.  For example,
+although you may have installed the ROADS Web documents tree in say
+I</local/roads/htdocs>, you can usually tell your Web server to
+make this area visible to the rest of the world as say I</ROADS/>.
+
+You might want to export these documents using the name of your
+service.
+
+The factory default is to make the ROADS related HTML files appear
+under I</ROADS/>.
+
+=item I<WWW based admin programs directory?>
+
+The ROADS software comes with a number of World-Wide Web based tools
+for administration.  It is essential that you have these in an area of
+your WWW server which is protected from casual access - the only
+people able to run these programs should be the people who are looking
+after the ROADS installation.
+
+If you install these programs in your server's regular directory for
+CGI executables, you will need to be running a WWW server which lets
+you impose access controls on individual programs.
+
+The factory default is to install them in a directory of their own -
+I<admin-cgi> under the directory where the ROADS software was unpacked.
+
+=item I<WWW path to admin executables directory?>
+
+Now we need to know what the outside world sees this directory as.
+For example, if you put the administrative programs in the directory
+which was mapped on your Web server to I</ROADS/admin-cgi/>, you
+would enter this here.  Note that if this directory is not your
+regular I<cgi-bin>, you will probably need to enable CGI processing
+for it.
+
+The factory default is to use I</ROADS/admin-cgi/>.
+
+=item I<Enter the URL of your proxy server>
+
+The link checking tool distributed with the ROADS software can make
+use of a caching proxy server.  We strongly advise you to use this
+feature if you are going to run the link checker.
+
+The factory default is not to use a proxy server.
+
+=back
+
+
+=head2 Directory names
+
+=over 4
+
+=item I<Do you want to run the ROADS software from this directory?>
+
+You can choose to have the ROADS package configured to run in the
+directory where it was unpacked, or have individual parts of it
+installed in separate directories - e.g. you might want the HTML
+documents to be copied to your WWW server's file space, and so on.
+
+The factory default is to run everything out of the directory in which
+the ROADS software was unpacked.
+
+If you answer no to this question, you'll be prompted for the
+directories where the individual ROADS components should be installed:
+
+=item I<Absolute pathname for the directory to hold the internal programs?>
+
+The ROADS internal programs all live in a single directory.  By
+default it is the 'bin' subdirectory of the ROADS installation
+directory.  You can opt to change this to be any directory in your
+computer's filing system - e.g. I</usr/local/bin>.
+
+=item I<Default config file directory?>
+
+The ROADS package uses a number of configuration files.  Normally
+these live in a subdirectory of the ROADS installation directory
+called I<config>, but you can have them put anywhere you like.
+
+=item I<Absolute path to guts directory?>
+
+Some of the ROADS programs create files for internal use, e.g. the
+index of your resource descriptions.  The default location for these
+is in the I<guts> subdirectory of the top level ROADS directory, but
+you can have them placed wherever you like.
+
+=item I<Absolute path to library directory?>
+
+There are a number of library files which are used by various parts of
+the ROADS software.  These normally live in the I<lib> directory,
+under the top level ROADS installation directory.  To have them
+installed in an alternative directory, type its name in here.
+
+=item I<Absolute path to log directory?>
+
+Some of the ROADS tools generate log files as part of their operation
+and these are normally placed in a directory called I<logs>, under
+the top level ROADS installation directory.  You can override this by
+typing in a new log file directory here.
+
+=item I<Absolute path to ROADS template directory?>
+
+This package has a default directory in which the ROADS resource
+description templates are held.  If you would like to change this, enter
+a new directory name.
+
+=back
+
+
+=head2 WHOIS++ related questions
+
+=over 4
+
+=item I<Server handle?>
+
+Your ROADS WHOIS++ server needs to be given a unique ``server handle''
+which identifies it.  The installation process will attempt to come up
+with one of these for you, based on your machine's hostname -
+e.g. I<lutacuk01>.  If you are already using this server handle, or
+would prefer to use another, enter it below.
+
+=item I<What port number will your WHOIS++ server be listening on?>
+
+We recommend that you use an unprivileged port, such as the factory
+default of I<6663>.
+
+The configuration script will ask you if you wish to rebuild your
+database and start the index server towards the end of the 
+configuration process.  If you tell it not to, you'll need to
+start the WHOIS++ server yourself by running the program I<bin/wppd.pl> 
+in the ROADS I<bin> directory!  You'll also want to add a line
+to your startup scripts to restart the I<bin/wppd.pl> server when
+the machine is rebooted.  Where this script is depends on the version
+of UNIX you are running; see your OS documentation for details (typically
+it is in /etc/rc.local or /etc/rc.d but it is so variable it would be
+very difficult for us to produce a portable section of code that could
+do this for you)
+
+=item I<Maximum number of results with full response?>
+
+What is the upper limit on the number of results which your WHOIS++
+server should return in full ?  e.g. if the limit were 100, and a
+search matched over 100 resource descriptions, only a summary response
+would be returned.
+
+The factory default is to return I<100> records in full.
+
+=item I<What is the upper limit on the number of results to return?>
+
+What is the upper limit on the number of results which your WHOIS++
+server should be allowed to return ?  e.g. if the limit were 25, and a
+user asked for 100, they would only be returned the first 25.
+
+The factory default is an upper limit of I<100>.
+
+=item I<Default maximum number of results to return?>
+
+The factory default is 100.
+
+=item I<Do you want to return a hit count with the search results?>
+
+You can choose whether or not your WHOIS++ server should return a hit
+count with its response to each search.  If you choose not to return a
+hit count, your users will have no way of knowing how many records
+there are in your database.  This may be desirable for some
+applications, e.g. White Pages databases.
+
+The factory default is to return a hit count as a separate B<COUNT>
+record at the end of the search results.
+
+=back
+
+
+=head2 Miscellaneous questions
+
+=over 4
+
+=item I<Absolute path to sort program?>
+
+Some of the ROADS programs use the Unix I<sort> utility.  Where can
+this be found on your system?
+
+NB: the GNU version of I<sort> may be preferable to the one distributed
+by your vendor, since it does not impose a size limit on the line length.
+
+The factory default is determined by searching in well-known places
+for I<sort>.
+
+=item I<Absolute path to mv executable?>
+
+Some of the ROADS programs use the Unix I<mv> utility.  Where can
+this be found on your system?
+
+The factory default is determined by searching in well-known places
+for I<mv>.
+
+=item I<Absolute path to cp executable?>
+
+Some of the ROADS programs use the Unix I<cp> utility.  Where can
+this be found on your system?
+
+The factory default is determined by searching in well-known places
+for I<cp>.
+
+=item I<Absolute path to uniq executable?>
+
+Some of the ROADS programs use the Unix I<uniq> utility.  Where can
+this be found on your system?
+
+The factory default is determined by searching in well-known places
+for I<uniq>.
+
+=item I<Absolute path to cat executable?>
+
+Some of the ROADS programs use the Unix I<cat> utility.  Where can
+this be found on your system?
+
+The factory default is determined by searching in well-known places
+for I<cat>.
+
+=item I<Absolute path to ci executable?>
+
+You must have the GNU Revision Control System (RCS) Checkin program
+(I<ci>) available on your machine if you wish to archive copies of
+templates that have been deindexed.
+
+The factory default is determined by searching in well-known places
+for a program called I<ci>.
+
+=item I<Absolute path to mailer executable?>
+
+Some of the ROADS programs can email information to administrators.
+What program should they use to do this?
+
+The factory default is to look for some common names for a user
+oriented program for sending email, e.g. I<mailx>, I<Mail>, and
+so on.  This program should be capable of accepting a list of email
+addresses, and a subject line via the B<-s> command line option -
+like the BSD incarnation of I<mail>.
+
+=item I<Absolute path to temporary directory?>
+
+Some ROADS programs make use of temporary files which are held in one
+of your system's temporary directories.  What is the absolute path of
+the directory you wish to use for temporary files on this machine?
+
+The factory default is to use I</tmp>.
+
+=item I<URL of bullet point image on your Web server?>
+
+The default WWW interface to the ROADS software uses an inlined image
+as a bullet point.  You can specify the image which should be used
+here.
+
+The factory default is to use I</ROADS/icons/redball.gif>, which
+may be found in the I<htdocs/icons> subdirectory of the directory
+in which the ROADS software was unpacked.
+
+=back
+
+
+=head1 COMPLETING THE INSTALLATION
+
+
+=head2 Substitutions on internal programs
+
+Once you have answered all of I<Configure>'s questions, it will
+begin to install and configure the ROADS software for use on your
+machine.  You'll see a series of messages like this:
+
+  Performing substitutions on internal programs...
+  Performing substitutions on WWW CGI programs...
+  Performing substitutions on WWW based admin programs...
+  Done substituting!
+  
+  Unpacking shrink wrapped config files...
+
+You'll be asked if you want to install the sample database of eLib
+projects which comes with the ROADS software.  If you say yes, you
+should see the message:
+  
+  Unpacking sample data...
+
+Sample config files and data can be found, respectively, in the
+I<config.dist> and I<source.dist> subdirectories of the directory
+in which the ROADS software was unpacked.
+
+If you already have either of these directories, e.g. because you keep
+your data (from a previous installation) separate, you will see
+messages of the form:
+
+  You already have the config directory "/usr/local/roads/config"
+  Do you want to overwrite it with the factory defaults? [n]
+
+  You already have the templates directory "/usr/local/roads/source"
+  Do you want to overwrite it with the factory samples? [n]
+
+The default is not to overwrite them.
+
+
+=head2 Checking directories
+
+Next, the I<Configure> program will check to see that the directories you
+have named actually exist, and attempt to create them if necessary.  Some
+of this will have happened already as part of the question and answer
+process.
+
+You should see messages of the form:
+
+  Checking directories exist:
+
+    /usr/local/roads/bin ........ ok!
+    /usr/local/roads/admin-cgi ........ ok!
+    /usr/local/roads/cgi-bin ........ ok!
+    /usr/local/roads/guts ........ ok!
+    /usr/local/roads/htdocs ........ ok!
+    /usr/local/roads/lib ........ ok!
+    /usr/local/roads/logs ........ ok!
+    /usr/local/roads/source ........ ok!
+    /tmp ........ ok!
+
+
+=head2 Special files
+
+The installation process creates a small number of special files:
+
+=over 4
+
+=item List of I<databases>
+
+This will be created as the file I<databases> in the ROADS I<config>
+directory.  If you already have this file, you'll be asked whether you
+want to make a backup copy of it:
+
+  You already have "/usr/local/roads/config/databases"
+  Do you want to keep a safe copy of it ?
+
+=item Run-time configuration - I<ROADS.pm>
+
+All of the ROADS tools read their run-time settings from a file called
+I<ROADS.pm> in the ROADS I<lib> directory.  This is created as
+part of the installation process, but you can change it by hand.  You
+should see a message like this as it is created:
+
+  Dumping configuration to lib/ROADS.pm...
+
+=item I<search.pl> vs. I<admin.pl>
+
+This CGI program serves a dual role as the search program for both
+admin users and end users - altering its behaviour depending on the
+name by which it is invoked.  Because of the split between admin
+oriented CGI programs and user oriented CGI programs, it's necessary
+to make a copy of the program.  As this is done, you'll see the
+message:
+
+  Symlinking /usr/local/roads/cgi-bin/search.pl to
+    /usr/local/roads/admin-cgi/admin.pl...
+
+=back
+
+
+=head2 Installing directories
+
+Having updated the relevant files to reflect your preferences, 
+I<Configure> will now install the various directories which together
+form the ROADS software:
+
+  Installing individual ROADS components...
+   From "bin" into "/usr/local/roads/bin" ... already there!
+   From "admin-cgi" into "/usr/local/roads/admin-cgi" ... already there!
+   From "cgi-bin" into "/usr/local/roads/cgi-bin" ... already there!
+   From "htdocs" into "/usr/local/roads/htdocs" ... already there!
+   From "lib" into "/usr/local/roads/lib" ... already there!
+
+If the inode number of the destination directory is the same as that
+of the source directory, the message I<already there> is displayed,
+and the files aren't copied.
+
+
+=head1 REGISTRATION
+
+You will be asked at the end of the installation process whether you
+want to register your server.  The default is to do this.
+
+We encourage you to register your server with us, so that we can get
+an idea of how widely the ROADS software is being used, and keep in
+touch with our users.  If you answer yes to the question below, the
+configuration information you supplied will be sent to us, along with
+information on the versions of the ROADS tools which you have, and
+your machine type and operating system.
+
+If this worries you (remember The Microsoft Network!) say no, and you
+can use the 'server info' utility from the ROADS admin centre to see
+exactly what information would be transmitted.  The admin centre also
+has a utility for registering your ROADS server, so you can register
+from there if you want to :-)
+
+
+=head1 RESOURCE DESCRIPTION TEMPLATES
+
+ROADS provides tools to help in the cataloguing of Internet resources,
+using a simple resource description format known as the IAFA template.
+This was initially devised as a way of cataloguing resources on
+B<I>nternet B<a>nonymous B<F>TP B<a>rchives, but then extended for use
+with the World-Wide Web in all its glory.
+
+These templates look very much like the headers on an email message, but
+most of the attribute names are different - e.g.
+
+  Template-Type: SERVICE
+  Handle: SOSIG428
+  Title: UKBORDERS Information
+  Copyright-Owner: JISC, ESRC
+  Keywords: Geography, Digitised Bourndary Data (DBD), Census,
+    Demography, Population, GIS, Computer Aided Mapping
+  Description: UKBORDERS provides the digitised boundary data
+    associated with the  1991 Census of Population. The boundary
+    data allows users to map 1991 Census data systematically at
+    any scale from small area to the whole country and can be
+    used to design new zones from the small area building blocks
+    and to integrate census data fully in geographical information
+    systems. Academic staff and students of UK Higher Education
+    institutions may access the digitised boundary data from the
+    Universities of Edinburgh only after completing the required
+    registration process. The data is also available through MIDAS
+    at Manchester.
+  Subject-Descriptor-Scheme-v1:   UDC
+  Subject-Descriptor-v1:  312 91
+  Admin-Email-v1: <ukborders@ed.ac.uk>
+  URI-v1: http://datalib.ed.ac.uk/UKBORDERS/start.html
+  Record-Last-Modified-Email:     ecdh@ssa.bris.ac.uk
+  Record-Last-Modified-Date:      Tue Jan 16 23:00:00 1996
+
+These resource description templates may either be created by hand, using
+a text editor, or entered via a World-Wide Web form.  Once a template is
+in the database it may be edited via a WWW form, or again by hand.
+
+When creating or editing a template using the WWW forms interface, the
+I<view> of the template may be constrained to a restricted set of
+the attributes.  This means that fields which are not used on a
+regular basis can effectively be eliminated.  These fields are,
+however, still available should they be needed - just not displayed by
+the WWW based editor.
+
+Note that you can trivially modify large numbers of templates using
+Perl's I<-spi> feature.  This lets you essentially edit a file in place,
+e.g.
+
+  perl -spi -e 's/Bourndary/Boundary/g' source/*
+
+would change all instances of the word B<Bourndary> to B<Boundary>,
+in all of the files in the I<source> directory.
+
+
+=head1 CATALOGUING DIFFERENT KINDS OF RESOURCE
+
+A number of default resource description templates are provided with
+the software.  Each of these is intended for describing a particular
+type of resource:
+
+=over 4
+
+=item DOCUMENT
+
+a book or technical report
+
+=item FAQ
+
+a Frequently Asked Questions document
+
+=item IMAGE
+
+a GIF or JPEG images
+
+=item MAILARCHIVE
+
+the location of a mailing list archive
+
+=item ORGANIZATION
+
+information about an organization
+
+=item PROJECT
+
+information about a project
+
+=item SERVICE
+
+information about an on-line service
+
+=item SOFTWARE
+
+information about a software package, e.g. ROADS
+
+=item SOUND
+
+an AIFF or WAV object
+
+=item TRAINMAT
+
+training materials
+
+=item USENET
+
+information about a Usenet News conference
+
+=item USER
+
+information about a person
+
+=item VIDEO
+
+an MPEG or QuickTime object
+
+=back
+
+These default templates provide a framework for describing commonly
+occurring objects such as documents, images and sounds, and also more
+nebulous things such as network services.  The subject service
+maintainer is free to change the templates distributed with the
+ROADS software, and new templates may be created either for describing
+new types of resource - or as alternatives to the distributed
+templates.
+
+We suggest that the existing templates be used as much as possible.
+Hopefully we can avoid the situation that separate groups
+independently arrive at different ways of writing the same information
+down in the template format.  If it seems to be necessary to change a
+template, or create a new one, we recommend liasing with other ROADS
+users and the ROADS developers.
+
+
+=head1 WHAT THE END USER SEES
+
+The templates in the ROADS database are made visible to the end user
+in three ways:
+
+=over 4
+
+=item Browseable lists of resources classified according to subject
+categories, with links both to the resources themselves, and to their
+catalogue entries
+
+=item Catalogue entries which describe the resources in detail and
+provide links to them
+
+=item A search capability, the results of which lead to these resource
+descriptions
+
+=back
+
+
+=head1 CUSTOMIZATION
+
+The subject service maintainer may dramatically alter the appearance
+of the Web pages generated by the ROADS software, so as to add local
+customizations.  Consequently, two sites both using ROADS may have
+very little in common in terms of the appearance of their Web pages -
+even though the software used to generate them is the same.
+
+The maintainer has a great deal of latitude in customizing the format
+of the resource description listings, should they wish to.  The start
+and end of the HTML pages generated by the ROADS software can be
+modified using a local <em>subject listing outline</em> document.  This
+also makes it possible to specify the format which should be used for
+each entry.  This outline document is formatted just like regular HTML,
+but has special ROADS-specific tags in it which will be replaced with
+the subject listing information by the ROADS software.
+
+Likewise, the search capability may be customized so as to restrict
+the attributes which may be included in a search.  Version 2 of the ROADS
+software uses outline HTML documents to specify the format of the list
+of search results, and the format of an individual resource description
+template when it is rendered into HTML.
+
+Finally, a list of resources which have recently been added to the
+subject service can be generated automatically for by the ROADS software.
+The format of the resulting HTML document can be specified in a similar
+way to that of the subject listings, and it is possible to specify how
+long a resource remains on the list for before it is automatically
+removed.
+
+
+=head1 RUN-TIME SETTINGS
+
+The tools we supply under the banner name ``ROADS'' all read their
+run-time configuration from a single file, I<ROADS.pm>, as
+described in the installation guide.  A separate document, ``Run-time
+configuration of the ROADS software'' describes the function of each
+of these settings.
+
+By changing the values of the variables in I<ROADS.pm> you will
+alter the behaviour of the ROADS tools in this installation the next
+time they're run.  It's important to note that there are two cases
+where this does not apply:
+
+=over 4
+
+=item Tools which are already running, e.g. the ROADS WHOIS++ server,
+which normally runs permanently.
+
+=item Settings which have been used to generate static files, such as
+the HTML produced by the ``What's New'' and subject listing tools.
+
+=back
+
+Tools which are already running will need to be re-run or re-started
+before changes to the run-time configuration will affect them, and
+static files such as the subject listing HTML tree will need to be
+regenerated by re-running the tools which produced them with the
+appropriate arguments.  How best to do this for your installation is
+discussed in the section below on management tools.
+ 
+
+=head1 CUSTOMISING THE USER INTERFACE
+
+The primary user interface to the ROADS software is the World-Wide
+Web, and the HyperText Markup Language (HTML), though many ROADS
+features are also accessible from the Unix command line.  Most of the
+ROADS tools draw in their HTML from external files, rather than having
+this hard coded into the tools themselves - making it trivial to
+modify the HTML returned to the user to include local customizations
+such as logos and help text which is specific to the subject area.
+
+We also provide a number of HTML style tags which allow you to
+introduce run-time settings from your ROADS installation and dynamic
+information such as search results into the HTML generated by the
+ROADS tools.
+
+Most of the HTML associated with the ROADS tools can be found in the
+appropriate subdirectory of the ROADS I<config/multilingual>
+directory - we supply a default set of message files in
+I<config/multilingual/UK-English>, and are planning to gather together
+message sets in other European languages as part of our work on the
+DESIRE project.  Contributions would be very welcome!  This directory
+space is subdivided by tool name, so, for example, the opening page of
+HTML returned by the ROADS search tool may be found in
+I<config/multilingual/*/search/search.html>.
+
+For example, in order to customise the initial search page returned to
+the end user to include a locally produced logo, make use of HTML 3.2
+specific colour features, and hide some of the more advanced search
+options you might change I<search.html> as follows:
+
+  <HTML>
+  <HEAD>
+  <TITLE>Supercool Web Search Thingie</TITLE>
+  </HEAD>
+  <BODY BGCOLOR="#000000" TEXT="#ffffff">
+  <H1>Supercool Web Search Thingie</H1>
+  
+  <IMG SRC="/logo.gif" ALT="">
+  
+  <THISGETFORM>
+   <HR>
+   Query:<INPUT TYPE="text" NAME="query" SIZE=50>
+   <INPUT TYPE="submit" VALUE="Start search">
+   <INPUT TYPE="reset" VALUE="Clear this form">
+   <HR>
+  Type in your search term and press the <EM>start search</EM> button.
+   <HR>
+   <INPUT TYPE="checkbox" NAME="caseful" VALUE="on">Case sensitive search.
+   <INPUT TYPE="checkbox" NAME="ranking" VALUE="on">Rank results in order.
+  Type of resource:
+  <ALLTEMPLATETYPES>
+  Database:
+  <REALDATABASES>
+   <HR>
+  </FORM>
+  </HTML>
+
+The choice of a particular set of message files is determined by the
+B<Accept-Language:> and B<Accept-Charset:> settings of the user's WWW
+ browser, and defaults to English in the event that the user's preferred
+language and character set combination is unavilable.  This mechanism may
+be controlled by editing the file I<config/languages>, which indicates
+the directory which should be used for a given language and character set
+combination.
+
+Alternatively, you may prefer to take a static copy of the HTML
+dynamically generated by the ROADS software and modify this to
+incorporate your local customizations.  Note that if you do this, it
+may be necessary to re-write your HTML from time to time if the ROADS
+installation details change, e.g. when moving your HTTP server to a
+different port number.
+
+
+=head1 OTHER COOL STUFF
+
+Whilst we have concentrated on a single metadata format, the IAFA
+template, and a single search and retrieval protocol, WHOIS++ - there
+are a variety of other formats and protocols which it may be useful to
+use to mount databases created with the ROADS tools.  Similarly, there
+are a variety of other metadata formats which it may be useful to
+convert from, in order to create resource description templates for use
+with the ROADS tools.
+
+If you wish to provide access to your database for Z39.50 clients, grab
+the Zplugin from:
+
+  <URL:http://www.ilrt.bris.ac.uk/roads/software/zplugin/>
+
+This uses Index Data's Zebra Z39.50 server to provide access to ROADS
+records and includes a selection of Unix binaries to make it easy to
+set up without needing to compile the Index Data code.
+
+As part of ROADS and other related projects, UKOLN have produced a
+number of software tools which may be useful to people running ROADS
+servers:
+
+  <URL:http://www.ukoln.ac.uk/metadata/software-tools/>
+
+ADAM, one of the eLib subject gateway services using ROADS, have
+written a WWW indexing robot which can dump its results out as ROADS
+records.  You can get it from:
+
+  <URL:http://www.adam.ac.uk/adam/tech/dc.bot/>
+
+If you plan to modify the default database schema shipped with the
+ROADS software, see UKOLN's metadata pages:
+
+  <URL:http://www.ukoln.ac.uk/metadata/>
+
+and in particular, the ROADS template registry and the ROADS
+cataloguing guidlines.
+ 
+Our principal aim is a degree of interoperability with Harvest and
+Glimpse based systems using SOIF, LDAP servers using LDIF, and Z39.50
+servers using GRS-1.  We have also been investigating and
+participating in the development of the Dublin Core Element Set, which
+aims to provide a minimal set of metadata elements which may be used
+in information interchange between different systems, and in
+integrating the automated data gathering process used by WWW indexing
+systems such as the Harvest Gatherer with the cataloguing approach the
+ROADS software was originally designed around.
+
+
+=head1 SUPPORT
+
+We maintain a contact address for the ROADS team as a whole -
+I<roads-liaison@bristol.ac.uk>, which we recommend that you use as
+your first point of contact with us in the event of any problems or
+questions.
+
+We also run a number of mailing lists related to the ROADS software.
+In particular, you might want to subscribe to one or both of the
+following:
+
+=over 4
+
+=item I<open-roads>
+
+for general discussions about the ROADS software.
+
+=item I<roads-hackers>
+
+for explicitly technical discussions, e.g. changes to the code base.
+
+=back
+
+You can join these lists by sending an email message to
+I<majordomo@net.lut.ac.uk> consisting of the word I<subscribe> followed
+by the mailing list's name, e.g.  
+
+  subscribe roads-hackers
+
+Our mailing lists are archived via the World-Wide Web at:
+
+  http://www.roads.lut.ac.uk/lists/
+
+
+=head1 UPGRADING
+
+People upgrading from version 1 of the ROADS software should be aware
+that:
+
+More tools now use our generic HTML rendering code - see
+I<config/multilingual/*> for tool names.
+
+The format and location of some of the configuration files has changed.
+In particular, those of the subject listing and What's New tools.
+
+The various ROADS library routines have been repackaged as modules in
+the B<ROADS::> namespace.  This process is only partially complete as
+of version 2 - in that there still exists a complex web of dependencies
+between modules, e.g. through the use of global variables.
+
+There's no longer a separate ROADS manual - this is now generated from
+the embedded POD documentation within the ROADS tools and library modules.
+
+
+=head1 CHANGES
+
+Changes since version 1 of the ROADS software include the following :-
+
+=over 4
+
+=item Sensible defaults.
+
+In version 1 of the ROADS software we chose some deliberately obtuse
+default settings and values, in an attempt to force people to
+configure the software for their own services.  This didn't work too
+well in practice, so now we try to provide sensible defaults in the
+first place!
+
+=item Variants and clusters.
+
+The WWW based template editor (I<admin-cgi/mktemp.pl>) now allows you
+to dynamically alter the number of variants and clusters in a record.
+Additional buttons appear in the main template editor form for each
+cluster (e.g. user, organization, and so on) and variant (e.g. URI).
+
+=item Trusted information providers.
+
+I<admin-cgi/mktemp.pl> now supports the concept of access controls on
+templates, so that trusted information providers may be restricted as
+to which templates they can edit and the options (e.g. check in to
+database, offline entry, email to administrator) they can use.  A new
+WWW based admin tool I<admin-cgi/tempuserauth.pl> has been provided
+to make it easier to administer these access control lists.
+
+=item Identifying duplicate URLs.
+
+A new tool I<bin/dup_urls.pl> has been produced to do this.  It also
+has a WWW based front end - I<admin-cgi/dup_urls.pl>.
+
+=item More flexible search forms.
+
+In ROADS version 1 it was only possible to have a single HTML form
+returned when someone called the search program I<cgi-bin/search.pl>.
+With version 2 it's now possible to have multiple search forms, with
+the filename of the form to dump out specified by a CGI parameter
+B<form>.  See L<cgi-bin/search> for more information on how we've
+implemented this.
+
+On the search form, we now support up to three attribute/value pairs,
+as an alternative to the single text entry box which we supported in
+ROADS versions 0 and 1.  The rationale is that this approach can be
+used to add additional search constraints via hidden HTML form fields,
+and also to provide end users with a simple user interface to
+potentially complex Boolean searching operations.  The sample search
+configuration we ship with the ROADS software shows how this can be
+used to implement dynamic browsing by subject category as an example.
+
+=item Multiple views of search results.
+
+In ROADS version 1, you could configure the way search results were
+rendered, but they would always be rendered the same way.  In version
+2 we've added the ability to render the search results in multiple
+formats, with the format again selected by a CGI variable - B<view>
+in this case.
+
+Furthermore, we've made it possible to associate different rendering
+rules with a particular record depending on heuristics such as the
+type of the record (image, document, and so on) and the server it was
+returned by (when cross-searching multiple servers).  For more
+information, see L<lib/ROADS/Render.pm>.
+
+=item Children in subject listings.
+
+It's now possible to indicate parent/child relationships between
+resources when generating subject listings.  See L<bin/addsl.pl> and
+L<bin/cullsl.pl> for more information.
+
+=item Additional record types.
+
+We've bundled the TRAINMAT schema definition being used by the eLib
+Netskills project and the PROJECT schema definition being used by
+UKOLN for their eLib projects database.
+
+=item Improved documentation.
+
+All programs and library files are now documented using Perl's POD
+format, and a Perl based Pod to SGML converter has been written.
+This makes it possible to provide versions of the ROADS documentation
+in a multiplicity of formats, including plain text, HTML, RTF, and
+PostScript.
+
+The technical documentation tries to cover a number of the common
+scenarios encountered when installing/configuring the ROADS software
+and setting up a service based on it.  See L<Configure> for more
+information.
+
+=item Inserting clusters.
+
+It's now possible to insert other records into cluster sections of
+new/updated records being edited using the WWW based template editor.
+See L<admin-cgi/mktemp.pl> for more information.
+
+=item Creating new templates based on existing ones.
+
+In the main I<admin-cgi/mktemp.pl> editing screen, type in the name
+of the template handle you would like to be created whilst editing
+an existing template - the result will be saved as a new record with
+this handle.
+
+=item Context sensitive help.
+
+I<admin-cgi/mktemp.pl> now supports context sensitive help, with the
+ability to display brief notes next to nominated fields of nominated
+template types.  These are HTML fragments stored in the HTML
+messages directory.  See L<admin-cgi/mktemp.pl> for more information.
+
+=item Commonly used attributes.
+
+We now ship a B<Common Elements> view with the ROADS template editor
+I<admin-cgi/mktemp.pl>.  This lets you restrict the attributes which
+the template editor displays to ones which a survey of ROADS users
+determined were the most popular.
+
+=item Substring searching.
+
+We now support the WHOIS++ "substring" search constraint, allowing
+for matches against substrings in indexed terms.
+
+=item Configurable indexing.
+
+It's now possible to control the way that the ROADS index builder
+creates its index, by setting the I<lib/ROADS.pm> variable
+I<ROADS::IndexSplitPattern>.  This means that, for instance, you can
+arrange for whole URLs to be indexed.  Just make sure you have lots
+of memory free :-)
+
+=item Access control on admin programs.
+
+All of the programs in the "admin" area (distributed as I<admin-cgi>)
+now support fine grained access control based on the user name value
+supplied by the HTTP server after authentication.  This appears in
+the process environment as the variable B<REMOTE_USER>.  For more
+information, see L<lib/ROADS/Auth.pm>.
+
+=item What's new listings.
+
+This is now more flexible, including the ability to restrict the list
+generated to the last N resources added, and resources added since a
+particular date.  See L<bin/addwn.pl> for more infomation.
+
+=item Subject and What's New views.
+
+Both the subject listing and What's New tools now use the generic
+ROADS library code for rendering records into HTML.  For more
+information, see L<lib/ROADS/HTMLOut.pm> and L<lib/ROADS/Render.pm>.
+
+As an example of the flexibility of this approach, we include a
+BUBL style mailhost view with the What's New tool.
+
+=item Link checker enhancements.
+
+The ROADS link checker I<bin/lc.pl> now detects when a resource has
+been updated by monitoring the HTTP B<Last-modififed> and
+B<Content-length> headers.  It also supports a new argument I<-w>
+which may be used to flag resources which have been updated in a given
+number of days - i.e. as a measure of currency.
+
+=item Cross-searching.
+
+We now support the indexing and searching of other WHOIS++ servers
+using the WHOIS++ indexing protocol defined in RFC 1913.  We also
+include preliminary support for the Common Indexing Protocol being
+promulgated by the Internet Engineering Task Force.  For more
+information, see L<bin/wig.pl>.
+
+In addiiton to the native WHOIS++ indexing and searching support,
+we also ship code to index (by generating RFC 1913 centroids) both
+Harvest and Z39.50 servers, and to gateway WHOIS++ queries to
+both types of server.  The Harvest support (see L<bin/harvest_shim.pl>
+and L<bin/harvest_centroid.pl>) is pretty much complete, and
+shouldn't need major changes to get working.  By contrast, the
+Z39.50 support (see L<bin/z3950_shim.pl> and L<bin/z3950_centroid.pl>)
+is likely to require significant changes for use outside its
+intended environment - because of the complexity of the Z39.50
+protocol and its attendant interoperability problems.
+
+=item I18N.
+
+It's now possible, at least in a limited sense, to use the ROADS
+software to enter, search for, and retrieve records which contain
+localized characters such as those in the ISO Latin 1 character set
+(ISO 8859-1).  Since most WWW browsers do not currently support HTML
+4's tagging of form input fields with localization information, or
+strip input fields to US ASCII, this feature is likely to only be of
+limited use for the moment.
+
+=back
+
+=head1 COPYRIGHT
+
+Copyright (c) 1988, Martin Hamilton E<lt>martinh@gnu.orgE<gt> and Jon
+Knight E<lt>jon@net.lut.ac.ukE<gt>.  All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+It was developed by the Department of Computer Studies at Loughborough
+University of Technology, as part of the ROADS project.  ROADS is funded
+under the UK Electronic Libraries Programme (eLib), the European
+Commission Telematics for Research Programme, and the TERENA
+development programme.
+
+
+=head1 AUTHORS
+
+Martin Hamilton E<lt>martinh@gnu.orgE<gt>,
+Jon Knight E<lt>jon@net.lut.ac.ukE<gt>,
+with apologies to Tom Christiansen, and Larry Wall :-)
+

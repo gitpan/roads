@@ -1,0 +1,25 @@
+Template-Type:		PROJECT
+Handle::::m:
+URI:80:::o:
+Project-Acronym::::o:
+Short-Title::::o:
+Title::::m:
+Alternative-Title::::o:
+Description:40:5::o:
+Programme::::o:
+Programme-Area::::o:
+Lead-(ORGANIZATION*)::::o:
+Partner-(ORGANIZATION*)::::o:
+Project-Manager-(USER*)::::o:
+Project-Contact-(USER*)::::o:
+Project-Assessor-(USER*)::::o:
+Keywords::::o:
+Subject-(DESCRIPTOR*)::::o:
+Start-Date::::o:
+End-Date::::o:
+Funding::::o:
+To-Be-Reviewed-Date::::o:
+Record-Last-Verified-Email::::o:
+Record-Last-Verified-Date::::o:
+Destination::::o:
+Comments::::o:

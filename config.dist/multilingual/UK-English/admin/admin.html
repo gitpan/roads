@@ -1,0 +1,38 @@
+<HTML>
+<HEAD>
+<TITLE><ROADSSERVICENAME> Search Engine</TITLE>
+<LINK REL="StyleSheet" HREF="/<HTDOCS>/looknfeel/thatroadslook.css"
+  TYPE="text/css">
+</HEAD>
+<BODY>
+<H1><ROADSSERVICENAME> Search Engine</H1>
+
+<THISGETFORM>
+ <HR>
+ Query:<INPUT TYPE="text" NAME="query" SIZE=30>
+ <INPUT TYPE="submit" VALUE="Start search">
+ <INPUT TYPE="reset" VALUE="Clear this form">
+ <HR>
+To search for networked resources, enter one or more terms. You will
+find only resources where ALL terms are relevant. You may also use the
+expressions AND, OR and NOT to specify your search more precisely.
+ <HR>
+ <INPUT TYPE="checkbox" NAME="caseful" VALUE="on">Case sensitive search.
+ <INPUT TYPE="checkbox" NAME="headlines" VALUE="on">Titles only.
+ <INPUT TYPE="checkbox" NAME="stemming" VALUE="on" CHECKED>Stemming.
+ <INPUT TYPE="checkbox" NAME="ranking" VALUE="on">Ranking.
+ <INPUT TYPE="checkbox" NAME="debug" VALUE="on">Debug.
+ <INPUT TYPE="hidden" NAME="method" VALUE="any"><P>
+Type of resource:
+<ALLTEMPLATETYPES>
+Database:
+<DATABASES>
+ <HR>
+</FORM>
+<ADDRESS>Developed by <A HREF="http://hill.lut.ac.uk/People/jon.html">Jon
+Knight</A> and <A HREF="http://www.net.lut.ac.uk/~martin/">Martin
+Hamilton</A>
+</ADDRESS>
+</BODY>
+</HTML>
+

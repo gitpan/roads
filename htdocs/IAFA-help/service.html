@@ -1,0 +1,171 @@
+<HTML>
+<HEAD>
+<TITLE>Field Descriptions for SERVICE templates</TITLE>
+</HEAD>
+<BODY>
+<H1>Field Descriptions for SERVICE IAFA Template Types</H1>
+
+This document is extracted from the IAFA Templates Internet Draft and is
+intended to provide a little online guidance on the sort of the things
+that should be placed in the various fields.  Note that not all fields
+need to be filled in; which ones you use as a "minimum" set depend on
+your application.
+
+<PRE>
+<EM>   Data Element Name        Description.</EM>
+
+<A NAME="Handle">   <STRONG>Handle:</STRONG>                  Handle of object.
+<A NAME="Category">   <STRONG>Category:</STRONG>                Type of object. See <A HREF="#note1">Note &lt;1&gt;</A>
+<A NAME="Title">   <STRONG>Title:</STRONG>                   Title of service.
+<A NAME="Short-Title">   <STRONG>Short-Title:</STRONG>             Summary title (if the Title is
+                            very long).
+<A NAME="Alternative-Title">   <STRONG>Alternative-Title:</STRONG>     An alternative to
+                            the <A HREF="#Title">Title</A> or <A HREF="#Short-Title">Short-Title</A>
+                            title fields.
+<A NAME="Source">   <STRONG>Source:</STRONG>                  Information as to the definitive version
+<A NAME="Discussion">   <STRONG>Discussion:</STRONG>              Free text description of possi-
+                            ble discussion forums (USENET
+                            groups, mailing lists) appropri-
+                            ate for this object.
+<A NAME="Language">   <STRONG>Language-v*:</STRONG>             The name of the language in
+                            which the object is written. For
+                            documents this would be the
+                            natural language.
+<A NAME="ISSN">   <STRONG>ISSN-v*:</STRONG>                 The International Standard
+                            Serial Number of the object.
+<A NAME="URI">   <STRONG>URI:</STRONG>                     URI of service.
+<A NAME="Admin">   <STRONG>Admin-(<A HREF="user.html">USER</A>*):</STRONG>           Contact information of person or
+                            group responsible for service
+                            administration (administrative
+                            contact).
+
+<A NAME="Owmer">   <STRONG>Owner-(<A HREF="organization.html">ORGANIZATION</A>*):</STRONG>   Information on organization
+                            responsible for this service.
+
+<A NAME="Sponsoring">   <STRONG>Sponsoring-(<A HREF="organization.html">ORGANIZATION</A>*):</STRONG>
+                            Contact information for the
+                            organization sponsoring this
+                            site.
+
+<A NAME="Description">   <STRONG>Description:</STRONG>             Free text description of ser-
+                            vice.
+
+<A NAME="Authentication">   <STRONG>Authentication:</STRONG>          Authentication information. Free
+                            text field supplying login and
+                            password information (if neces-
+                            sary) or other method for
+                            authentication.
+
+<A NAME="Registration">   <STRONG>Registration:</STRONG>            How to register for this service
+                            if general access is not avail-
+                            able.
+
+<A NAME="Charging-Policy">   <STRONG>Charging-Policy:</STRONG>         Free text field describing any
+                            charging mechanism in place.
+                            Additionally, fee structure may
+                            be included in this field.
+
+<A NAME="Access-Policy">   <STRONG>Access-Policy:</STRONG>           Policies and restrictions for
+                            using this service.
+
+<A NAME="Access-Times">   <STRONG>Access-Times:</STRONG>            Time ranges for mandatory or
+                            preferred access of service.
+
+<A NAME="Keywords">   <STRONG>Keywords:</STRONG>                Keywords appropriate for
+                            describing this service.
+
+<A NAME="Subject-Descriptor-Scheme">   <STRONG>Subject-Descriptor-Scheme-v*:</STRONG>Name of classification
+                            scheme used in the corresponding 
+                            <A HREF="#Subject-Descriptor">Subject-Descriptor</A> field.
+<A NAME="Subject-Descriptor">   <STRONG>Subject-Descriptor-v*:</STRONG>   A classification
+                            mark for the resource.
+<A NAME="To-Be-Reviewed-Date">   <STRONG>To-Be-Reviewed-Date:</STRONG>     Date on which the resource is
+                            expected to require re-assessment.
+<A NAME="Record-Last-Verified-Email">   <STRONG>Record-Last-Verified-Email:</STRONG>Email address of the
+                            person who last verified this 
+                            template.
+<A NAME="Record-Last-Verified-Date">   <STRONG>Record-Last-Verified-Date:</STRONG>Date of the last
+                            verification of this template.
+<A NAME="Comments">   <STRONG>Comments:</STRONG>                Comments by the template
+                            creator(s).
+<A NAME="Destination">   <STRONG>Destination:</STRONG>             Records which database(s)
+                            a template will go into once
+                            evaluation procedures have 
+                            been completed.
+
+</PRE>
+
+<HR>
+Notes for these templates:
+<P>
+<A NAME="note1">&lt;1&gt;  The intention of this field is to define the category     of the object. For example, in the case of documents it
+     could be "Technical Report", or "Conference Paper" and
+     the name and date of the conference at which the paper
+     was presented. It may also be something like "General
+     Guide" or "User manual".
+<HR>
+
+<H2>Examples</H2>
+
+<H3>Example 1:</H3>
+
+The following is an example of an entry for a telnet ser-
+vice.
+
+<PRE>
+   Template-Type:           SERVICE
+   Title:                   Census Bureau information server
+   URI:                     telnet://census.ispy.gov:1234
+   Admin-Name:              Jay Bond
+   Admin-Postal:            PO Box. 42, A Street Washington
+                            DC, USA 20001
+   Admin-Work-Phone:        +1 202 222 3333
+   Admin-Work-Fax:          +1 202 444 5555
+   Admin-Email:             jb007@census.ispy.gov
+   Description:             This server provides information
+                            from the latest USA Census
+                            Bureau statistics (1990) Type
+                            "help" for more information.
+   Authentication:          Once connected type your email
+                            address at the "login:" prompt.
+                            No password is required.
+   Registration:            No formal registration is
+                            required
+   Charging-Policy:         There is no charge for the use
+                            of this service
+   Access-Times:            9:00 EST / 17:00 EST
+   Access-Policy:           This service may not be used by
+                            sites in the Republic of the
+                            VTTS
+   Keywords:                census, population, 1990,
+                            statistics
+   Record-Last-Modified-Name:
+                            Miss Moneypenny
+   Record-Last-Modified-Email:
+                            m.moneypenny@census.ispy.gov
+   Record-Last-Modified-Date:
+                            Wed, 1 Jan 1970 12:00:00 GMT
+</PRE>
+
+<H3>Example 2:</H3>
+
+The following is an example of a mailing list (service).
+
+<PRE>
+   Template-Type:           SERVICE
+   Title:                   fishlovers
+   URI:                     fishlovers@foo.com
+   Admin-Name:              Ima Adams
+   Admin-Email:             fishlovers-request@foo.com
+   Registration:            Send mail to the administrative
+                            address with your own email
+                            address requesting addition
+   Description:             Discussion list for people who
+                            love fish of all types
+   Keywords:                fish, aquarium, marine, freshwa-
+                            ter, saltwater
+   Access-Policy:           Any Internet user may subscribe
+                            to this mailing list
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# init.wppd - sample run-level script to start/stop ROADS WHOIS++ server
+#             for Unixes which used the System V style init setup
+
+# Author: Martin Hamilton <m.t.hamilton@lut.ac.uk>
+# $Id: init.wppd,v 3.1 1998/09/05 14:00:05 martin Exp $
+
+# Typical usage...  Save this script as (e.g.) /etc/init.d/init.wppd
+# and make symlinks to the run-levels you want to start/stop at, e.g.
+# 'ln -s /etc/init.d/init.wppd /etc/rc2.d/S88wppd'.  Locations may
+# vary from one OS/init distribution to another!
+
+# Edit me if necessary!
+ROADS=/usr/local/roads
+
+[ -f $ROADS/bin/wppd.pl ] || exit 0
+
+case "$1" in
+  start)
+	(su -c "$ROADS/bin/wppdc.pl start" nobody);
+        ;;
+  stop)
+	$ROADS/bin/wppdc.pl stop
+        ;;
+  *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+esac
+
+exit 0

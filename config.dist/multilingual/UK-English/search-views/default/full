@@ -1,0 +1,18 @@
+<dl>
+<dt>
+<a href="<@URI>">
+<b CLASS=DCtitle><@TITLE "no title available"></b></a>
+<dd>
+<p>
+<em CLASS=DCdescriptor>Description:</em><br> <SPAN CLASS=DCdescriptorcontent><@DESCRIPTION "no description supplied"> </SPAN>
+<p>
+<em CLASS=DCkeyword>Keywords:</em><br> <SPAN CLASS=DCkeywordcontent><@KEYWORDS></SPAN>
+<p>
+<em class=DCidentifier>Accessible from:</em><br>
+<ul>
+<SPAN class=DCidentifiercontent>
+<FOREACH "<li> not available on-line"> <li> <a href="<@URI>" ><@URI></a>
+</span>
+</ul>
+<p>
+</dl>

@@ -1,0 +1,17 @@
+<dl>
+<dt>
+<a href="<@URI>">
+<b><@TITLE "no title available"></b></a>
+<dd>
+<font color=ffffff>
+<em>Description:</em><br> <@DESCRIPTION "no description supplied"> 
+<BR>
+<em>Keywords:</em><br> <@KEYWORDS>
+<p>
+<em>Accessible from:</em><br>
+<ul>
+<FOREACH "<li> not available on-line"> <li> <a href="<@URI>"><@URI></a> 
+</ul>
+</font>
+<p>
+</dl>

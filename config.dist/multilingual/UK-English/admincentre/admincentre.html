@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+<HEAD>
+<TITLE>ROADS Admin Centre</TITLE>
+</HEAD>
+<BODY>
+<H1>ROADS Admin Centre</H1>
+
+<P><STRONG>NB:</STRONG> See also
+<A HREF="http://www.roads.lut.ac.uk/v2/Manual/">the
+online documentation</A> for the ROADS software!</P>
+
+<P>WHOIS++ server maintenance:</P>
+
+<FORM METHOD="GET" ACTION="<MYURL>/<ADMIN-CGI>/wppdc.pl">
+<SELECT NAME="operation">
+<OPTION CHECKED VALUE="status">Check status of WHOIS++ server
+<OPTION VALUE="start">Start WHOIS++ server
+<OPTION VALUE="stop">Stop WHOIS++ server
+<OPTION VALUE="restart">Restart WHOIS++ server
+<OPTION VALUE="safetyfirst">Restart WHOIS++ server if not running already
+</SELECT>
+<INPUT TYPE="SUBMIT" VALUE="Go">
+</FORM>
+
+<P>Resource description templates:</P>
+
+<P>
+<FORM ACTION="<MYURL>/<ADMIN-CGI>/mktemp.pl" METHOD="POST">
+<INPUT TYPE="hidden" NAME="language" VALUE="en">
+<INPUT TYPE="hidden" NAME="charset" VALUE="iso-8859-1">
+<INPUT TYPE="hidden" NAME="templatetype" VALUE="DOCUMENT">
+<INPUT TYPE="hidden" NAME="asksize" VALUE="sizes">
+<INPUT TYPE="hidden" NAME="view" VALUE="Quick Edit">
+<INPUT TYPE="hidden" NAME="op" VALUE="text">
+<INPUT TYPE="hidden" NAME="mode" VALUE="create">
+<INPUT TYPE="hidden" NAME="originalhandle" VALUE="">
+<INPUT TYPE="hidden" NAME="partdone" VALUE="yes">
+<INPUT TYPE="hidden" NAME="clusterAuthor" VALUE="1">
+<INPUT TYPE="hidden" NAME="variantsize" VALUE="1">
+<INPUT TYPE="submit" VALUE="Quick DOCUMENT Template Creation">
+</FORM>
+
+<FORM ACTION="<MYURL>/<ADMIN-CGI>/mktemp.pl" METHOD="POST">
+<INPUT TYPE="hidden" NAME="language" VALUE="en">
+<INPUT TYPE="hidden" NAME="charset" VALUE="iso-8859-1">
+<INPUT TYPE="hidden" NAME="templatetype" VALUE="SERVICE">
+<INPUT TYPE="hidden" NAME="asksize" VALUE="sizes">
+<INPUT TYPE="hidden" NAME="view" VALUE="Quick Edit">
+<INPUT TYPE="hidden" NAME="op" VALUE="text">
+<INPUT TYPE="hidden" NAME="mode" VALUE="create">
+<INPUT TYPE="hidden" NAME="originalhandle" VALUE="">
+<INPUT TYPE="hidden" NAME="partdone" VALUE="yes">
+<INPUT TYPE="hidden" NAME="clusterAuthor" VALUE="1">
+<INPUT TYPE="hidden" NAME="variantsize" VALUE="1">
+<INPUT TYPE="submit" VALUE="Quick SERVICE Template Creation">
+</FORM>
+</P>
+<UL>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/mktemp.pl">Create a new template,
+  or edit an existing one</A></LI>
+<LI> <A HREF="<MYURL>/<CGI-BIN>/tempbyhand.pl">Display the contents of a given
+  template</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/admin.pl">Search for, then edit, an existing 
+  template</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/mkinv.pl">Index the ROADS database
+   manually</A> - normally done for you by the editor</LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/deindex.pl">Remove a template
+  from the database</A></LI>
+</UL>
+
+<P>Checking:</P>
+
+<UL>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/bogus.pl">Check the integrity
+  of the ROADS software installation</A></LI>
+<BR>
+<BR>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/iafa_lint.pl">Check the syntax of
+  the templates in the ROADS database</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/dup_urls.pl">Check templates for
+  duplicate URLs</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/review.pl">Check which resource
+  descriptions are due for review</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/freq.pl">Term frequency counter</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/countattr.pl">Template statistics</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/lc.pl">Check the links (URLs) in the ROADS 
+  database</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/report.pl">View link checking summary 
+  report</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/dodgy.pl">List resources which have been 
+  consistently inaccessible</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/exterminate.pl">Remove resources which 
+  have repeatedly been inaccessible</A></LI>
+</UL>
+
+<P>ROADS installation:</P>
+
+<UL>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/info.pl">View ROADS installation
+  settings</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/mktemp-config-editor.pl">Edit template 
+  editor TIPS permissions</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/stoplist.pl">Show terms which are not
+  indexed</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/stopattr.pl">Show template attributes
+  which are not indexed</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/expansions.pl">Show query expansions
+  used with stemming</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/search_restrict.pl">Show search
+  restrictions for end users</A></LI>
+<LI> <A HREF="<MYURL>/<ADMIN-CGI>/admin_restrict.pl">Show search
+  restrictions for admin users</A></LI>
+</UL>
+
+<A HREF="<MYURL>/<ADMIN-CGI>/register.pl">Register this ROADS server</A><BR>
+<A HREF="mailto:roads-liaison@bristol.ac.uk">Send bug report!</A><BR>
+
+<P><EM>$Id: admincentre.html,v 2.15 1998/08/06 11:28:07 jon Exp $<EM></P>
+
+<HR>
+<ADDRESS>Developed by <A HREF="http://hill.lut.ac.uk/People/jon.html">Jon
+Knight</A> and <A HREF="http://www.net.lut.ac.uk/~martin/">Martin
+Hamilton</A>
+</ADDRESS>
+</BODY>
+</HTML>
+

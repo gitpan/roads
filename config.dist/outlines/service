@@ -1,0 +1,30 @@
+Template-Type:           SERVICE
+Handle::::m:
+Template-Version:::1:o:
+Title::2::m:
+URI-v*:80:::o:
+Admin-(USER*)::::o:
+Owner-(ORGANIZATION*)::::o:
+Sponsoring-(ORGANIZATION*)::::o:
+Publisher-(ORGANIZATION*)::::o:
+Description:25:5::o:
+Authentication::::o:
+Registration::::o:
+Charging-Policy::::o:
+Access-Policy::::o:
+Access-Times::::o:
+Keywords::::o:
+Subject-(DESCRIPTOR*)::::o:
+Relation-(RELATION*)::::o:
+Short-Title::::o:
+Alternative-Title::::o:
+Language-v*::::o:
+ISSN::::o:
+Discussion::::o:
+Source::::o:
+Category:::None|Bibliography|Database|Electronic journal|FAQ|Interactive tutorial|Quiz|Series|Subject guide|Technical report|Textbook|User guide:o:
+To-Be-Reviewed-Date::::o:
+Record-Last-Verified-Email::::o:
+Record-Last-Verified-Date::::o:
+Comments::::o:
+Destination::::o:

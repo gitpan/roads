@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>Organization Clusters matching query: <QUERY> in <ROADSSERVICENAME></title>
+</head>
+<body>
+
+<h2>Organization Clusters matching query: <QUERY> in <ROADSSERVICENAME></h2>
+
+<RESULTS>
+
+<dl>
+ <dt>Name:</dt> 
+  <dd><@NAME "no name supplied"></dd>
+ <dt>Type:</dt>
+  <dd><@TYPE></dd>
+ <dt>Postal:</dt>
+  <dd><@POSTAL></dd>
+ <dt>Email:</dt>
+  <dd><@EMAIL></dd>
+</dl>
+
+</RESULTS>
+
+</body>
+</html>
+

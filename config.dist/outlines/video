@@ -1,0 +1,35 @@
+Template-Type:		VIDEO
+Handle::::m:
+Template-Version:::1:o:
+Category:::None|Bibliography|Database|Electronic journal|FAQ|Interactive tutorial|Quiz|Series|Subject guide|Technical report|Textbook|User guide:o:
+Title::2::m:
+URI-v*:80:::o:
+Short-Title::::o:
+Alternative-Title::::o:
+Author-(USER*):10:10::o:
+Admin-(USER*)::::o:
+Source::::o:
+Requirements:40:5::o:
+Description:40:5::o:
+Citation::::o:
+Publication-Status::::o:
+Publisher-(ORGANIZATION*)::::o:
+Copyright::::o:
+Creation-Date::::o:
+Discussion::::o:
+Keywords::::o:
+Version-v*::::o:
+Format-v*:::MPEG|nv|H261|AVI|JPEG:o:
+Size-v*::::o:
+Language-v*::::o:
+Character-Set-v*::::o:
+ISBN-v*::::o:
+ISSN-v*::::o:
+Last-Revision-Date-v*::::o:
+Subject-(DESCRIPTOR*)::::o:
+Relation-(RELATION*)::::o:
+To-Be-Reviewed-Date::::o:
+Record-Last-Verified-Email::::o:
+Record-Last-Verified-Date::::o:
+Comments::::o:
+Destination::::o:

@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>User Clusters matching query: <QUERY> in <ROADSSERVICENAME></title>
+</head>
+<body>
+
+<h2>User Clusters matching query: <QUERY> in <ROADSSERVICENAME></h2>
+
+<RESULTS>
+
+<dl>
+ <dt>Name:</dt> 
+  <dd><@NAME "no name supplied"></dd>
+ <dt>Job-Title:</dt>
+  <dd><@JOB-TITLE "no job title supplied"></dd>
+ <dt>Department</dt>
+  <dd><@DEPARTMENT "no department supplied"></dd>
+ <dt>Work-Postal:</dt>
+  <dd><@WORK-POSTAL></dd>
+ <dt>Work-Phone:</dt>
+  <dd><@WORK-PHONE></dd>
+ <dt>Email:</dt>
+  <dd><@EMAIL></dd>
+</dl>
+
+</RESULTS>
+
+</body>
+</html>
+

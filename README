@@ -1,0 +1,246 @@
+
+                   ROADS software version 2.00
+                   ---------------------------
+
+WHAT IS THIS ?
+
+The ROADS software is a collection of tools which can be used in
+building on-line catalogues.  Key features of the package are :-
+
+  . Simple text based resource description format
+  . World-Wide Web forms based resource description editor
+  . WWW and WHOIS++ based search capability 
+  . Automatic generation of customised views of the
+      catalogue, e.g. breakdowns by subject category
+  . Automatic generation of listings of recently added
+      resources
+  . Dynamic browsing of resources in particular subject
+      categories
+  . Highly customizable HTML output
+  . Distributed indexing and searching across multiple
+      WHOIS++ servers using the Common Indexing Protocol
+      (centroids)
+  . Limited support for indexing and searching Harvest
+      and Z39.50 servers
+  . Tested for Year 2000 compliance according to the
+      British Standards Institute's check list
+
+It also features a number of World-Wide Web based database
+administration tools, e.g.
+
+  . Index maintenance
+  . Removing/archiving old resource descriptions
+  . Overall installation consistency checking
+  . Resource description consistency checking
+  . Review date checking
+  . Checking for broken links (dangling URLs)
+  . Checking for duplicate URLs
+  . Checking for URL currency, e.g. records which
+      have (or have not) been changed recently
+
+Most of these tools can be used independently of each other.  You
+could choose, for example, not to support searching via WHOIS++ - or
+not to generate subject category breakdowns of your resource
+descriptions.  However, all of the tools are written to manipulate
+their data in the IAFA template format, a popular way of writing
+simple Internet resource descriptions.
+
+
+BACKGROUND
+
+The aim of this work is to provide infrastructure software to support
+a number of Subject Based Services, sometimes referred to as SBIGs.
+
+The development of this software was funded by the Resource
+Organisation and Discovery in Subject-based Services (ROADS) project
+of the UK Electronic Libraries Programme (aka eLib), and by the
+European Commission under the Telematics for Research programme.  This
+project is known as DESIRE, which is actually short for Development of
+a European Service for Information on Research and Education (phew!).
+
+More information about ROADS is available at the Institute for
+Learning and Research Technology (ILRT) at Bristol University :-
+
+  <URL:http://www.ilrt.bris.ac.uk/roads/>
+
+More information about eLib and the eLib subject services is available
+from the UK Office of Library and Information Networking (UKOLN),
+based at the University of Bath :-
+
+  <URL:http://www.ukoln.ac.uk/elib/>
+
+The DESIRE project has an overall home page :-
+
+  <URL:http://www.desire.org/>
+
+The resource discovery and indexing sub group of DESIRE has a WWW
+presence at :-
+
+  <URL:http://www.ub2.lu.se/desire/>
+
+
+THE AUTHORS
+
+This software was written by Jon Knight and Martin Hamilton, in the
+Department of Computer Studies at Loughborough University of
+Technology, deep in the heart of the English Midlands.  We have been
+aided and abetted by a number of people, who ran alpha and beta test
+versions of the code, contributed bug reports and (best of all!) bug
+fixes.  In particular, we'd like to thank Mark Burrell, Debra Hiom,
+Andy Powell, Rebecca Bradshaw, Bob Parkinson, Dan Brickley, Jasper
+Tredgold, Donal Hanna, Bill Jupp, Thomas Krichel and Virginia Knight.
+
+
+REQUIREMENTS
+
+This version of the ROADS software requires 
+
+  . a Unix-like operating system, e.g. Linux or FreeBSD
+  . Perl 5.002 or above (5.004 recommended)
+  . an HTTP daemon which supports the Common Gateway
+      Interface (CGI) specification, e.g. the Apache
+      or NCSA servers.
+
+In order to run the link checking tool, and its associated report
+generator, you will need libwww-perl-5, which may be obtained from
+
+  <URL:http://www.sn.no/libwww-perl/>
+
+or your nearest Comprehensive Perl Archive Network (CPAN) site, which
+you can find by pointing your WWW browser at
+
+  <URL:http://www.perl.com/CPAN/>
+
+The ROADS software was developed mostly under SunOS 4.1.4 and Linux
+2.0, using the Apache HTTP server.  It has also been lightly tested
+under other variants of Unix, including IRIX 5, HP/UX 9, Digital Unix
+(OSF/1) and Solaris 2.  Please let us know if you have any difficulty
+in getting it running on your platform!
+
+
+INSTALLATION
+
+The ROADS software distribution is packaged up as a compressed UNIX
+tar file.  To extract the installation from this file use:
+
+  zcat roads-v2.00.tar.Z | tar xvf -
+
+Make sure that you use binary mode if you transfer the compressed tar
+file across the network using FTP otherwise it will be damaged in
+transit and will not be usable.
+
+Once the tar file has been expanded you should find that you have a
+directory called roads-v2.00.
+
+Before you start installing the software, we suggest that you read the
+installation guide, which you will find along with our other on-line
+documentation at:
+
+  http://www.roads.lut.ac.uk/v2/Manual/
+
+To install the software, enter the roads-v2.00 directory and type:
+
+  ./Configure
+
+If this doesn't work, try
+
+  perl ./Configure
+
+You may need to give the full path to Perl, e.g.
+
+ /usr/local/bin/perl ./Configure
+
+This runs a configuration script which will find out about your
+machine, ask you some simple questions about where you wish to install
+the ROADS software and documentation and then proceed to install the
+software.  The ROADS software does NOT need to run as the "root"
+superuser on your machine but it is important that the user the HTTP
+daemon runs as (e.g. nobody) is able to read the files which the ROADS
+software generates.
+
+Installation of the software need not take place as root, unless you
+do not have write access to all of the directories involved in the
+installation.  If in doubt, you can install the ROADS software in the
+directory in which it was unpacked - which will NOT require root.
+
+Depending on which components of the ROADS software you choose to use,
+you may need to grant your HTTP daemon write access to some of the
+ROADS files and directories.  This is discussed in detail in the
+appropriate sections of the documentation.
+
+
+DOCUMENTATION
+
+A (nearly!) comprehensive set of of technical documentation is
+available alongside this release.  We have tried to document the
+following:
+
+  . the installation process itself
+  . programs used to maintain the ROADS installation
+  . programs used to manage databases of resource descriptions
+  . programs interacted with by end users
+  . configuration file formats
+  . log file formats
+  . internal file formats
+
+Technical notes on the overall installation and configuration process
+will be forthcoming in a future release, as will documentation aimed
+at the non-technical user and end-user.
+
+We maintain a software and documentation archive at Loughborough
+University of Technology.  This can be reached on the Web as
+
+  <URL:http://www.roads.lut.ac.uk/>
+
+Look out for draft documentation and information about new versions of
+the software here!
+
+Hint: the ROADS tools are self-documenting, using Perl's "POD" system.
+This means that you can get to the documentation for a program or
+library module by typing something like :-
+
+  perldoc bin/addsl.pl
+
+i.e. "perldoc" followed by the path to the Perl code.
+
+
+SAMPLE DATABASE
+
+The ROADS software ships with a sample database of UK Electronic
+Libraries Programme (eLib) projects created by the team at UKOLN, many
+of which complement the work done on ROADS.
+
+If you don't already have a database of your own, you'll be asked
+whether you want to install this.  To build an HTML breakdown of the
+records in the eLib projects database, use the bin/addsl.pl program,
+e.g.
+
+  bin/addsl.pl -aiN
+
+
+CONTACT DETAILS
+
+If you have any problems, queries or comments about this software
+package, please contact the ROADS team :-
+
+  roads-liaison@bristol.ac.uk
+
+You may also find it worthwhile subscribing to the open-roads mailing
+list.  This is a public forum for users of the ROADS software.
+
+To subscribe to the mailing list send an email message with the word
+"subscribe" in the body to open-roads-request@net.lut.ac.uk.  This
+mailing list is the place to be if you want to suggest features for
+future releases, as sometimes we have to weigh up contradictory
+requirements from our users and this requires some discussion.
+
+We also have a mailing list for strictly technical discussions -
+send mail to roads-hackers-request@net.lut.ac.uk with the word
+"subscribe" alone in the body to join.
+
+Cheers!
+
+Jon Knight <J.P.Knight@lut.ac.uk>
+Martin Hamilton <M.T.Hamilton@lut.ac.uk> 
+
+$Id: README,v 3.13 1998/09/05 14:04:15 martin Exp $

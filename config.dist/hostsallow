@@ -1,0 +1,32 @@
+# Access control list for WHOIS++ server
+#
+# Format is 
+#
+#  [hostname|ipaddress]: [allow|deny|poll]
+#
+# Where hostname and ipaddress are regular expressions which the client
+# info is matched against.  Note that the first match is taken as the
+# definitive answer, and that the default is to deny everything - i.e.
+# you need to have an entry which says that everyone is allowed to
+# search if you make to make the server publicly available!
+
+# Let us (the developers) search and poll for centroids.  We'd like to
+# be able to poll your server so that we can extract centroids for use
+# in the ROADS development process.  Hope that's OK with you :-)
+gizmo.(lut|lboro|loughborough).ac.uk: poll
+158.125.96.46: poll
+weeble.(lut|lboro|loughborough).ac.uk: poll
+158.125.96.47: poll
+savage.ecn.bris.ac.uk: poll
+137.222.60.20: poll
+snowball.ilrt.bris.ac.uk: poll
+137.222.34.138: poll
+137.222.34.157: poll
+scoop.ukoln.ac.uk: poll
+138.38.146.8: poll
+www.ets.bris.ac.uk: poll
+137.222.16.1: poll
+
+# Let everyone search this server, but not poll it for centroids
+*: allow
+

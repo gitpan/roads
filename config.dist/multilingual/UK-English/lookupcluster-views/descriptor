@@ -1,0 +1,22 @@
+<html>
+<head>
+<title>Descriptor Clusters matching query: <QUERY> in <ROADSSERVICENAME></title>
+</head>
+<body>
+
+<h2>Descriptor Clusters matching query: <QUERY> in <ROADSSERVICENAME></h2>
+
+<RESULTS>
+
+<dl>
+ <dt>Descriptor:</dt> 
+  <dd><@DESCRIPTOR "no subject descriptor supplied"></dd>
+ <dt>Descriptor-Scheme:</dt>
+  <dd><@DESCRIPTOR-SCHEME "no subject descriptor scheme supplied"></dd>
+</dl>
+
+</RESULTS>
+
+</body>
+</html>
+

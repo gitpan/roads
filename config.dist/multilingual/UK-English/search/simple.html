@@ -1,0 +1,52 @@
+<HTML>
+<HEAD>
+<TITLE><ROADSSERVICENAME> Engine</TITLE>
+<LINK REL="StyleSheet" HREF="/<HTDOCS>/looknfeel/thatroadslook.css"
+  TYPE="text/css">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1 ALIGN=CENTER><ROADSSERVICENAME> Engine</H1>
+
+<P ALIGN=CENTER>
+  <A HREF="http://www.roads.lut.ac.uk/">
+    <IMG SRC="/<HTDOCS>/icons/little-roads.gif" ALT="Powered by ROADS">
+  </A></P>
+
+This search form hardly has any buttons.  If it seems a bit too
+simple, don't worry - we have a
+<A HREF="/<CGI-BIN>/search.pl?form=search">full</A> search form,
+and a <A HREF="/<CGI-BIN>/search.pl?form=wired">funky search
+form</A>.<P>
+
+To search for networked resources, enter one or more terms. You may
+also use the expressions AND, OR and NOT to specify your search more
+precisely.
+
+<THISGETFORM>
+ <HR>
+ <TABLE WIDTH="100%">
+ <TR><TD><INPUT TYPE="text" NAME="query" SIZE=30>
+ </TABLE>
+
+ <INPUT TYPE="submit" VALUE="Start search">
+ <INPUT TYPE="reset" VALUE="Clear this form">
+ <INPUT TYPE="hidden" NAME="caseful" VALUE="on">
+ <INPUT TYPE="hidden" NAME="stemming" VALUE="on">
+ <INPUT TYPE="hidden" NAME="ranking" VALUE="on">
+ <INPUT TYPE="checkbox" NAME="debug" VALUE="off">Debug.
+ <INPUT TYPE="hidden" NAME="referrals" VALUE="on">
+ <INPUT TYPE="hidden" NAME="view" VALUE="default">
+ <INPUT TYPE="hidden" NAME="maxserver" VALUE="8">
+ <INPUT TYPE="hidden" NAME="method" VALUE="any">
+Type of resource:
+<ALLTEMPLATETYPES>
+ <HR>
+</FORM>
+
+<ADDRESS>Developed by <A HREF="http://hill.lut.ac.uk/People/jon.html">Jon
+Knight</A> and <A HREF="http://www.net.lut.ac.uk/~martin/">Martin
+Hamilton</A>
+</ADDRESS>
+</BODY>
+</HTML>
+

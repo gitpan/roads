@@ -1,0 +1,39 @@
+</PRE><P><HR>
+<H2><A NAME="templateadmin">Template administration</A></H2>
+<INPUT TYPE="hidden" NAME="done" VALUE="yes">
+<INPUT TYPE="hidden" NAME="asksize" VALUE="done">
+Add me to the user authentication list for this template: <MKTEMP-AUTH><BR>
+What do you want to do with the template?<BR>
+
+<OFFLINEMODE>
+<INPUT TYPE="radio" NAME="op" VALUE="offline" CHECKED>
+ Store template for later indexing.<BR>
+</OFFLINEMODE>
+<RETURNTEMPLATE>
+<INPUT TYPE="radio" NAME="op" VALUE="text">
+ Return text of template.<BR>
+</RETURNTEMPLATE>
+<EMAILTEMPLATE>
+<INPUT TYPE="radio" NAME="op" VALUE="email">
+ Email template to administrator.<BR>
+</EMAILTEMPLATE>
+<ENTERTEMPLATE>
+<INPUT TYPE="radio" NAME="op" VALUE="enter">
+ Enter template into database.<BR>
+</ENTERTEMPLATE>
+
+<LISTINGBLOCK>
+ <INPUT TYPE="checkbox" NAME="slinsert" VALUE="yes">Add to subject list<BR>
+ Subject list view: <SELECTLISTING><BR>
+</LISTINGBLOCK>
+<WHATSNEWBLOCK>
+ <INPUT TYPE="checkbox" NAME="wninsert" VALUE="yes">Add to what's new list<BR>
+ Whats new view: <SELECTWHATSNEW><BR>
+</WHATSNEWBLOCK>
+<!-- More stuff in here for inserting template in lists -->
+<HR>
+<INPUT TYPE="submit" VALUE="Submit Template">
+<INPUT TYPE="reset" VALUE="Reset to Initial Values">
+</FORM>
+</BODY>  
+</HTML>

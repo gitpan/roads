@@ -1,0 +1,537 @@
+$Id: CHANGES,v 3.20 1998/09/11 19:12:22 jon Exp $
+
+# v2.00 - Friday 11th Sept 1998  ##########################################
+
+Added pointers in the README to ADAM's dc.bot WWW indexer, the UKOLN
+metadata group and software tools, and the ILRT's Zplugin.
+
+Incorporated UKOLN's eLib projects database, replacing the old "What's
+on Martin's bookshelf" database.  A minute's silence, please!
+
+Fixed bug 2b3-001 - searching on non-ASCII characters wasn't working
+even if people can type them into their browsers.  It turns out that
+Perl splitting on non-alphanumerics actually treats non-ASCII characters
+as punctuation/whitespace.
+
+Fixed bug 2b3-002 - various typographical errors in the sample HTML
+distributed with the ROADS software.
+
+Fixed bug 2b3-003 - bin/iafa_lint.pl failed to detect records without
+a space between the attribute and the value as an error.
+
+Fixed bug 2b3-004 - bin/lc.pl didn't work with modern versions of
+libwww-perl.  You'll now *need* a modern version of libwww-perl to
+make it work, so there!  Incorporated code contributed by Bill Jupp for
+reporting resources changed in the last N days - see the -w option in
+the documentation.
+
+Fixed bugs 2b3-005 and 2b3-006 - bin/cullsl.pl failed occasionally due
+to a typo, didn't process the -l option properly, and didn't generate
+an error message if invoked with a handle that doesn't correspond to an
+actual record in the ROADS database.
+
+Made the paths Configure uses to make a symlink from cgi-bin/search.pl
+to admin-cgi/admin.pl absolute rather than relative.  What we did
+before failed in some circumstances.
+
+Renamed bin/centrix.pl (Harvest centroid extraction program) to
+bin/harvest_centroid.pl.
+
+Renamed bin/newi.pl (Z39.50 centroid extraction program) to
+bin/z3950_centroid.pl.
+
+Renamed bin/wpp_shim.pl (WHOIS++ to Harvest application level gateway)
+to bin/harvest_shim.pl.
+
+Renamed bin/wpp_z39shim.pl (WHOIS++ to Z39.50 application level gateway)
+to bin/z3950_shim.pl.
+
+Minor tweaks to the ROADS CSS stylesheet to improve overall look and
+feel.
+
+Modified the sample "complex" search form to illustrate how to do
+dynamic browsing of subject categories (subject-descriptor fields) using
+cgi-bin/search.pl.  Minor changes to various of the sample config files
+to support this.
+
+Made installation of the sample database optional - if you haven't got
+a source directory already, you'll be asked whether you want the sample
+one.
+
+Removed the old German "translation" of our HTML messages - apparently
+we didn't do a very good job!  Volunteers sought for translations into
+other languages: translate the messages from the original originals,
+and get a namecheck in the credits when they're incorporated in a
+ROADS release.
+
+Tweaked the embedded POD documentation to fix compatibility problems
+with some of the pod2x utilities - e.g. don't use formatting on the
+synopsis section.
+
+# v2b3 - Monday July 20th 1998 ########################################
+
+cgi-bin/redirect.pl now supports automatic redirection to mirror
+sites, based on a list of URL prefixes and mirror sites held in the
+ROADS config directory.  Do a "perldoc cgi-bin/redirect.pl" for more
+information.
+
+Fixed bug 2b1-003 (carried over from beta 1) - editing the Trusted
+Information Provider access control list had no effect under some
+circumstances.
+
+Grouping of attributes and values to search for on the combined
+attribute/value pair combo boxes in cgi-bin/search.pl didn't work
+properly if you typed multiple terms into the "value" input box.
+search.pl now wraps a given attribute/value combination in round
+brackets, to group it together.
+
+Although bin/wppd.pl (the WHOIS++ server) accepted a command line
+argument to change the location of its index, this was being ignored
+by some of the indexing code - which assumed that it was always
+running out of the index directory set in lib/ROADS.pm.  This should
+now have the desired effect.
+
+admin-cgi/deindex.pl, the WWW based front end to bin/deindex.pl,
+didn't pass its options through from the WWW from properly.
+
+Updated the documentation for bin/wig.pl, the WHOIS++ index gatherer
+program.  This now explains with worked examples how to use it to set
+up a cross-searching service using centroids, and how to configure the
+Common Indexing Protocol (CIP).
+
+Incorporated bin/wpp_z39shim.pl - an improved WHOIS++ to Z39.50
+application level gateway contributed by Peter Valkenburg of TERENA
+and the TF-CHIC WWW indexing pilot project.  This replaces the earlier
+Tcl based prototype, bin/schtim.tcl.
+
+We no longer copy cgi-bin/search.pl to admin-cgi/admin.pl to use as
+the admin search engine - now we make a symbolic link instead.  If
+your WWW server doesn't honour symbolic links by default you'll need
+to turn this feature on in order to use the admin search feature.
+
+Included the template editor offline editing mode in the options which
+are turned on by default by config/mktemp.cfg.
+
+# v2b2 - Sunday May 24th 1998 #########################################
+
+Added a note to Configure and the README about getting to the
+on-line documentation via the perldoc utility.
+
+Found and fixed a number of simple bugs (mostly typos and
+transposition errors) in the pre-release testing process.
+
+Converted the outline HTML for the template editor main screen,
+cgi-bin/suggest.pl, and cgi-bin/survey.pl to use HTML 3.2 TABLEs.
+This seems to improve the look and feel of these pages quite a
+bit, without locking out Lynx users.
+
+Integrated fixes to NWI/EWI Z39.50 server centroid generation
+code as a result of feedback from the TF-CHIC pilot participants.
+We now use a temporary hash database instead of trying to build
+the centroid in memory.
+
+Integrated contributed code from Peter Valkenburg (TERENA) for
+improved WHOIS++ <-> Harvest gatewaying.
+
+Improved documentation (POD) quality for subject listings.
+
+mktemp.pl was dumping out its Content-Type header in the wrong
+place.
+
+Configure now always uses the current version number, even if the
+settings are read in from an existing ROADS.pm file.
+
+Moved config/lookupcluster-views into config/multilingual/* - no
+need to have it in the top level config directory any more.
+
+We now ignore blank lines in config/databases.
+
+We now handle stoplisted terms that are next to brackets.
+
+Integrated version 1 patches.
+
+# v2b1 - Tuesday 10th March 1998 ######################################
+
+More or less a repackaging of the last alpha release.  However there
+have been some minor changes...
+
+Bug fixing :-
+
+Form result processing in cgi-bin/survey.pl now substitutes for any
+double quotes (") and commas (') in field values, since these are used
+to wrap the response values when they're saved to disk.
+
+We were inadvertantly distributing two versions of the sample survey
+questionnaire - one in the config/multilingual/*/survey directory, and
+another in the old location in config/survey.  The latter has been
+removed.
+
+Found and fixed a bug in the rendering of templates as WHOIS++ search
+results which would occasionally give bogus results - e.g. the wrong
+attribute/value pair.
+
+Made the installation process (./Configure) require less typing from
+the installer by showing default choices for each section in advance
+and giving the option of skipping if the settings are acceptable.
+
+Stopped views in the template that didn't contain a cluster reference
+from deleting all the data in that cluster.
+
+New stuff :-
+
+All HTML code now refers to a CSS1 style sheet held in
+htdocs/looknfeel/thatroadslook.css which allows services to broadly
+alter the appearence of the site for CSS1 compatible browsers without
+having to tweak the HTML files by hand individually.
+
+All Perl code now contains embedded documentation written using POD,
+including library routines.
+
+Integrated code to extract centroids from Harvest Gatherers/Brokers
+and SOIF template collections - bin/centrix.pl
+
+Integrated code to extract centroids from collections of WIR objects
+created by the DESIRE/NWI/EWI "Combine" robot - bin/newi.pl
+
+Integrated rudimentary Harvest Broker application level query gateway
+for cross-searching - bin/wpp_shim.pl
+
+Integrated even more rudimentary Z39.50 application level gateway for
+cross-searching - bin/schtim.tcl.  NB: This requires that you fetch
+and install IrTcl from www.indexdata.dk.  It will a) probably only
+work against Zebra servers loading with templates created by Combine,
+and b) require modification in order to run at all.  Because of the
+complexity of the Z39.50 protocol this will always be a hacker-only
+tool :-(
+
+# v2a3 - Wednesday December 3rd 1997 #################################
+
+Implemented additional version 2 requirements :-
+
+2 - Default values in template editor are now "sensible", so no more
+  wibble :-)
+
+3 - Template editor now supports the additional and removal of both
+  clusters and variants during an editing session (i.e. on the final
+  form it displays).  Should we now provide an option to remove the
+  "how many additional variants/clusters?" stage ?
+
+21 - Hide automatically generated fields' values.  Done in the sample
+  "common elements" view distributed with version 2.
+
+24 - Simple template view "Common elements" of the most commonly used
+  template attributes based on centroids gathered for cross-searching
+  experiment.
+
+29 - Sensible defaults in place for "Category:" attribute in
+  templates, but possibly not sensible enough.  Comments needed.
+
+31 - See 24.
+
+35 - Created "Mailshot" view of What's New listing to simulate BUBL
+  style mailshot.
+
+Bug fixes and new mini/maxi-features :-
+
+The WHOIS++ server should no longer die if it has problems forking.
+
+The template editor now supports an "offline composition" mode, in
+which it places new or edited templates in a holding area for later
+reindexing.
+
+A sample cron job "bin/rebuild.pl" has been created to show how to
+integrate offine editing with periodic database reindexing and the
+building of subject/what's new listings.
+
+The template editor no longer creates its temporary files in the main
+template source directory - uses $ROADS::TmpDir instead.
+
+Added code to ReadTemplate to read list of template handle to filename
+mappings (normally guts/alltemps), and told the readtemplate
+subroutine to use this if not initialised already.
+
+Replaced hard coded template and alltemps reading routines in most of
+the ROADS tools (e.g. addsl, addwn, cullsl, cullwn, deindex, ...) with
+calls to readalltemps/readtemplate.
+
+Changed numerous $hash{$var} instances to $hash{"$var"} for extra
+resilience - some variables' values weren't being interpolated
+properly.
+
+A new CGI program "suggest.pl" has been written.  This lets end users
+submit a simplistic template style record which is emailed to the
+ROADS database admin - the fields on the form are admin configurable.
+
+Moved preferredURL subroutine from subject listing code into a
+separate Perl module PreferredURL and updated the tools which depend
+on it to use this version.
+
+Added additional HTML rendering language feature - test for a given
+value for a given attribute, e.g. <@subject-descriptor=815>
+
+Made generation of subject listing alphabetical and numeric indexes
+optional - turn-offable by -A and -N switches on command line for
+addsl and cullsl.
+
+Subject and what's new listings should now be able to have their HTML
+customised in the same way that search results can be - we're now
+using the search result rendering code to generate them.  This means
+that the outline HTML for these tools has now moved into the
+multilingual/*/subject-listing-views and
+multilingual/*/whats-new-views directories.
+
+Added 'coldstart' option to wppdc.pl - works as start option but also
+causes any existing wppd.pid to be removed.  For use in (say)
+automatically cold starting the WHOIS++ server after a reboot.
+
+Added sample System V style run-level script to start wppd
+automatically when the machine is booted up - bin/init.wppd.
+
+Changed background job launching from admincentre programs so that it
+only sends mail once if the ROADS tech contact and admin contact are
+the same.
+
+Templates directory name in bin/countattr.pl would be truncated if
+buried deeply in filesystem directory hierarchy - made more room for
+it.
+
+Made bin/bogus.pl only check for the writeability of the temporary
+directory, rather than doing a recursive traversal - people seem to
+have lots of random junk in their temporary directories, so the news
+that some/all of this stuff isn't writeable can be misleading.
+
+Changed debugging statements in deindex.pl which named it as mkinv.pl
+- casualties of cutting'n'pasting!
+
+Changed HTML form associated with WWW deindexing front end -
+admin-cgi/deindex.pl, since we no longer reindex the whole database as
+a result of a deindex.
+
+Made URIs optional in default distributed template outlines.
+
+Added URI attribute to USER and ORGANIZATION templates in default
+outlines.
+
+Changed template editor rendering style so that single line fields are
+displayed with no intervening vertical white space apart from the
+basic newline.  This lets us get more stuff onto each screen with the
+template editor.
+
+Added CGI client end search logging in addition to WHOIS++ server end
+- WHOIS++ server logs now written to logs/wppd-hits by default, and
+CGI search logs to logs/search-hits.  This means we get real client
+info in the search-hits, and capture WHOIS++ activity separately
+(e.g. useful for analysing cross-searching).
+
+Added logging for WHOIS++ system commands and syntax errors - we were
+only logging search requests before.
+
+Added test for attribute name 'ANY' in attribute/value variant of the
+search form, so that you can specifically un-constrain a particular
+search term.  When the attribute name is 'ANY', it's removed from the
+query before the query is passed on to the server.
+
+Moved generic HTML rendering substitutions, e.g. <HTDOCS>, into a
+separate routine GenericSubs which is called from both OutputHTML and
+Render.  We have convergence :-)
+
+Removed url: prefix from AltaVista sample search result expansion -
+should now find some matches!
+
+Updated survey questionnaire to change fields from radio buttons to
+drop down SELECT lists and made text boxes/areas bigger.
+
+HTML rendering code now ignores Emacs backup files when looking for
+subject listing rendering rules (e.g. header~)
+
+search.pl can now be called as nph-search.pl, in which case it tries
+to dump out HTTP headers and a line of HTML before proceeding as
+normal.  This may make it harder for people to press the "submit"
+button on the search form lots of times when response times are a bit
+slow.  Note that you will to change your search form or create a new
+form which has the nph- invocation as a target and call search.pl with
+the CGI parameter form=<new_formname>.
+
+As a byproduct of these changes some files and directories have moved
+about :-
+
+Changed config/subject-listing/udc-map to config/class-map.
+Moved config/subject-listing/outlines to
+  config/multilingual/*/subject-listing-views
+Moved config/whats-new/outlines to
+  config/multilingual/*/whats-new-views
+Moved config/subject-listing/views/* to config/subject-listing.
+Moved config/whats-new/views/* to config/whats-new.
+Removed 'Outline-File' entry from whats-new views.
+Removed 'Outline-File', 'Alpha-Outline' and 'Number-Outline'
+  from subject-listing views.
+Added 'AlphaList-File', 'NumList-File' and 'WWW-Directory' to
+  subject-listing views.
+
+# v2a2 - Friday October 10th 1997 ####################################
+
+Integrated code for indexing I18N characters.
+
+Bug fix for centroid searching - mixed/upper case queries weren't
+being interpreted properly.
+
+Implemented more ROADS version 2 requirements :-  (nearly done now!)
+
+3 - The number of variants is now dynamically alterable during the
+  editing of a template.  Buttons have been provided which allow for
+  the addition of an extra variant, or deletion of the most recently
+  added variant.
+
+4 - It is now possible to edit the options that appear at the bottom
+  of the template editor views, so that trusted information providers
+  only have access to the ones that the ROADS administrator wishes.
+  A new admin-cgi script "mktemp-config-editor.pl" has been written to
+  allow the configuration files that specify who can do what to be
+  easily setup and altered by the ROADS server administrator.
+
+10 - It's now possible to describe relationships between objects in the
+  templates - initially concentrating on parent/child relationships, but
+  allowing for other relationships to be defined at a later stage.  A
+  new relation specific variant has been introduced.  The bin/addsl.pl
+  and bin/cullsl.pl scripts have been modified so that subject
+  listings can display related templates.
+
+19 - It is now possible to insert an existing template of the
+  appropriate type as a cluster into one being edited by quoting its
+  handle, in addition to the cluster search feature.  Any entries made
+  in the cluster's form will override the entries inherited from the
+  template referred to by the handle - so, for instance, you can type
+  in a template's handle to include it as a cluster, but then change
+  an attribute or two for the version which eventually appears in the
+  main template which is being created/edited.
+
+20 - A note has been added to the 'handle' attribute's entry in the
+  template editor outlining how to create a new template based on the
+  currently displayed one.
+
+21b - Arbitrary text can now be associated with attributes when
+  they're rendered in the template editor, e.g. a note next to the
+  handle field informing the user that is automatically generated.
+  This is possible on a template type/attribute basis, or for all
+  instances of a given attribute.
+
+22 - A section has been added to the ROADS documentation demonstrating
+  how small (e.g. one line) Perl scripts may be used to perform global
+  edits on ROADS templates.
+
+24 - Sub-string searching is now possible.  In fact, this was the
+  default behaviour in previous versions of ROADS!  It's now possible
+  to select the behaviour you want.  Note that stemming and substring
+  searching are mutually exclusive.
+
+26 - It's now possible to control the regular expression used to
+  tokenise terms in the templates when they're being indexed.  This
+  means that you can (for instance) index full email addresses and
+  potentially full URLs.  The results will vary from database to
+  database, but we anticipate that indexing full URLs won't work well
+  for most people because of the internal structure of the ROADS
+  database index.
+
+28 - The subject listing generator now only display parents in subject
+  listings with links to children.
+
+30 - ROADS templates are now version numbered.  The current version is
+  "1", and this appears in templates created by the template editor as
+  an additional attribute Template-Version:
+
+34 - Criteria for inclusion in the what's new list are now more
+  flexible, e.g. restricting the list to the last N records added,
+  using the "-l" command line switch, or to records added since a
+  particular date/time, using the "-z" switch.
+
+36 - The link checker now notes (up to a point) when the content of an
+  object has changed.  We now keep two DB(M) databases in the ROADS
+  "guts" directory - "lastmodified" and "contentlength", and flag a
+  change when either of these has been altered.
+
+
+# v2a1 - Friday August 15th 1997 #####################################
+
+Integrated fixes from version 1 code base.
+
+Major changes: all library code apart from the template editor is now
+packaged in Perl module form, and should cleanly export public
+functions and data structures using the Exporter module.
+
+The WHOIS++ server can now handle *simple* centroid gathering and
+referral generation (a la RFC 1913/1914).
+
+Implemented version 2 requirements :-
+
+5 - A separate tool, dup_urls.pl, has been written to identify
+templates containing duplicate URLs.
+
+6 - Attribute/value constraints (up to a maximum of three pairs) can
+be added to the search form, and the style of searching (AND or OR)
+can be selected using a form element.  These can be hidden (e.g. to
+hard wire a particular subject category), used with drop-down lists
+(e.g. the HTML <SELECT> widget), and so on.  It's also now possible to
+have multiple search forms and select the one which is wanted using a
+CGI parameter.
+
+7 - It's now possible to have multiple HTML renderings of the search
+results, using a CGI parameter to select the one to display.  The
+rendering of an individual template into HTML is now conditional, and
+it's trivial to have a completely different way of rendering (for
+instance) a particular type of object (e.g. document versus service
+versus image), or to have different rendering rules depending on the
+server the object was retrieved from in a centroid based search across
+multiple servers.
+
+8 - see 7!
+
+11 - The addition of a specific country code to a record template
+  so that on can make browsable lists by country, using an attribute called
+  Organization-Country in the ORGANIZATION cluster, and the ISO country codes
+  as the format of entry.
+
+12 - The addition of new default TRAINMAT template - outlined in
+  Appendix A of RFC 2007: Foster et al., Catalogue of Network Training
+  Materials, October 1996 <URL:http://ds.internic.net/rfc/rfc2007.txt>.
+
+13 - Configuration documentation should be consolidated into an
+  Admin Guide to Configuration, including pseudo-HTML configuration features.
+  The individual documentation should be consolidated into a full admin
+  guide.  Should be in different formats: RTF, PostScript, HTML and LaTeX.
+
+14 - The should be a document explaining the logic behind the search
+  algorithm.  This was asked for at the technical meeting.
+
+15 - It has been noted that there is difficulty in working at the
+  UNIX command line level when the files are being manipulated are typically
+  owned by nobody.  Some hints and tips covering strategies for
+  dealing with this using UNIX users/groups and ACLs where available
+  have been incorporated into the ROADS admin guide (actually done
+  for ROADS version 1).
+
+16 - The Admin Guide now includes guidance on moving a test
+  installation to a live installation (actually done for ROADS version
+  1).
+
+17 - The installer tool now explicitly refers to the WWW based
+  installation checker in the ROADS admin centre (actually done for
+  ROADS version 1).
+
+18 - The installation can now pick up and use existing configuration
+  information - i.e. the lib/ROADS.pm file (actually done for ROADS
+  version 1).
+
+27 - Each of the ROADS WWW based admin tools can now take an access
+  control list, indicating which HTTP authenticated users may use it.
+
+32 - The sample templates shipped with the ROADS distribution now
+  contain a record-status attribute to record the stage which the
+  cataloguing process has gotten to.
+
+33 - Records created by the template editor now contain the
+  attributes Record-Created-By-Date: and Record-Created-By-Email:
+
+37 - A tool has been written which performs a WHOIS++ search and
+  returns a list of matching template handles.  This may be used as
+  input to any of the other ROADS tools which operate on a list of
+  handles, e.g. to generate customised browsable lists.

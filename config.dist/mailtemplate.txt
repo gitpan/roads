@@ -1,0 +1,9 @@
+During a linkchecker-run over our local Webfiles,
+we found these 'bad' URLs in documents maintained
+by you. If any of these problems were mentioned in
+earlier messages of this sort (if you have recieved
+any), we strongly suggest that you either remove
+or substitute those particular references from the
+named pages.
+
+		Best Regards, The System Operators.

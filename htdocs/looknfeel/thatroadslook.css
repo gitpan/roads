@@ -1,0 +1,107 @@
+BODY {
+  color: #000; 
+  background: #ffffff; 
+  margin-left: 7%; 
+  font-family: helvetica, sans-serif;
+}
+
+H1,H2 {
+  margin-left: -6%; 
+  color: #900;
+}
+
+.DCcreator {
+  
+}
+
+.DCtitle {
+/*  border-width: thick thick thick; */
+/*  border-color: blue; */
+
+  color: black;
+  text-transform: uppercase;
+  font-family: times, serif;
+
+/*  font-style: italic; */
+  font-variant: small-caps;
+  font-weight: bolder;
+  font-size: large
+}
+
+.DCsubject {
+  background: gray;
+  color: white;
+  text-transform: uppercase
+}
+
+.DCkeyword {
+  background: gray;
+  color: white;
+  text-transform: uppercase
+}
+
+.DCkeywordcontent {
+  color: black;
+  font-style: small-caps;
+}
+
+.DCdescriptor {
+  background: gray;
+  color: white;
+  text-transform: uppercase
+}
+
+.DCdescriptorcontent {
+  color: black;
+  font-style: small-caps;
+}
+
+.DCpublisher {
+
+}
+
+.DCcontributor {
+
+}
+
+.DCdate {
+
+}
+
+.DCtype  {
+
+}
+
+.DCformat {
+
+}
+
+.DCidentifier {
+  background: gray;
+  color: white;
+}
+
+.DCidentifiercontent {
+  color: blue;
+}
+
+.DCrelation {
+
+}
+
+.DCsource {
+
+}
+
+.DClanguage {
+
+}
+
+.DCcoverage {
+
+}
+
+.DCrightsmanagement {
+
+}
+

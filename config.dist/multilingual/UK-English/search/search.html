@@ -1,0 +1,104 @@
+<HTML>
+<HEAD>
+<TITLE><ROADSSERVICENAME> Engine</TITLE>
+<LINK REL="StyleSheet" HREF="/<HTDOCS>/looknfeel/thatroadslook.css"
+  TYPE="text/css">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1 ALIGN=CENTER><ROADSSERVICENAME> Engine</H1>
+
+<P ALIGN=CENTER>
+  <A HREF="http://www.roads.lut.ac.uk/">
+    <IMG SRC="/<HTDOCS>/icons/little-roads.gif" ALT="Powered by ROADS">
+  </A></P>
+
+This search form has a button for practically every option.  If it
+seems a bit much, don't worry - we have a
+<A HREF="/<CGI-BIN>/search.pl?form=simple">simple</A> search form,
+and a <A HREF="/<CGI-BIN>/search.pl?form=wired">funky search
+form</A>.<P>
+
+To search for networked resources, enter one or more terms. You may
+also use the expressions AND, OR and NOT to specify your search more
+precisely.
+
+<THISGETFORM>
+ <HR>
+ <TABLE WIDTH="100%">
+ <TR><TD><SELECT NAME="attrib1">
+ <OPTION SELECTED>ANY
+ <OPTION>Author
+ <OPTION>Description
+ <OPTION>Keywords
+ <OPTION>Title
+ </SELECT>
+ <TD><INPUT TYPE="text" NAME="term1" SIZE=30>
+
+ <TR><TD><SELECT NAME="attrib2">
+ <OPTION>ANY
+ <OPTION>Author
+ <OPTION SELECTED>Description
+ <OPTION>Keywords
+ <OPTION>Title
+ </SELECT>
+ <TD><INPUT TYPE="text" NAME="term2" SIZE=30>
+
+ <TR><TD>Browse in category:
+     <INPUT TYPE=hidden NAME="attrib3" VALUE="subject-descriptor">
+ <TD><SELECT NAME="term3">
+ <OPTION SELECTED VALUE=""> (None)
+ <OPTION VALUE="anr"> Access to Network Resources
+ <OPTION VALUE="digi"> Digitisation
+ <OPTION VALUE="dp"> Digital Preservation
+ <OPTION VALUE="edd"> Electronic Document Delivery
+ <OPTION VALUE="ej"> Electronic Journals and Pre-Prints
+ <OPTION VALUE="ers"> Electronic Reserve Support
+ <OPTION VALUE="es"> Evaluation Studies
+ <OPTION VALUE="eslp"> Electronic Short Loan
+ <OPTION VALUE="hl"> Hybrid Libraries
+ <OPTION VALUE="images"> Images
+ <OPTION VALUE="odp"> On Demand Publishing
+ <OPTION VALUE="pp"> Pre-Prints
+ <OPTION VALUE="qa"> Quality Assurance
+ <OPTION VALUE="ss"> Supporting Studies
+ <OPTION VALUE="ta"> Training and Awareness
+ </SELECT>
+ </TABLE>
+<P>
+ Find information which matches <SELECT NAME="boolean">
+ <OPTION VALUE="and" SELECTED>all
+ <OPTION VALUE="or">any
+ </SELECT> of the above.<P>
+
+ <INPUT TYPE="submit" VALUE="Start search">
+ <INPUT TYPE="reset" VALUE="Clear this form">
+<P>
+ <INPUT TYPE="checkbox" NAME="caseful" VALUE="on">Case sensitive search.
+ <INPUT TYPE="checkbox" NAME="ranking" VALUE="on">Ranking.
+ <INPUT TYPE="checkbox" NAME="debug" VALUE="on">Debug.
+ <INPUT TYPE="checkbox" NAME="referrals" VALUE="on" CHECKED>Follow referrals.<BR>
+ Search type:
+ <INPUT TYPE="radio" NAME="stemming" VALUE="on" CHECKED>Stemming.
+ <INPUT TYPE="radio" NAME="stemming" VALUE="sub">Substring.
+ <INPUT TYPE="radio" NAME="stemming" VALUE="off">Exact.
+ <INPUT TYPE="hidden" NAME="maxserver" VALUE="8">
+ <INPUT TYPE="hidden" NAME="method" VALUE="any"><P>
+<P>
+Results in <SELECT NAME="view">
+<OPTION VALUE="default" SELECTED>detailed
+<OPTION VALUE="headlines">summary
+<OPTION VALUE="wired">WIRED
+</SELECT> format<P>
+Type of resource:
+<ALLTEMPLATETYPES>
+Database:
+<REALDATABASES>
+ <HR>
+</FORM>
+<ADDRESS>Developed by <A HREF="http://hill.lut.ac.uk/People/jon.html">Jon
+Knight</A> and <A HREF="http://www.net.lut.ac.uk/~martin/">Martin
+Hamilton</A>
+</ADDRESS>
+</BODY>
+</HTML>
+

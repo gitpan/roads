@@ -1,0 +1,25 @@
+<dl>
+<dt>
+<a href="<@URI>">
+<b><@TITLE "no title available"></b></a>
+<p>
+<dd>
+<em>Programme-Area:</em><br> <@PROGRAMME-AREA>
+<p>
+<em>Description:</em><br> <@DESCRIPTION "no description supplied"> 
+<p>
+<em>Keywords:</em><br> <@KEYWORDS>
+<p>
+<em>Lead site:</em><br> <@LEAD-NAME>
+<p>
+<em>Partner site(s):</em><br>
+<ul>
+<FOREACH> <li> <@PARTNER-NAME>
+</ul>
+<p>
+<em>WWW site(s):</em><br>
+<ul>
+<FOREACH "<li> not available on-line"> <li> <a href="<@URI>"><@URI></a>
+</ul>
+<p>
+</dl>
